@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu | Merchant ICP Master List - Auto-Approval</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; color: #1a1a1a; background: #ffffff; font-size: 16px; line-height: 1.8; }
+
+  .header { background: #0b5147; color: #ffffff; padding: 48px 60px 40px; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
+  .logo { font-size: 36px; font-weight: 800; letter-spacing: -0.5px; }
+  .logo span { color: #01de8f; }
+  .badge { background: #01de8f; color: #0b5147; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .header h1 { font-size: 28px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
+  .header .subtitle { font-size: 16px; color: #8de6c6; font-weight: 500; margin-bottom: 4px; }
+  .header .meta { font-size: 13px; color: #93adaa; }
+
+  .overview-bar { background: #e0ebe7; border-left: 4px solid #01de8f; padding: 24px 32px; margin: 0 60px; margin-top: 32px; border-radius: 0 8px 8px 0; }
+  .overview-bar h3 { font-size: 18px; font-weight: 700; color: #0b5147; margin-bottom: 8px; }
+  .overview-bar p { font-size: 15px; color: #397168; line-height: 1.7; }
+
+  .content { padding: 40px 60px 60px; }
+
+  .category-section { margin-bottom: 40px; }
+  .category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 3px solid #0b5147; }
+  .category-header h2 { font-size: 22px; font-weight: 800; color: #0b5147; }
+  .category-count { background: #01de8f; color: #0b5147; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px; }
+
+  .merchant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .merchant-card { background: #f8fbfa; border: 1px solid #d5eae3; border-radius: 8px; padding: 20px 24px; transition: border-color 0.2s; }
+  .merchant-card:hover { border-color: #01de8f; }
+  .merchant-card .number { display: inline-block; background: #0b5147; color: #01de8f; font-size: 12px; font-weight: 700; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 50%; margin-bottom: 8px; }
+  .merchant-card h4 { font-size: 16px; font-weight: 700; color: #0b5147; margin-bottom: 6px; }
+  .merchant-card p { font-size: 14px; color: #555; line-height: 1.6; }
+
+  .footer-note { background: #0b5147; color: #93adaa; padding: 32px 60px; margin-top: 40px; font-size: 13px; line-height: 1.7; font-style: italic; }
+  .footer-note strong { color: #01de8f; font-style: normal; }
+  .footer { background: #0b5147; border-top: 1px solid #397168; padding: 20px 60px; display: flex; justify-content: space-between; align-items: center; }
+  .footer span { color: #93adaa; font-size: 13px; }
+  .footer .brand { color: #01de8f; font-weight: 700; }
+
+  @media print {
+    body { font-size: 11px; }
+    .header { padding: 30px 40px 24px; }
+    .content { padding: 24px 40px 40px; }
+    .overview-bar { margin: 0 40px; margin-top: 20px; }
+    .merchant-grid { gap: 10px; }
+    .merchant-card { padding: 14px 16px; }
+    .category-section { page-break-inside: avoid; }
+    .footer-note, .footer { padding-left: 40px; padding-right: 40px; }
+  }
+  @media (max-width: 768px) {
+    .header, .content, .overview-bar, .footer-note, .footer { padding-left: 24px; padding-right: 24px; }
+    .overview-bar { margin: 0 24px; margin-top: 24px; }
+    .merchant-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo">Kashu<span>.</span></div>
+    <div class="badge">Tier I - Auto-Approval</div>
+  </div>
+  <h1>Merchant ICP Master List</h1>
+  <div class="subtitle">Auto-Approval (Tier I Card Present) Merchants Only</div>
+  <div class="meta">Luqra Underwriting Matrix Verified | Last Updated: March 2026</div>
+</div>
+
+<div class="overview-bar">
+  <h3>Overview</h3>
+  <p>Every merchant category in this document is Tier I Card Present under the Luqra underwriting matrix. That means instant or same-day approval, no reserve addendum, no processing statements required unless AMV exceeds $150k, and FICO floor of 550. These are your fastest closes and cleanest accounts. Nothing on the restricted or prohibited list made this cut.</p>
+</div>
+
+<div class="content">
+
+  <!-- FOOD & BEVERAGE -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Food & Beverage</h2>
+      <span class="category-count">9 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">1</div>
+        <h4>Restaurants and Cafes (Full Service)</h4>
+        <p>Card present, high transaction volume, established processing history in most cases. One of the highest-volume merchant categories available.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">2</div>
+        <h4>Fast Casual and Counter Service Restaurants</h4>
+        <p>High frequency, card present, low average ticket but massive volume. Franchises and independents both qualify.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">3</div>
+        <h4>Bars and Nightclubs</h4>
+        <p>Card present, high average ticket with drinks and tabs. Strong monthly volume. Often on outdated rates from their original setup.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">4</div>
+        <h4>Breweries and Wineries (Taproom)</h4>
+        <p>Card present retail and taproom sales. Growing market with strong ticket size and loyal customers. Often owner-operated and receptive to savings conversations.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">5</div>
+        <h4>Coffee Shops and Cafes</h4>
+        <p>High transaction frequency, card present, low chargeback. Often running Square or Toast with room to save.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">6</div>
+        <h4>Food Trucks</h4>
+        <p>Card present, mobile, growing market. Many still cash-heavy and converting. Simple boarding, low risk.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">7</div>
+        <h4>Bakeries and Specialty Food Shops</h4>
+        <p>Retail card present, steady volume, low chargeback. Easy close once you show the rate comparison.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">8</div>
+        <h4>Catering Companies</h4>
+        <p>High average ticket, card present and MOTO deposits. Growing with event market. Owner-operated and reachable directly.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">9</div>
+        <h4>Ice Cream Shops and Dessert Bars</h4>
+        <p>Card present, high foot traffic, clean chargeback history. Seasonal in some markets but strong volume during peak.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTOMOTIVE -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Automotive</h2>
+      <span class="category-count">7 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">10</div>
+        <h4>Auto Repair and Service Shops</h4>
+        <p>High average ticket, card present, repeat customers. One of the top Tier I volume categories. Often paying 3%+ through legacy processors.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">11</div>
+        <h4>Auto Body and Collision Shops</h4>
+        <p>High ticket, card present, often insurance-driven volume. Stable long-tenure accounts.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">12</div>
+        <h4>Oil Change and Quick Lube</h4>
+        <p>High frequency, card present, franchise and independent locations. Clean accounts with predictable volume.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">13</div>
+        <h4>Tire Shops and Wheel/Rim Retailers</h4>
+        <p>High average ticket, card present, recurring customers. Easy to find and easy to convert.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">14</div>
+        <h4>Car Washes</h4>
+        <p>High transaction frequency, often automated, card present. Very low chargeback risk and easy boarding.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">15</div>
+        <h4>Parking Lots and Garages</h4>
+        <p>High volume, card present, simple operations. Often owned by investors or operators managing multiple locations.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">16</div>
+        <h4>Towing and Roadside Assistance</h4>
+        <p>Card present or MOTO, high average ticket, emergency-driven demand. Low chargeback, clean accounts.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEALTH & WELLNESS -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Health & Wellness</h2>
+      <span class="category-count">12 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">17</div>
+        <h4>Medical and Dental Practices</h4>
+        <p>High average ticket on patient-pay portion, card present, stable long-tenure practices. Consistently overpaying on legacy deals.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">18</div>
+        <h4>Urgent Care Clinics</h4>
+        <p>High volume, card present for patient portion. Often on legacy processing arrangements with significant savings opportunity.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">19</div>
+        <h4>Physical Therapy Practices</h4>
+        <p>Similar to urgent care. High volume patient-pay, card present, stable long-term accounts.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">20</div>
+        <h4>Chiropractic Offices</h4>
+        <p>Membership and per-visit billing, card present, loyal patient base. Recurring monthly volume and easy to retain once boarded.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">21</div>
+        <h4>Veterinary Clinics</h4>
+        <p>High average ticket, card present, emotionally-driven spending with low price sensitivity. Stable accounts.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">22</div>
+        <h4>Optometrists and Vision Centers</h4>
+        <p>Card present retail and services. High average ticket on frames and exams. Stable practices with predictable volume.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">23</div>
+        <h4>Med Spas (Non-Pharma)</h4>
+        <p>High average ticket, card present, growing market. Services like laser, Botox, facials. Not pharmaceutical, qualifies cleanly.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">24</div>
+        <h4>Massage Therapy and Day Spas</h4>
+        <p>Membership and per-session billing, card present, loyal recurring clientele. Predictable monthly volume.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">25</div>
+        <h4>Gyms and Fitness Studios</h4>
+        <p>Membership billing, card present, recurring volume. Both big box and boutique studios qualify.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">26</div>
+        <h4>Yoga and Pilates Studios</h4>
+        <p>Class pass and membership billing, card present, low chargeback, loyal clientele. Easy to board and retain.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">27</div>
+        <h4>Martial Arts and Dance Studios</h4>
+        <p>Membership and class billing, card present, family-oriented market. Stable recurring volume.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">28</div>
+        <h4>Tanning Salons</h4>
+        <p>Membership billing, card present, high frequency visits. Low average ticket but strong monthly recurring volume.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERSONAL CARE -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Personal Care</h2>
+      <span class="category-count">5 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">29</div>
+        <h4>Hair Salons</h4>
+        <p>Card present, high frequency, loyal clientele. One of the most common merchant types in every market. Easy close on a rate conversation.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">30</div>
+        <h4>Barbershops</h4>
+        <p>Card present, high transaction frequency. Growing card acceptance in markets that were previously cash-heavy.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">31</div>
+        <h4>Nail Salons</h4>
+        <p>Card present, high frequency, mostly cash historically. Strong conversion opportunity as card acceptance grows.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">32</div>
+        <h4>Dry Cleaners and Laundromats</h4>
+        <p>Card present, steady volume, long-tenure owner-operated businesses. Often on legacy rates.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">33</div>
+        <h4>Pet Groomers and Boarding</h4>
+        <p>Card present, recurring clients, growing market. High customer loyalty and low chargeback.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME SERVICES & CONSTRUCTION -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Home Services & Construction</h2>
+      <span class="category-count">11 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">34</div>
+        <h4>General Contractors</h4>
+        <p>High average ticket, card present and MOTO, project-based billing. One of the top volume categories in every market.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">35</div>
+        <h4>Plumbers</h4>
+        <p>High ticket, card present for residential and commercial. Emergency-driven demand with strong volume.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">36</div>
+        <h4>Electricians</h4>
+        <p>High ticket, card present, recurring commercial and residential. Clean accounts, low chargeback.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">37</div>
+        <h4>HVAC Companies</h4>
+        <p>High average ticket, seasonal peaks, card present and MOTO. Consistent year-round volume with maintenance agreements.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">38</div>
+        <h4>Roofers</h4>
+        <p>Very high average ticket, card present and MOTO. Project-based, high volume per transaction. Storm season creates surges.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">39</div>
+        <h4>Landscaping and Lawn Care</h4>
+        <p>Recurring service billing, card present and MOTO, growing market. Seasonal in some regions but strong spring/summer volume.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">40</div>
+        <h4>Cleaning and Maid Services</h4>
+        <p>Recurring billing, card present and MOTO, low chargeback. Residential and commercial both qualify.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">41</div>
+        <h4>Pool Service and Maintenance</h4>
+        <p>Recurring monthly billing, card present, low chargeback. Growing in Sun Belt markets. Easy to find and board.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">42</div>
+        <h4>Pest Control Companies</h4>
+        <p>Recurring service contracts, card present and MOTO, low chargeback. Stable long-tenure accounts.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">43</div>
+        <h4>Moving Companies</h4>
+        <p>High average ticket, card present and MOTO, project-based. Seasonal peaks in spring and summer.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">44</div>
+        <h4>Hardware and Building Supply (Independent)</h4>
+        <p>High ticket, card present, underserved by mainstream processors. B2B and retail mix.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RETAIL -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Retail</h2>
+      <span class="category-count">9 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">45</div>
+        <h4>Retail Boutiques and Gift Shops</h4>
+        <p>Card present, high foot traffic, seasonal peaks. Easy to board and low chargeback risk.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">46</div>
+        <h4>Florists</h4>
+        <p>Card present, recurring event and holiday-driven volume. Strong local relationships and loyal customer base.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">47</div>
+        <h4>Jewelry Stores (Independent)</h4>
+        <p>High average ticket, card present, low transaction frequency but strong dollar volume. Often on outdated rates.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">48</div>
+        <h4>Sporting Goods Stores (Independent)</h4>
+        <p>Card present, high ticket on equipment, growing market. Not franchise-restricted and easy to approach directly.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">49</div>
+        <h4>Bike and Recreational Shops</h4>
+        <p>Seasonal but high ticket, card present, growing market especially in urban and suburban areas.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">50</div>
+        <h4>Convenience Stores (Independent)</h4>
+        <p>High frequency, card present, consistent volume. Independent owners are reachable and motivated by savings.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">51</div>
+        <h4>Liquor Stores (Independent)</h4>
+        <p>High frequency, card present, consistent volume. Often owner-operated and open to rate savings conversations.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">52</div>
+        <h4>Hobby and Craft Stores (Independent)</h4>
+        <p>Card present retail, steady volume, niche loyal customer base. Often overlooked by processors.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">53</div>
+        <h4>Music Schools and Instrument Shops</h4>
+        <p>Membership and retail billing, card present, low chargeback. Consistent monthly volume.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDUCATION & CHILDCARE -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Education & Childcare</h2>
+      <span class="category-count">4 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">54</div>
+        <h4>Childcare and Daycare Centers</h4>
+        <p>Recurring weekly or monthly billing, card present, emotionally-driven retention. Extremely low chargeback. Stable long-tenure accounts.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">55</div>
+        <h4>Tutoring and Learning Centers</h4>
+        <p>Session and membership billing, card present, growing market. Parent-driven spending with low price sensitivity.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">56</div>
+        <h4>Preschools and Montessori Schools (Private)</h4>
+        <p>Tuition billing, card present, recurring high-ticket payments. Stable volume with low chargeback.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">57</div>
+        <h4>After-School Programs and Camps</h4>
+        <p>Program billing, card present, seasonal peaks. Easy to board and low chargeback.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENTS & ENTERTAINMENT -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Events & Entertainment</h2>
+      <span class="category-count">5 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">58</div>
+        <h4>Wedding and Event Venues</h4>
+        <p>High average ticket, deposit-heavy billing, card present and MOTO. Strong volume per transaction and easy to find through local directories.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">59</div>
+        <h4>Photography and Videography Studios</h4>
+        <p>High average ticket, card present and MOTO, project-based. Low chargeback, growing market.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">60</div>
+        <h4>Entertainment Centers and Arcades</h4>
+        <p>High frequency, card present, family-oriented. Growing with the experiential spending trend.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">61</div>
+        <h4>Bowling Alleys</h4>
+        <p>Card present, food and lane rental mix, stable volume. Often on legacy deals with room to save.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">62</div>
+        <h4>Mini Golf and Family Activity Centers</h4>
+        <p>Card present, high foot traffic, seasonal. Clean accounts with simple operations.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFESSIONAL SERVICES -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Professional Services (In-Person / MOTO)</h2>
+      <span class="category-count">6 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">63</div>
+        <h4>Accounting and Bookkeeping Firms</h4>
+        <p>High average invoice, card present and MOTO, recurring clients. Often paying high rates through outdated setups.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">64</div>
+        <h4>Law Firms (General Practice, Estate, Family)</h4>
+        <p>High average invoice, MOTO and card present, recurring client billing. Low chargeback, stable long-tenure accounts.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">65</div>
+        <h4>Real Estate Agencies (Independent)</h4>
+        <p>Commission billing, MOTO, high average ticket. Overlap with the MRP channel creates warm introductions.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">66</div>
+        <h4>Insurance Agencies (Independent)</h4>
+        <p>Premium billing, recurring clients, card present and MOTO. Stable long-term accounts with predictable volume.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">67</div>
+        <h4>Tax Preparation Services</h4>
+        <p>Seasonal but extremely high volume during peak, card present. Low chargeback, recurring annual clients.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">68</div>
+        <h4>Printing and Signage Companies</h4>
+        <p>B2B focused, card present and MOTO, recurring commercial clients. Stable accounts with predictable monthly volume.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPECIALTY -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Specialty</h2>
+      <span class="category-count">7 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">69</div>
+        <h4>Funeral Homes</h4>
+        <p>High average ticket, card present, stable long-tenure businesses. Emotionally-driven spending with zero price sensitivity. Often on legacy deals they have never revisited.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">70</div>
+        <h4>Veterinary Specialists and Emergency Clinics</h4>
+        <p>Very high average ticket, card present, emotionally-driven demand. Strong volume and low chargeback even on large tickets.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">71</div>
+        <h4>Trophy, Award, and Engraving Shops</h4>
+        <p>B2B and retail, card present, recurring corporate clients. Simple operations and easy to board.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">72</div>
+        <h4>Laundromats (Coin and Card)</h4>
+        <p>High frequency, card present, growing card acceptance. Simple operations and predictable volume.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">73</div>
+        <h4>Self-Storage Facilities</h4>
+        <p>Recurring monthly billing, card present, low chargeback. Owner-operated and often on legacy rates.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">74</div>
+        <h4>Car Rental (Independent)</h4>
+        <p>High average ticket, card present, growing market outside of major chains. Local operators are reachable and motivated.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">75</div>
+        <h4>Franchise Locations (New Openings)</h4>
+        <p>The highest-leverage category when sourced through the MRP network. Every new franchise location needs processing before opening day. One franchise consultant MRP feeding new openings is a compounding pipeline.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-note">
+  <strong>Note:</strong> All categories above are Tier I Card Present under the Luqra underwriting matrix. Instant or same-day approval. No reserve addendum. FICO 550+. Processing statements only required above $150k AMV. Any merchant approaching restricted or prohibited categories was excluded.
+</div>
+
+<div class="footer">
+  <span class="brand">Kashu</span>
+  <span>John Polimeni, CRO | john@kashupay.com | March 2026</span>
+</div>
+
+</body>
+</html>

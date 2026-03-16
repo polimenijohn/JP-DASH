@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CRO Playbook & Sales Intelligence | Kashu</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --dark:   #0b5147;
+    --mid:    #397168;
+    --muted:  #93adaa;
+    --green:  #01de8f;
+    --bg:     #f4f9f8;
+    --white:  #ffffff;
+    --text:   #1a2e2b;
+    --sub:    #4a6360;
+    --border: #c8dbd8;
+    --red:    #e05252;
+    --gold:   #f5a623;
+    --blue:   #3b82f6;
+    --purple: #8b5cf6;
+  }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: var(--dark);
+    padding: 36px 24px 0;
+    text-align: center;
+  }
+  .logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: var(--green);
+    border-radius: 12px;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+  }
+  .header h1 {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .header .subtitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  /* Navigation */
+  .nav-bar {
+    background: var(--dark);
+    padding: 0 24px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .nav-btn {
+    padding: 10px 18px;
+    border: 1.5px solid var(--mid);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { border-color: var(--green); color: var(--green); }
+  .nav-btn.active { background: var(--green); color: var(--dark); border-color: var(--green); }
+
+  /* Main */
+  .main {
+    background: var(--bg);
+    min-height: calc(100vh - 200px);
+    padding: 32px 24px 64px;
+    border-radius: 24px 24px 0 0;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* Section */
+  .section { display: none; }
+  .section.active { display: block; }
+  .section-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 8px;
+  }
+  .section-desc {
+    font-size: 15px;
+    color: var(--sub);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: box-shadow 0.2s;
+  }
+  .card:hover { box-shadow: 0 4px 20px rgba(11,81,71,0.08); }
+  .card-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+  .label-green { background: #e6faf2; color: #0b5147; }
+  .label-gold { background: #fef3e0; color: #a16e1a; }
+  .label-blue { background: #e8f0fe; color: #1a56db; }
+  .label-purple { background: #f0ebfe; color: #6d28d9; }
+  .label-red { background: #fde8e8; color: #c81e1e; }
+  .card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .card p, .card li {
+    font-size: 14px;
+    color: var(--sub);
+    line-height: 1.7;
+  }
+  .card ul { list-style: none; padding: 0; }
+  .card li { padding: 6px 0; padding-left: 20px; position: relative; }
+  .card li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 14px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+
+  /* Script blocks */
+  .script-block {
+    background: #f0f7f5;
+    border-left: 4px solid var(--green);
+    border-radius: 0 10px 10px 0;
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.7;
+    position: relative;
+  }
+  .script-block .copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--dark);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .script-block .copy-btn:hover { background: var(--green); color: var(--dark); }
+
+  /* Grids */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+
+  /* Framework steps */
+  .step-num {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    background: var(--green);
+    color: var(--dark);
+    font-weight: 800;
+    font-size: 14px;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  .step-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .step-content { flex: 1; }
+  .step-content h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+  .step-content p {
+    font-size: 14px;
+    color: var(--sub);
+    line-height: 1.6;
+  }
+
+  /* Principle cards */
+  .principle-card {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    padding: 24px;
+    text-align: center;
+  }
+  .principle-num {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .principle-card h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 8px;
+  }
+  .principle-card p {
+    font-size: 13px;
+    color: var(--sub);
+    line-height: 1.5;
+  }
+
+  /* Objection table */
+  .obj-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .obj-row:last-child { border-bottom: none; }
+  .obj-label, .obj-response {
+    padding: 16px 20px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .obj-label {
+    background: #fef3e0;
+    color: #a16e1a;
+    font-weight: 600;
+    border-right: 1px solid var(--border);
+  }
+  .obj-response {
+    background: var(--white);
+    color: var(--sub);
+  }
+
+  /* Search */
+  .search-box {
+    width: 100%;
+    padding: 14px 20px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    background: var(--white);
+    margin-bottom: 24px;
+    transition: border-color 0.2s;
+  }
+  .search-box:focus { outline: none; border-color: var(--green); }
+
+  /* Highlight */
+  .highlight {
+    background: linear-gradient(135deg, var(--dark), var(--mid));
+    border-radius: 14px;
+    padding: 32px;
+    color: var(--white);
+    margin-bottom: 20px;
+  }
+  .highlight h3 { color: var(--green); font-size: 22px; margin-bottom: 12px; }
+  .highlight p { color: rgba(255,255,255,0.85); font-size: 14px; line-height: 1.7; }
+
+  /* Quick-ref badge */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 6px;
+    margin-bottom: 6px;
+  }
+  .badge-green { background: var(--green); color: var(--dark); }
+  .badge-gold { background: var(--gold); color: #fff; }
+  .badge-blue { background: var(--blue); color: #fff; }
+
+  @media (max-width: 600px) {
+    .nav-bar { gap: 6px; }
+    .nav-btn { padding: 8px 12px; font-size: 12px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .obj-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-mark">K</div>
+  <h1>CRO Playbook & Sales Intelligence</h1>
+  <div class="subtitle">Mental Models + Frameworks + Tactics = 1 of 1</div>
+</div>
+
+<div class="nav-bar">
+  <button class="nav-btn active" onclick="showSection('philosophy')">Philosophy</button>
+  <button class="nav-btn" onclick="showSection('challenger')">Challenger Framework</button>
+  <button class="nav-btn" onclick="showSection('mental-models')">Mental Models</button>
+  <button class="nav-btn" onclick="showSection('psychology')">Sales Psychology</button>
+  <button class="nav-btn" onclick="showSection('frameworks')">Advanced Frameworks</button>
+  <button class="nav-btn" onclick="showSection('outreach')">Outreach Templates</button>
+  <button class="nav-btn" onclick="showSection('objections')">Objection Reframes</button>
+  <button class="nav-btn" onclick="showSection('mrp')">MRP Recruiting</button>
+  <button class="nav-btn" onclick="showSection('b2b')">B2B War Chest</button>
+  <button class="nav-btn" onclick="showSection('daily')">Daily Principles</button>
+  <button class="nav-btn" onclick="showSection('research')">Video Research</button>
+</div>
+
+<div class="main">
+<div class="container">
+
+<!-- ===== PHILOSOPHY ===== -->
+<div id="philosophy" class="section active">
+  <div class="section-title">The 1 of 1 Philosophy</div>
+  <div class="section-desc">You are not selling processing. You are selling a decision framework. Every merchant has a processor. They're not shopping. Your job is to reframe how they think about their own P&L so that NOT switching becomes the irrational choice.</div>
+
+  <div class="highlight">
+    <h3>The Three Laws</h3>
+    <p><strong>1. Never sound like a processor.</strong> Every other rep leads with "save money on processing." You lead with a reframe.</p>
+    <p style="margin-top:10px"><strong>2. Never compete on features. Compete on the frame.</strong> The merchant who sees processing as a cost center will always shop you on price. The merchant who sees it as a revenue line is yours forever.</p>
+    <p style="margin-top:10px"><strong>3. Every interaction should leave them thinking "I've never heard it put that way before."</strong> If you sound like everyone else, you get treated like everyone else.</p>
+  </div>
+
+  <div class="highlight">
+    <h3>The 1 of 1 Test</h3>
+    <p>Before sending any outreach, writing any copy, or making any pitch, ask: <strong>"Could any other processor rep have said this exact thing?"</strong> If yes, rewrite it. If no, send it.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <span class="card-label label-green">Positioning</span>
+      <h3>Your Stack (Why You're Unreplicable)</h3>
+      <ul>
+        <li>You lead with math, not promises. You show the statement, show the delta, put it in writing before they sign.</li>
+        <li>You reframe processing from a cost to a revenue line. Nobody else leads with this.</li>
+        <li>You close at 70%. That's the MRP pitch: "I personally close the merchants for you."</li>
+        <li>You think in systems, not transactions. Dashboard, velocity tracker, scorecard, AI voice agent.</li>
+        <li>You ARE the product. Merchants convert because of you. That's a moat technology can't replicate.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="card-label label-gold">Surcharge Reframe</span>
+      <h3>The Pitch Nobody Else Makes</h3>
+      <p><strong>What everyone else says:</strong> "We can save you money on processing fees."</p>
+      <p style="margin-top:12px"><strong>What you say:</strong> "I'm not here to save you money. I'm here to add a revenue line to your business that didn't exist before."</p>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        Right now, you're paying around 3% on every card transaction. That's a cost. It comes out of your margin. With surcharge, that 3% shifts to the customer -- which 73% of consumers already expect and are fine with. Your processing cost goes to zero. But here's the part nobody talks about: that surcharge doesn't just offset your fees. On certain transaction types, it generates a small margin for you. So you went from paying $2,500 a month to making money on every transaction. That's not a processor switch. That's a P&L restructure.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CHALLENGER FRAMEWORK ===== -->
+<div id="challenger" class="section">
+  <div class="section-title">The Challenger Framework</div>
+  <div class="section-desc">Challengers make up 40% of top performers in complex B2B sales. Relationship Builders? 7%. The framework: Teach something they didn't know, Tailor to their situation, Take Control of the close.</div>
+
+  <div class="card">
+    <span class="card-label label-green">The 6-Step Commercial Teaching Choreography</span>
+    <h3>Every Call, Every Outreach, Every Close</h3>
+
+    <div class="step-row">
+      <span class="step-num">1</span>
+      <div class="step-content">
+        <h4>The Warmer (Lead with knowledge, not questions)</h4>
+        <p>Don't open with "tell me about your business." Open with what you already know.</p>
+        <div class="script-block">
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          I looked at your business. You're doing roughly [X] a month in card volume based on your vertical and size. Your current processor is probably charging you somewhere between 2.8 and 3.4% effective rate. That's [dollar amount] a month in fees you're eating.
+        </div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <span class="step-num">2</span>
+      <div class="step-content">
+        <h4>The Reframe (The thing they didn't know)</h4>
+        <p>Connect their current situation to a bigger problem they haven't recognized.</p>
+        <div class="script-block">
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          Most business owners think processing fees are a fixed cost of doing business. They're not. They're a negotiable line item that directly impacts your bottom line, and most processors are betting you'll never look at it closely.
+        </div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <span class="step-num">3</span>
+      <div class="step-content">
+        <h4>Rational Drowning (The math that hurts)</h4>
+        <p>Show the numbers. Make the cost of inaction concrete and painful.</p>
+        <div class="script-block">
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          At a 3.2% effective rate on $80K/month, you're paying $2,560/month in processing fees. With Kashu at 2.2% plus surcharge, your effective cost drops to near zero. That's $30,720 a year you're handing to your processor for nothing. Over 3 years, that's $92,000. What would you do with an extra $92K?
+        </div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <span class="step-num">4</span>
+      <div class="step-content">
+        <h4>Emotional Impact (The story)</h4>
+        <p>Tell a story about a real merchant in the same situation. Make it tangible.</p>
+        <div class="script-block">
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          I had a restaurant owner last month, doing $120K/month in volume. He'd been with his processor for 6 years. Never questioned it. When we ran his statement, he was paying an effective rate of 3.6%. He was losing $51,840 a year. That's a full-time employee. He was paying his processor a salary and didn't even know it.
+        </div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <span class="step-num">5</span>
+      <div class="step-content">
+        <h4>A New Way (Before you mention Kashu)</h4>
+        <p>Paint the picture of what's possible. Build desire for change itself.</p>
+        <div class="script-block">
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          Imagine your processing fees aren't a cost anymore. Imagine they're a revenue line. Your customers pay a small surcharge -- which 73% of Americans are already used to seeing -- and instead of you paying $2,500 a month, you're collecting an additional margin. That's not switching processors. That's restructuring your P&L.
+        </div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <span class="step-num">6</span>
+      <div class="step-content">
+        <h4>Your Solution (Now it's Kashu)</h4>
+        <p>Finally introduce the product. Position unique differentiators.</p>
+        <div class="script-block">
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          That's exactly what Kashu does. 0% to you on surcharge. We handle the compliance, the terminal, the transition. You go live without missing a single day of business. And I'll put the better pricing in writing before you sign anything.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MENTAL MODELS ===== -->
+<div id="mental-models" class="section">
+  <div class="section-title">Mental Model Toolkit</div>
+  <div class="section-desc">Compressed decision frameworks. Use them on calls, in copy, in recruiting, and in your own strategic thinking. These are the operating system behind every close.</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <span class="card-label label-green">Close Technique</span>
+      <h3>First Principles Close</h3>
+      <p>When a merchant says "we've always used Square" or "we're happy" -- don't argue features. Strip it down to fundamentals.</p>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        Forget processors for a second. What are you actually paying per transaction right now? What do you actually need from a payments system? Let's start from those two things and see if what you have matches what you need.
+      </div>
+      <p style="margin-top:12px"><strong>Why it works:</strong> Forces them out of autopilot. They've never been asked to think about it from the ground up. You're reframing the entire decision.</p>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-gold">Close Technique</span>
+      <h3>Inversion Close</h3>
+      <p>Instead of selling why they SHOULD switch, flip it. Let them eliminate their own objections.</p>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        Let me ask you this -- what would have to be true for you to NEVER switch processors, no matter what? Let's walk through that list.
+      </div>
+      <p style="margin-top:12px"><strong>Why it works:</strong> They'll say things like "if switching was painful, if it disrupted my business, if pricing wasn't better." You already beat every item. You're not pitching -- you're eliminating.</p>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-blue">MRP Recruiting</span>
+      <h3>Second-Order Thinking</h3>
+      <p>Most MRP recruiters pitch first-order: "refer merchants, earn residuals." You pitch the cascade.</p>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        You refer 10 merchants. That's your T2 residual income. But here's what nobody talks about -- each of those merchants knows other business owners. When they see their statement and realize they're saving money, they start referring. You recruit 3 MRPs under you, and you earn a 10% override on everything they bring in. In 12 months, you're earning on volume you never even touched. This isn't a referral program. It's a distribution network, and you're building equity in it.
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-purple">Discovery</span>
+      <h3>Gap Selling (Keenan)</h3>
+      <p>For every merchant, map three things. The bigger the gap, the more urgency.</p>
+      <ul>
+        <li><strong>Current State:</strong> What processor, what rate, what pain, what's broken</li>
+        <li><strong>Future State:</strong> Better pricing, surcharge revenue, no contract lock-in, responsive support</li>
+        <li><strong>The Gap:</strong> Not "save 0.5%." It's "$30K/year in found money, a revenue line that didn't exist, and a processor that picks up the phone."</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-red">Pattern Interrupt</span>
+      <h3>Negative Reverse Selling</h3>
+      <p>Break the expected script on cold calls and cold outreach. Remove pressure, signal confidence.</p>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        Hey, this might not even be relevant to you -- but I ran some rough numbers on businesses like yours in [vertical] and the gap between what you're probably paying and what you should be paying was big enough that I figured it was worth 90 seconds of your time. If it's not a fit, just tell me and I'll disappear.
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-green">Negotiation</span>
+      <h3>Tactical Empathy (Chris Voss)</h3>
+      <ul>
+        <li><strong>Labeling:</strong> "It sounds like you've been burned by a processor switch before." (Pause. Let them talk.)</li>
+        <li><strong>Mirroring:</strong> They say "We're not looking to change anything right now." You say: "Not looking to change anything right now?" (Repeat last few words. Pause. They elaborate.)</li>
+        <li><strong>Accusation Audit:</strong> "You're probably thinking this is just another processor rep trying to get a deal done. You've heard the pitch before. Someone promises lower rates, then the hidden fees show up 3 months later. I get it. That's exactly why I put the pricing in writing before you sign anything."</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SALES PSYCHOLOGY ===== -->
+<div id="psychology" class="section">
+  <div class="section-title">Sales Psychology Arsenal</div>
+  <div class="section-desc">The science behind why people buy, how they decide, and what makes an offer irresistible. Every framework here maps directly to how you sell.</div>
+
+  <div class="highlight">
+    <h3>Hormozi Value Equation</h3>
+    <p><strong>Value = (Dream Outcome x Perceived Likelihood) / (Time Delay x Effort & Sacrifice)</strong></p>
+    <p style="margin-top:12px">Maximize the top (make the outcome huge and the certainty high), minimize the bottom (make it fast and effortless). Kashu already crushes this: Dream Outcome = $0 processing cost + revenue line. Likelihood = guaranteed in writing. Time Delay = live without missing a day. Effort = we handle everything. The equation is already stacked. Say it out loud on calls.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <span class="card-label label-red">Kahneman</span>
+      <h3>Loss Aversion</h3>
+      <p>The pain of losing is psychologically <strong>2x as powerful</strong> as the pleasure of gaining. People will fight harder to avoid a loss than to capture a gain.</p>
+      <p style="margin-top:12px"><strong>How to use it:</strong> Frame your pitch around what they're LOSING by staying, not what they're GAINING by switching.</p>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        Every month you stay with your current processor, you're losing $2,500. That's not a fee you're paying -- that's revenue walking out the door. In 12 months, that's $30,000 you'll never get back. The question isn't whether to switch. The question is how many more months of losses you're comfortable with.
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-gold">Cialdini</span>
+      <h3>6 Principles of Persuasion</h3>
+      <ul>
+        <li><strong>Reciprocity:</strong> Give value first (free statement analysis). They feel obligated to engage.</li>
+        <li><strong>Scarcity:</strong> "We're onboarding 15 merchants this month. After that, it's a waitlist for underwriting."</li>
+        <li><strong>Authority:</strong> "I'm the CRO. I personally close every merchant. 70% conversion rate."</li>
+        <li><strong>Social Proof:</strong> "We just onboarded [X] merchants in [vertical] this month alone."</li>
+        <li><strong>Commitment:</strong> Get small yeses early. "Does that savings number look right to you?" Once they agree, they're locked in.</li>
+        <li><strong>Liking:</strong> Mirror their energy. Match their pace. Sound like someone they'd grab a beer with, not a sales rep.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-purple">Klaff</span>
+      <h3>Frame Control (Pitch Anything)</h3>
+      <p>Whoever controls the frame controls the conversation. In most sales interactions, the buyer holds the frame ("convince me"). You need to flip it.</p>
+      <ul>
+        <li><strong>Prize Frame:</strong> You are the prize, not the seller. "I close at 70%. My calendar fills up fast. If the math works for you, let's move. If not, no hard feelings."</li>
+        <li><strong>Time Frame:</strong> Create urgency without being pushy. "Underwriting takes 3-5 days. If you want to be processing by next week, we'd need to submit today."</li>
+        <li><strong>Power Frame:</strong> When they try to assert dominance ("send me some info"), redirect. "Happy to. But the info won't mean anything without your statement. Send that over and I'll build a custom comparison in 24 hours."</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-blue">Anchoring</span>
+      <h3>The Anchor Effect</h3>
+      <p>The first number someone hears becomes the anchor everything else is compared against.</p>
+      <p style="margin-top:12px"><strong>How to use it:</strong> Always state their CURRENT cost first (the high number), then show Kashu's cost (the low number). Never lead with your pricing in isolation.</p>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        You're currently paying $2,560 a month in processing fees. With Kashu and surcharge, that drops to $0. Not $500. Not $1,000. Zero. That's a $30,720 annual swing.
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-green">Hormozi</span>
+      <h3>Grand Slam Offer Structure</h3>
+      <p>"Make offers so good people feel stupid saying no." A Grand Slam Offer can't be compared to any other product available.</p>
+      <ul>
+        <li><strong>Dream Outcome:</strong> Processing costs go to $0 and become a revenue line</li>
+        <li><strong>Perceived Likelihood:</strong> Guaranteed better pricing in writing before you sign</li>
+        <li><strong>Time Delay:</strong> Live without missing a single day of business</li>
+        <li><strong>Effort:</strong> We handle compliance, terminals, transition, everything</li>
+        <li><strong>Guarantee:</strong> If we can't beat your current rate, we'll show you in writing and shake hands</li>
+      </ul>
+      <p style="margin-top:12px"><strong>Your offer is already a Grand Slam.</strong> Most reps don't frame it this way. You should. Every time.</p>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-gold">Chet Holmes</span>
+      <h3>Dream 100 Strategy</h3>
+      <p>95% of the market is controlled by a small number of players. Instead of spraying outreach at thousands, identify your top 100 dream prospects and go after them relentlessly.</p>
+      <ul>
+        <li><strong>For Merchants:</strong> Identify the top 100 businesses in your best verticals by volume. Multi-touch them monthly. Small gifts, personalized outreach, educational content.</li>
+        <li><strong>For MRPs:</strong> Identify the top 100 people with the best networks (CPAs, bookkeepers, business consultants, payroll companies). These 100 people can each bring you 10-50 merchants.</li>
+        <li><strong>For PE:</strong> Identify the top 100 PE firms with portfolios in your sweet-spot verticals. One PE deal = 10-50 merchants in one conversation.</li>
+      </ul>
+      <p style="margin-top:12px"><strong>The math:</strong> 80% of sales are made on the 5th-12th contact. Only 10% of salespeople follow up after 3 touches. The Dream 100 wins on persistence, not volume.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADVANCED FRAMEWORKS ===== -->
+<div id="frameworks" class="section">
+  <div class="section-title">Advanced Frameworks</div>
+  <div class="section-desc">Deeper tactical systems for specific situations. SPIN for discovery, Win Without Pitching for authority positioning, and the High Agency filter for team building.</div>
+
+  <div class="card">
+    <span class="card-label label-blue">Discovery</span>
+    <h3>SPIN Selling Questions (Mapped to Kashu)</h3>
+    <p>SPIN is based on 35,000 analyzed sales calls. The four question types build urgency progressively.</p>
+
+    <div class="step-row" style="margin-top:20px">
+      <span class="step-num">S</span>
+      <div class="step-content">
+        <h4>Situation Questions (Gather facts)</h4>
+        <p>"What processor are you using currently?" / "What's your approximate monthly card volume?" / "Are you on interchange-plus or flat rate?" / "How long have you been with them?"</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <span class="step-num">P</span>
+      <div class="step-content">
+        <h4>Problem Questions (Uncover pain)</h4>
+        <p>"Have you ever looked at your effective rate vs what you were quoted?" / "How responsive is your current processor when you have issues?" / "Have you ever felt like the fees crept up without explanation?"</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <span class="step-num">I</span>
+      <div class="step-content">
+        <h4>Implication Questions (Amplify the cost)</h4>
+        <p>"If you're overpaying by even 0.5%, what does that add up to over a year?" / "What could you do with an extra $25K-$40K annually?" / "How many hours a month does your team spend dealing with processor issues?"</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <span class="step-num">N</span>
+      <div class="step-content">
+        <h4>Need-Payoff Questions (Let them sell themselves)</h4>
+        <p>"If I could show you in writing that you'd save [X] per month, would that be worth a 15-minute conversation?" / "If you could turn processing from a cost into revenue, how would that change your planning for next quarter?"</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <span class="card-label label-purple">Authority</span>
+      <h3>Win Without Pitching (Blair Enns)</h3>
+      <p>Stop pitching. Start diagnosing. "Prescription without diagnosis is malpractice."</p>
+      <ul>
+        <li><strong>Position as expert, not vendor.</strong> You're not competing for the deal. You're evaluating whether it's worth your time.</li>
+        <li><strong>Diagnose before prescribing.</strong> Run the statement analysis first. Never pitch without data. The diagnosis IS the pitch.</li>
+        <li><strong>Charge premium, never discount.</strong> Where you win, you don't cut price -- you charge more. Kashu's value is in the surcharge reframe, not in having the lowest rate.</li>
+        <li><strong>Walk away power.</strong> The willingness to say "this might not be a fit" is the most attractive thing you can say in a sales conversation.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-green">Team Building</span>
+      <h3>High Agency Filter (George Mack)</h3>
+      <p>Screen every MRP, partner, and hire against these markers.</p>
+      <ul>
+        <li><strong>Green flags:</strong> Asks specific questions on the first call. Follows up within 24 hours with names. Has a network they can articulate. Challenges your pitch. Has built something before.</li>
+        <li><strong>Red flags:</strong> "How much can I make?" before understanding the product. Wants everything done for them. No network. Agrees with everything (low-agency compliance). "Needs to think about it" without asking specifics.</li>
+        <li><strong>The golden question:</strong> "If I put you in a room with 10 business owners who are overpaying on processing, what would you say?" High-agency answer = specific, actionable. Low-agency answer = vague, asks what you'd recommend.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="card-label label-red">Pattern Interrupt</span>
+    <h3>5 Pattern Interrupt Techniques</h3>
+    <div class="grid-2" style="margin-top:16px">
+      <div>
+        <h4 style="color:var(--dark);margin-bottom:8px">1. Negative Reverse Selling</h4>
+        <p>"Is this even worth exploring?" Removes pressure, invites honesty.</p>
+        <h4 style="color:var(--dark);margin:16px 0 8px">2. Third-Party Stories</h4>
+        <p>"Other restaurant owners I've worked with were skeptical too -- until they saw the statement comparison. Has anyone shown you that before?"</p>
+        <h4 style="color:var(--dark);margin:16px 0 8px">3. Pain Hooks</h4>
+        <p>"Some businesses struggle with processor responsiveness -- when something goes wrong on a Saturday, does anyone pick up?"</p>
+      </div>
+      <div>
+        <h4 style="color:var(--dark);margin-bottom:8px">4. Up-Front Contracts</h4>
+        <p>"Let's spend 15 minutes on this. If the math works, we'll talk next steps. If not, I'll tell you straight and we shake hands. Fair?"</p>
+        <h4 style="color:var(--dark);margin:16px 0 8px">5. Post-Sell Reinforcement</h4>
+        <p>After commitment: "Anything that might delay or derail this on your end?" Neutralizes buyer's remorse before it starts.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== OUTREACH ===== -->
+<div id="outreach" class="section">
+  <div class="section-title">Outreach Templates</div>
+  <div class="section-desc">Every template follows the rule: make them think "I've never gotten a message like this before." Copy-ready for email, text, LinkedIn, and cold calls.</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <span class="card-label label-green">Email</span>
+      <h3>Cold Email -- Merchant</h3>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        Subject: The math on [Business Name]'s processing fees
+
+[First name] -- ran some rough numbers on your processing setup based on your vertical and volume range.
+
+Depending on your current rate, you're probably leaving somewhere between $18K-$36K/year on the table. Not in savings. In actual revenue you're not collecting.
+
+Most processors won't tell you this because it kills their margin. Happy to show you the math if you've got 10 minutes this week. If not, no sweat.
+
+John Polimeni
+CRO, Kashu
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-blue">Email</span>
+      <h3>Cold Email -- MRP Recruiting</h3>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        Subject: The residual math for someone with your network
+
+[First name] -- you're connected to business owners who process payments every day. Right now, that network is generating exactly $0 for you.
+
+With Kashu's MRP program, every merchant you refer pays you a monthly residual for as long as they process. 10 merchants at average volume puts you at [X]/month passive. That number grows every month their businesses grow.
+
+Not a commission. Not a one-time fee. A compounding portfolio.
+
+If that math interests you, I'll walk you through the whole thing in 15 minutes.
+
+John
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-purple">LinkedIn</span>
+      <h3>LinkedIn DM</h3>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        [Name] -- saw your profile. You're plugged into [industry/vertical] in a way that most people aren't. Quick question: are you earning anything from the business relationships you already have? If not, I have something worth 10 minutes of your time. If the math doesn't work, I'll be the first to tell you.
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-gold">Text</span>
+      <h3>Text Message</h3>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        Hey [Name], it's John from Kashu. Quick one -- I ran some numbers on what businesses in your space are overpaying on processing. The gap was big enough that I thought it was worth a text. Got 5 min this week?
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-red">Cold Call</span>
+      <h3>Cold Call Opener (Pattern Interrupt)</h3>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        Hey [Name], this is John with Kashu. Look, I know you're busy and you probably get calls like this, so I'll be upfront -- this might not be for you. I ran some rough numbers on what businesses like yours typically overpay on processing and the gap was significant enough that I'd feel bad not calling. If it's not a fit, I'll tell you in the first 60 seconds. Fair enough?
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-green">Follow-Up</span>
+      <h3>Follow-Up After No Response</h3>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        [Name] -- not trying to be that guy. I sent you some numbers last week on your processing setup. If the timing's wrong, just say so and I'll disappear. If you looked at it and had questions, I'm around. Either way, no pressure.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== OBJECTIONS ===== -->
+<div id="objections" class="section">
+  <div class="section-title">Objection Reframes</div>
+  <div class="section-desc">Standard objection handling responds. Challenger objection handling reframes. Search or scroll.</div>
+
+  <input type="text" class="search-box" placeholder="Search objections..." oninput="filterObjCards(this.value)"/>
+
+  <div id="obj-list">
+    <div class="card obj-card" data-search="happy current processor satisfied">
+      <span class="card-label label-gold">Merchant</span>
+      <h3>"We're happy with our current processor"</h3>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:8px"><s>Old: "That's great, but have you compared rates recently?"</s></p>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        That's what 90% of the merchants I talk to say. And 90% of them are overpaying by 15-40% without knowing it. Happiness and optimization are two different things. You can be happy AND leaving $30K a year on the table. Want to find out which one you are?
+      </div>
+    </div>
+
+    <div class="card obj-card" data-search="just switched recently changed processors">
+      <span class="card-label label-gold">Merchant</span>
+      <h3>"We just switched processors last year"</h3>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:8px"><s>Old: "Oh, okay. Can I follow up in a few months?"</s></p>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        Perfect -- that means you have a recent statement that's easy to compare. Newer contracts are actually easier to benchmark. Let me show you the delta and you can decide if it's worth a conversation.
+      </div>
+    </div>
+
+    <div class="card obj-card" data-search="no time busy don't have time">
+      <span class="card-label label-gold">Merchant</span>
+      <h3>"I don't have time for this"</h3>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:8px"><s>Old: "I totally understand. When would be a better time?"</s></p>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        Totally fair. Here's the 10-second version: I can show you in writing that you'll pay less than you pay now, and I can get you live without missing a day of business. If that's interesting, it's a 15-minute call. If not, I won't bother you again.
+      </div>
+    </div>
+
+    <div class="card obj-card" data-search="surcharge customers upset angry fees">
+      <span class="card-label label-gold">Merchant</span>
+      <h3>"Surcharging will upset my customers"</h3>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:8px"><s>Old: "Studies show customers are okay with it."</s></p>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        73% of Americans already see surcharges regularly and don't change their buying behavior. Gas stations have done this for 20 years. But here's the real question -- would you rather absorb $30K a year in fees to avoid a conversation, or add a small line item that most customers won't even notice? One of those is a business decision. The other is an assumption.
+      </div>
+    </div>
+
+    <div class="card obj-card" data-search="think about it need time consider">
+      <span class="card-label label-gold">Merchant</span>
+      <h3>"I need to think about it"</h3>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:8px"><s>Old: "Sure, let me know when you're ready."</s></p>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        Absolutely. While you're thinking about it, let me send you the pricing comparison in writing so you have the actual numbers in front of you. Most people who say they need to think about it are really just missing one piece of information. What's the one thing that would make this a yes or a no for you right now?
+      </div>
+    </div>
+
+    <div class="card obj-card" data-search="catch too good hidden fees">
+      <span class="card-label label-gold">Merchant</span>
+      <h3>"What's the catch?"</h3>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:8px"><s>Old: Lists features and reassurances.</s></p>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        No catch. Here's why it sounds too good: your current processor makes money by charging you as much as they can get away with. We make money by getting you to process through us. The more volume you run, the more we both make. Our incentives are aligned. Theirs aren't. That's the difference.
+      </div>
+    </div>
+
+    <div class="card obj-card" data-search="contract locked in agreement term">
+      <span class="card-label label-gold">Merchant</span>
+      <h3>"I'm locked into a contract"</h3>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        Let's look at the contract. Most processor contracts have a cancellation fee between $300-$500. If you're overpaying by $2,000/month, that cancellation fee pays for itself in the first week. The contract isn't protecting you -- it's protecting their margin. Let me run the numbers and show you the break-even. It's usually measured in days, not months.
+      </div>
+    </div>
+
+    <div class="card obj-card" data-search="send info email information brochure">
+      <span class="card-label label-gold">Merchant</span>
+      <h3>"Just send me some info"</h3>
+      <div class="script-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        Happy to. But here's the thing -- generic info won't tell you anything useful. Every processor's brochure looks the same. What actually matters is how your specific numbers compare. Send me a recent statement and I'll build you a custom comparison in 24 hours. That's the info worth looking at.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MRP RECRUITING ===== -->
+<div id="mrp" class="section">
+  <div class="section-title">MRP Recruiting (Challenger Method)</div>
+  <div class="section-desc">Stop recruiting. Start teaching. Most MRP pitches are Relationship Builder plays. This is a Challenger play -- teach them something they didn't know about their own network.</div>
+
+  <div class="card">
+    <span class="card-label label-green">Full Script</span>
+    <h3>The MRP Commercial Teaching Pitch</h3>
+
+    <div class="step-row" style="margin-top:20px">
+      <span class="step-num">1</span>
+      <div class="step-content">
+        <h4>Warmer</h4>
+        <div class="script-block">
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          You're already connected to business owners. You probably refer them to accountants, lawyers, insurance agents. You get nothing for those referrals. Meanwhile, those professionals are getting paid from the exact relationships you handed them.
+        </div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <span class="step-num">2</span>
+      <div class="step-content">
+        <h4>Reframe</h4>
+        <div class="script-block">
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          What if every business relationship you have was a producing asset? Not a one-time referral fee. A monthly residual that compounds as the merchant's business grows.
+        </div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <span class="step-num">3</span>
+      <div class="step-content">
+        <h4>Rational Drowning</h4>
+        <div class="script-block">
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          10 merchants at $60K average monthly volume. At T2, 25% of net, that's roughly [X]/month. You recruit 3 MRPs under you, each bringing 5 merchants. 10% override on their net. In 12 months, you're earning on 25+ merchants. In 24 months, 50+. This is what compounding looks like in payments.
+        </div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <span class="step-num">4</span>
+      <div class="step-content">
+        <h4>Emotional Impact</h4>
+        <div class="script-block">
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          I have an MRP who started 8 months ago with zero payments experience. Just a good network. She's now earning [X]/month in residuals and it grows every month. She didn't learn to sell processing. She learned to have one conversation: "Are you happy with what you're paying to process cards? Because I know someone who can show you the math."
+        </div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <span class="step-num">5</span>
+      <div class="step-content">
+        <h4>A New Way</h4>
+        <div class="script-block">
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          This isn't a side hustle. It's a distribution asset. Every merchant you bring on is an annuity. Every MRP you recruit under you is a multiplier. The question isn't whether this works -- the math is the math. The question is whether you want to keep giving away referrals for free.
+        </div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <span class="step-num">6</span>
+      <div class="step-content">
+        <h4>Your Solution</h4>
+        <div class="script-block">
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          Kashu's MRP program. T2 starts at 25% of net residuals, graduates to T1 at 50% once your portfolio hits $5M/month. 10% override on your downline. $500 minimum monthly payout. And I personally close the merchants for you at a 70% rate. You find them, I close them.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== B2B WAR CHEST ===== -->
+<div id="b2b" class="section">
+  <div class="section-title">B2B War Chest</div>
+  <div class="section-desc">The deepest tactical frameworks in B2B sales. Sandler Pain Funnel for discovery, MEDDIC for qualification, Straight Line for certainty, 80/20 for leverage, and 10x thinking for scale. This is what separates closers from order-takers.</div>
+
+  <div class="card">
+    <span class="card-label label-red">Discovery</span>
+    <h3>Sandler Pain Funnel (Mapped to Kashu)</h3>
+    <p>The Pain Funnel is a progressive sequence of questions that moves from surface-level to emotionally charged. The goal: get the merchant to articulate their own pain so clearly that the close becomes inevitable. You don't pitch. You dig.</p>
+
+    <div class="step-row" style="margin-top:20px">
+      <span class="step-num">1</span>
+      <div class="step-content">
+        <h4>Level 1: Broad Openers (Get them talking)</h4>
+        <p>"What are you focused on as a business right now?" / "How are things going with your current payment setup?" / "What were you hoping to get out of this call?"</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <span class="step-num">2</span>
+      <div class="step-content">
+        <h4>Level 2: Surface the Problem</h4>
+        <p>"Can you walk me through what happens when you get your monthly processing statement?" / "Can you be more specific about those fees? Give me an example." / "Why do you think that's been happening?" / "How long has that been going on?"</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <span class="step-num">3</span>
+      <div class="step-content">
+        <h4>Level 3: Impact and Emotion (Where deals are won)</h4>
+        <div class="script-block">
+          <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          "What's the impact of overpaying on processing to your bottom line?"
+"What does that look like in dollar terms over a year?"
+"What have you already tried to fix this? How did that work out?"
+"On a scale of 1-5, how effective is your current processor at actually solving your problems?"
+"What happens if we don't address this now -- what does next year look like?"
+"Have you given up trying to find something better?"
+        </div>
+        <p style="margin-top:12px"><strong>That last question is the kill shot.</strong> "Have you given up?" triggers a visceral response. Nobody wants to admit they've given up. It re-activates urgency in deals that were going flat.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="card-label label-blue">Qualification</span>
+    <h3>MEDDIC Deal Qualification (Mapped to Kashu)</h3>
+    <p>Before you invest time closing any deal, run it through MEDDIC. This prevents you from wasting cycles on deals that were never going to close.</p>
+
+    <div class="grid-2" style="margin-top:16px">
+      <div>
+        <h4 style="color:var(--dark);margin-bottom:8px">M -- Metrics</h4>
+        <p>What's their monthly volume? What are they paying now? What's the quantifiable savings? "This merchant processes $80K/month at 3.2%. Kashu saves them $2,560/month. That's $30K/year. The metrics are clear."</p>
+
+        <h4 style="color:var(--dark);margin:16px 0 8px">E -- Economic Buyer</h4>
+        <p>Who actually signs? Is it the person on the call or someone else? "Are you the one who makes the final call on switching processors, or is there someone else involved?" If they say "I need to check with my partner," you haven't found the economic buyer yet. Don't pitch until you do.</p>
+
+        <h4 style="color:var(--dark);margin:16px 0 8px">D -- Decision Criteria</h4>
+        <p>What matters most to them? Price? Speed of onboarding? Support? Contract flexibility? "When you evaluate a processor, what are the three things that matter most to you?" Then make sure your pitch hits all three.</p>
+      </div>
+      <div>
+        <h4 style="color:var(--dark);margin-bottom:8px">D -- Decision Process</h4>
+        <p>How do they actually decide? Timeline? Steps? "Walk me through what happens between today and you actually switching. What needs to happen?" Map every step so nothing surprises you.</p>
+
+        <h4 style="color:var(--dark);margin:16px 0 8px">I -- Identify Pain</h4>
+        <p>What's actually broken? Not "they're paying too much" but the specific, emotional pain. "My processor never picks up the phone." "I got hit with a rate increase and nobody told me." "I've been meaning to look at this for two years and never got around to it." THAT'S the pain you sell to.</p>
+
+        <h4 style="color:var(--dark);margin:16px 0 8px">C -- Champion</h4>
+        <p>Who inside the organization is going to fight for this deal when you're not in the room? For small businesses, the merchant IS the champion. For PE deals and multi-location businesses, you need someone on the inside who's sold on Kashu and will push it through.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="card-label label-gold">Closing</span>
+    <h3>Straight Line System -- The Three Tens</h3>
+    <p>Jordan Belfort's framework: every prospect needs to hit a 10/10 on three scales before they'll buy. Your job is to systematically raise each score.</p>
+
+    <div class="grid-3" style="margin-top:16px">
+      <div class="principle-card">
+        <div class="principle-num">10</div>
+        <h4>Product Certainty</h4>
+        <p>"Is Kashu actually going to save me money and work better than what I have?" Raise this with: statement analysis, written pricing guarantee, live comparison.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">10</div>
+        <h4>Trust in You</h4>
+        <p>"Is this guy legit or just another sales rep?" Raise this with: your knowledge of their business, your 70% close rate, your CRO title, your directness.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">10</div>
+        <h4>Trust in Kashu</h4>
+        <p>"Is this company going to be here in 6 months?" Raise this with: merchant count, processing volume, BNP partnership, compliance track record.</p>
+      </div>
+    </div>
+
+    <p style="margin-top:20px"><strong>The Looping Technique:</strong> When a prospect objects ("I need to think about it"), don't defend. Loop back. Resell the product (raise certainty on ten #1), then resell yourself (ten #2), then resell the company (ten #3). Each loop raises the certainty bar. The close happens when all three hit 10.</p>
+
+    <h4 style="color:var(--dark);margin-top:20px;margin-bottom:8px">Tonality (90% of Communication)</h4>
+    <p>Only 10% of communication is words. The rest is tone and body language. Key tonal patterns for Kashu calls:</p>
+    <ul>
+      <li><strong>Certainty tone:</strong> When stating pricing and guarantees. Declarative. No uptalk. "Your effective rate drops to zero." (Period. Not a question.)</li>
+      <li><strong>Reasonable man tone:</strong> When asking for the close. Calm, fair, like you're asking something completely reasonable. "All I need is a recent statement and I'll have your comparison back in 24 hours."</li>
+      <li><strong>Scarcity whisper:</strong> When creating urgency. Slightly lower volume, like you're sharing something not everyone gets. "We're pushing 15 merchants through underwriting this week. If you want to be in that batch, we'd need to move today."</li>
+      <li><strong>I care tone:</strong> When addressing concerns. Genuine, not performative. "Look, I get it. You've been burned before. That's exactly why I do it this way."</li>
+    </ul>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <span class="card-label label-purple">Leverage</span>
+      <h3>80/20 -- Perry Marshall</h3>
+      <p>20% of your activity produces 80% of your results. Within that 20%, there's another 20% that produces 80% of THAT. The game is finding the highest-leverage 4% and going all-in.</p>
+      <ul>
+        <li><strong>Rack the Shotgun:</strong> Send one signal. See who flinches. The merchants who respond to your first outreach are the 20%. The ones who respond AND ask specific questions are the 4%. Spend your time there.</li>
+        <li><strong>$10/hr vs $10,000/hr tasks:</strong> Formatting emails = $10/hr. Closing a $120K/month merchant = $10,000/hr. Building a system that closes without you = $100,000/hr. Know which one you're doing at all times.</li>
+        <li><strong>Disqualify fast:</strong> If they don't have budget, if there's no urgency, if the decision-maker isn't on the call -- move on. The fastest path to 2,000 merchants is spending zero time on merchants who were never going to close.</li>
+        <li><strong>Applied to MRPs:</strong> 20% of your MRPs will produce 80% of your merchant referrals. Find them. Feed them. The other 80% get the automated sequence. Don't spend equal time on unequal partners.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="card-label label-green">Scale</span>
+      <h3>10x Is Easier Than 2x</h3>
+      <p>Dan Sullivan's core insight: going 2x makes you do MORE of the same. Going 10x forces you to do DIFFERENT. 2x is incremental. 10x is transformational. You can't 10x by making more calls. You 10x by changing what calls you make.</p>
+      <ul>
+        <li><strong>2x thinking:</strong> "I need to make 23 calls a day to hit 2,000 merchants." (Impossible solo. Leads to burnout.)</li>
+        <li><strong>10x thinking:</strong> "I need to build a system where 200 MRPs each bring me 10 merchants, and an AI voice agent handles the first call." (Different game entirely.)</li>
+        <li><strong>The 80% purge:</strong> To 10x, you must drop the 80% of activities that only produce 2x results. That means: stop closing every deal yourself. Stop doing admin. Stop having calls that should be emails. Protect your time for the 20% that actually moves the number.</li>
+        <li><strong>Quality over quantity:</strong> One PE deal = 10-50 merchants in a single conversation. One high-agency MRP = 20 merchants over 12 months. One viral MRP testimonial = 10 new MRP applicants. Stop optimizing for volume. Optimize for leverage.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="card-label label-red">Disqualification</span>
+    <h3>The 5-Minute Kill Switch</h3>
+    <p>The best closers in B2B don't waste time on bad deals. Within the first 5 minutes of any call, you should know if this is worth pursuing. Run this checklist:</p>
+
+    <div class="grid-2" style="margin-top:16px">
+      <div>
+        <h4 style="color:var(--dark);margin-bottom:8px">Kill if:</h4>
+        <ul>
+          <li>Monthly volume under $15K (not worth the onboarding effort at this stage)</li>
+          <li>Decision-maker not on the call and no path to get them</li>
+          <li>Currently in a long-term contract with no willingness to pay the exit fee</li>
+          <li>High-risk vertical that won't pass underwriting</li>
+          <li>They want to "shop around" with 5 other processors (price shopper, not a buyer)</li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color:var(--dark);margin-bottom:8px">Advance if:</h4>
+        <ul>
+          <li>Volume over $30K/month and they're on interchange-plus or flat rate above 2.8%</li>
+          <li>Decision-maker is on the call or can be brought in within 48 hours</li>
+          <li>They have a specific pain point (rate increase, bad support, contract frustration)</li>
+          <li>They're asking specific questions about how it works (buying signals)</li>
+          <li>They lean forward when you mention the surcharge reframe (physical buying signal)</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:16px"><strong>Perry Marshall's rule:</strong> For every unqualified prospect you cut, you free up time for a qualified one. The math always works in your favor. Cut faster.</p>
+  </div>
+
+  <div class="highlight">
+    <h3>The Up-Front Contract (Sandler)</h3>
+    <p>Set the rules of engagement before every call. This eliminates "I need to think about it" because you agreed on the outcome before the conversation started.</p>
+    <p style="margin-top:12px"><strong>Open every call with:</strong> "Here's what I'd like to do. I'll take about 15 minutes to understand your current setup, show you how the math works for your specific business, and then we'll both decide if it makes sense to move forward. If it does, I'll tell you exactly what the next step is. If it doesn't, I'll tell you that too. Fair enough?"</p>
+    <p style="margin-top:12px">This does three things: (1) sets a time boundary so they relax, (2) establishes mutual decision-making so they don't feel sold to, and (3) gives you permission to close because they already agreed to a decision at the end.</p>
+  </div>
+</div>
+
+<!-- ===== DAILY PRINCIPLES ===== -->
+<div id="daily" class="section">
+  <div class="section-title">Daily Operating Principles</div>
+  <div class="section-desc">Read these every morning. These are the 10 rules that separate you from every other rep in the industry.</div>
+
+  <div class="grid-3">
+    <div class="principle-card">
+      <div class="principle-num">01</div>
+      <h4>Free Up Memory</h4>
+      <p>Every open loop that can be systematized should be. Save cognitive bandwidth for high-leverage decisions.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num">02</div>
+      <h4>Play Positive-Sum Games</h4>
+      <p>You make money, the merchant saves money, the MRP earns residuals. Everyone wins. Say it out loud.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num">03</div>
+      <h4>Pitch the Cascade</h4>
+      <p>Always show the second and third order effects. Never stop at first-order.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num">04</div>
+      <h4>Lead with the Reframe</h4>
+      <p>The product is the last thing you mention, not the first. Teach first. Sell last.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num">05</div>
+      <h4>Use Inversion on Stalls</h4>
+      <p>"What would have to be true for this to never close?" Then address that one thing.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num">06</div>
+      <h4>Be Unpredictable</h4>
+      <p>If your pitch sounds like it could come from any other rep, it's wrong. Rewrite it.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num">07</div>
+      <h4>Screen for High Agency</h4>
+      <p>In MRPs, merchants, partners. Low-agency people drain bandwidth. High-agency people multiply reach.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num">08</div>
+      <h4>Iterate Fast</h4>
+      <p>The key metric isn't hours, it's iterations. Run more experiments. Kill what doesn't work. Double what does.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num">09</div>
+      <h4>Verify, Don't Trust</h4>
+      <p>Your assumptions, pipeline data, MRP activity. Check the numbers. Always.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num">10</div>
+      <h4>Every Interaction Teaches</h4>
+      <p>You're showing someone something they didn't know about their own business. The sale is the natural conclusion.</p>
+    </div>
+  </div>
+
+  <div class="highlight" style="margin-top:28px">
+    <h3>The Positive-Sum Stack</h3>
+    <p>Naval says wealth creation is positive-sum. Status is zero-sum. Every competitor fighting over "who has the lowest rate" is playing a zero-sum status game. You moved the entire conversation to a different playing field. When the merchant is comparing you to their current processor, they're not comparing rates -- they're comparing "I pay $2,500/month" vs "I pay $0/month and might make money." There's nothing to compare. You're in a different category.</p>
+  </div>
+</div>
+
+<!-- ===== VIDEO RESEARCH ===== -->
+<div id="research" class="section">
+  <div class="section-title">Video Research & Sources</div>
+  <div class="section-desc">The original research that built this playbook. 5 videos, deep-dived and mapped to CRO application.</div>
+
+  <div class="card">
+    <span class="card-label label-purple">TikTok</span>
+    <h3>@selftaughtpm -- "Free Up Some Memory"</h3>
+    <p>Cognitive load management. Your brain running like a computer with too many tabs open. Close the tabs, write things down, offload what doesn't need to live in your head. Your processing power goes toward what matters.</p>
+    <p style="margin-top:8px"><strong>CRO application:</strong> Every tool we've built (dashboard, velocity tracker, scorecard) is a memory offload. The AI voice agent is the ultimate memory free-up. Stop being the bottleneck, start being the brain.</p>
+  </div>
+
+  <div class="card">
+    <span class="card-label label-green">Instagram -- 9,393 likes</span>
+    <h3>@douggrindstaff -- High Agency (George Mack)</h3>
+    <p>"Who do you call when stuck in a 3rd world prison cell?" 16 markers of high agency: weird teenage hobbies, treadmill energy, unpredictable opinions, immigrant mentality, self-taught learning, pet the elephant, infinite reframes. Low agency = groupthink, needing permission, chasing prestige.</p>
+    <p style="margin-top:8px"><strong>CRO application:</strong> Use as MRP screening filter. High-agency MRPs activate fast and produce volume. Low-agency MRPs sit on the roster. Also: you ARE the high-agency person merchants call when they're stuck with a bad processor.</p>
+  </div>
+
+  <div class="card">
+    <span class="card-label label-blue">Instagram -- 3,161 likes</span>
+    <h3>@douggrindstaff -- "No Skill Called Business" (Naval)</h3>
+    <p>Business is too generic to be a skill. What makes you dangerous: game theory, psychology, persuasion, microeconomics, logic. Key metric is iterations, not hours. Wealth creation is positive-sum. Status is zero-sum. Optimize for long-term, positive-sum games.</p>
+    <p style="margin-top:8px"><strong>CRO application:</strong> Your competitive edge isn't from a textbook -- it's from thousands of iterations. The iterated prisoner's dilemma maps to MRP relationships and merchant retention. You're playing repeated games. Positive-sum framing wins them all.</p>
+  </div>
+
+  <div class="card">
+    <span class="card-label label-gold">Instagram -- 852 likes</span>
+    <h3>@douggrindstaff -- 3 Mental Models</h3>
+    <p>First Principles (strip to fundamentals), Inversion (what guarantees failure? avoid that), Second-Order Thinking (ask "and then what?" past the obvious).</p>
+    <p style="margin-top:8px"><strong>CRO application:</strong> First Principles Close, Inversion Close, and Second-Order MRP Pitch. All three are now in the mental model toolkit above.</p>
+  </div>
+
+  <div class="card">
+    <span class="card-label label-red">Instagram -- 7,428 likes</span>
+    <h3>@douggrindstaff -- "Stop Being Predictable, Start Being Memorable"</h3>
+    <p>Dewey's education system produces conformity, not originality. Most people run the same playbook, same pitches, same positioning. The people who break through are genuinely hard to predict.</p>
+    <p style="margin-top:8px"><strong>CRO application:</strong> The surcharge reframe is already differentiated because nobody else leads with it. The 1 of 1 test: "Could any other processor rep have said this?" If yes, rewrite.</p>
+    <p style="margin-top:8px;font-style:italic;color:var(--green)">You commented "This is gold." on this one.</p>
+  </div>
+</div>
+
+</div><!-- /container -->
+</div><!-- /main -->
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({ top: 200, behavior: 'smooth' });
+}
+
+function copyText(btn) {
+  const block = btn.closest('.script-block');
+  const text = block.textContent.replace('Copy', '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+function filterObjCards(q) {
+  const query = q.toLowerCase();
+  document.querySelectorAll('.obj-card').forEach(card => {
+    const searchable = (card.dataset.search + ' ' + card.textContent).toLowerCase();
+    card.style.display = searchable.includes(query) ? 'block' : 'none';
+  });
+}
+</script>
+
+</body>
+</html>

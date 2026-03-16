@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kashu — Statement Analyzer</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --dark:    #0b5147;
+    --mid:     #397168;
+    --muted:   #93adaa;
+    --green:   #01de8f;
+    --light1:  #8de6c6;
+    --light2:  #d5eae3;
+    --light3:  #e1fea1;
+    --bg:      #f4f9f8;
+    --white:   #ffffff;
+    --text:    #1a2e2b;
+    --subtext: #4a6360;
+    --border:  #c8dbd8;
+    --red:     #e05252;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: var(--dark);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--green);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 16px; color: var(--dark);
+  }
+  header h1 { color: var(--white); font-size: 20px; font-weight: 600; }
+  header span { color: var(--muted); font-size: 14px; margin-left: auto; }
+
+  .main { max-width: 900px; margin: 40px auto; padding: 0 20px 80px; }
+
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--mid);
+    margin-bottom: 10px;
+  }
+
+  /* Upload Zone */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+    padding: 48px 24px;
+    text-align: center;
+    cursor: pointer;
+    background: var(--white);
+    transition: all 0.2s;
+    margin-bottom: 28px;
+  }
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--green);
+    background: #f0fdf8;
+  }
+  .upload-icon {
+    width: 56px; height: 56px;
+    background: var(--light2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 24px;
+  }
+  .upload-zone h3 { font-size: 18px; font-weight: 600; color: var(--dark); margin-bottom: 6px; }
+  .upload-zone p { color: var(--subtext); font-size: 14px; }
+  .upload-zone .hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  #fileInput { display: none; }
+  .upload-zone .btn-upload {
+    display: inline-block;
+    margin-top: 16px;
+    background: var(--dark);
+    color: var(--white);
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Progress */
+  #parseProgress {
+    display: none;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    border: 1px solid var(--border);
+  }
+  .progress-bar-track {
+    height: 6px; background: var(--light2); border-radius: 3px; margin-top: 10px;
+  }
+  .progress-bar-fill {
+    height: 6px; background: var(--green); border-radius: 3px;
+    width: 0%; transition: width 0.3s;
+  }
+  #progressLabel { font-size: 14px; color: var(--subtext); }
+
+  /* Parsed + Manual Entry Card */
+  .card {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .card h2 { font-size: 17px; font-weight: 700; color: var(--dark); margin-bottom: 20px; }
+
+  .parse-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .parse-status.success { background: #e6faf3; color: #0b8a5a; }
+  .parse-status.partial { background: #fff8e1; color: #b07c00; }
+  .parse-status.manual  { background: #fff0f0; color: var(--red); }
+
+  .fields-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media(max-width:600px){ .fields-grid { grid-template-columns: 1fr; } }
+
+  .field-group { display: flex; flex-direction: column; gap: 6px; }
+  .field-group label {
+    font-size: 12px; font-weight: 600; color: var(--subtext); text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .field-group .parsed-badge {
+    font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px;
+    background: #e6faf3; color: #0b8a5a; margin-left: 6px;
+  }
+  .field-group .manual-badge {
+    font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px;
+    background: #fff8e1; color: #b07c00; margin-left: 6px;
+  }
+  .field-group input, .field-group select {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--white);
+    transition: border 0.2s;
+    width: 100%;
+  }
+  .field-group input:focus, .field-group select:focus {
+    outline: none; border-color: var(--mid);
+  }
+  .field-group input.auto-filled { border-color: var(--green); background: #f0fdf8; }
+  .field-group .helper { font-size: 11px; color: var(--muted); }
+
+  /* Raw text toggle */
+  .raw-toggle {
+    font-size: 12px; color: var(--mid); cursor: pointer; text-decoration: underline;
+    margin-top: 16px; display: inline-block;
+  }
+  #rawTextBox {
+    display: none;
+    margin-top: 12px;
+    background: #f4f9f8;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 11px;
+    font-family: monospace;
+    color: var(--subtext);
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Results */
+  #resultsSection { display: none; }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  @media(max-width:600px){ .comparison-grid { grid-template-columns: 1fr; } }
+
+  .compare-card {
+    border-radius: 12px;
+    padding: 22px;
+    border: 1px solid var(--border);
+  }
+  .compare-card.current { background: #fff8f8; border-color: #f0cece; }
+  .compare-card.kashu   { background: #f0fdf8; border-color: #b3f0d8; }
+  .compare-card .cc-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .compare-card.current .cc-label { color: var(--red); }
+  .compare-card.kashu   .cc-label { color: #0b8a5a; }
+  .compare-card .cc-rate { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .compare-card.current .cc-rate { color: var(--red); }
+  .compare-card.kashu   .cc-rate { color: var(--dark); }
+  .compare-card .cc-monthly { font-size: 15px; color: var(--subtext); }
+  .compare-card .cc-note { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+  .savings-banner {
+    background: var(--dark);
+    color: var(--white);
+    border-radius: 12px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .savings-banner .sb-label { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+  .savings-banner .sb-number { font-size: 32px; font-weight: 700; color: var(--green); }
+  .savings-banner .sb-sub { font-size: 13px; color: var(--light1); margin-top: 2px; }
+  .savings-banner .sb-divider { width: 1px; height: 60px; background: #2a6b5e; }
+
+  .rate-breakdown {
+    background: var(--light2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+  .rate-breakdown h4 { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 12px; }
+  .rb-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 0; border-bottom: 1px solid #c8dbd8;
+    font-size: 14px;
+  }
+  .rb-row:last-child { border-bottom: none; }
+  .rb-row .rb-label { color: var(--subtext); }
+  .rb-row .rb-val { font-weight: 600; color: var(--dark); }
+  .rb-row .rb-val.bad { color: var(--red); }
+  .rb-row .rb-val.good { color: #0b8a5a; }
+
+  /* Pitch Summary */
+  .pitch-card {
+    background: var(--dark);
+    border-radius: 14px;
+    padding: 28px;
+    color: var(--white);
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .pitch-card h3 { font-size: 16px; font-weight: 700; color: var(--green); margin-bottom: 14px; }
+  .pitch-card p { font-size: 15px; line-height: 1.7; color: #d5eae3; }
+  .pitch-card .copy-btn {
+    position: absolute; top: 20px; right: 20px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--white);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .pitch-card .copy-btn:hover { background: rgba(255,255,255,0.2); }
+
+  /* Action buttons */
+  .actions-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--green); color: var(--dark); }
+  .btn-primary:hover { background: #00c97e; }
+  .btn-secondary { background: var(--light2); color: var(--dark); }
+  .btn-secondary:hover { background: var(--light1); }
+  .btn-outline { background: transparent; color: var(--dark); border: 1.5px solid var(--border); }
+  .btn-outline:hover { border-color: var(--mid); }
+  .btn-danger { background: transparent; color: var(--red); border: 1.5px solid #f0cece; }
+  .btn-danger:hover { background: #fff0f0; }
+
+  /* Analyze button */
+  #analyzeBtn {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    background: var(--dark);
+    color: var(--white);
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.2s;
+    display: none;
+  }
+  #analyzeBtn:hover { background: var(--mid); }
+
+  /* Merchant Info */
+  .merchant-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  @media(max-width:600px){ .merchant-row { grid-template-columns: 1fr; } }
+
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--dark); color: var(--white);
+    padding: 12px 20px; border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none; z-index: 9999;
+  }
+  .toast.show { opacity: 1; }
+
+  #noFileSection {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    color: var(--subtext);
+    font-size: 14px;
+  }
+
+  .opp-icon:empty, .kill-icon:empty, .wo-icon:empty, .cc-icon:empty, .wf-header-icon:empty, .upload-icon:empty, .pn-item .pn-icon:empty, .ty-icon:empty, .pm-icon:empty { display:none; }
+
+  .chevron::after, .touch-chevron::after { content: "\25BC"; font-size: 10px; }
+  .check::after { content: "\2713"; font-weight: 700; }
+  .setup-check.checked::after { content: "\2713"; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">K</div>
+  <h1>Statement Analyzer</h1>
+  <span>Kashu Sales Tools</span>
+</header>
+
+<div class="main">
+
+  <!-- Upload Zone -->
+  <div class="section-label">Step 1 — Upload Statement</div>
+  <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+    <div class="upload-icon"></div>
+    <h3>Drop a processing statement here</h3>
+    <p>PDF from any processor — Stripe, Square, Heartland, First Data, Worldpay, Clover, and more</p>
+    <p class="hint">All processing is done in your browser. No data is uploaded anywhere.</p>
+    <div class="btn-upload">Choose File</div>
+    <input type="file" id="fileInput" accept=".pdf" onchange="handleFile(event)"/>
+  </div>
+
+  <!-- Parse Progress -->
+  <div id="parseProgress">
+    <div id="progressLabel">Reading statement...</div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- Statement Data Card -->
+  <div class="card" id="dataCard" style="display:none;">
+    <h2>Statement Data</h2>
+    <div id="parseStatusBadge" class="parse-status"></div>
+
+    <div class="merchant-row">
+      <div class="field-group">
+        <label>Business Name</label>
+        <input type="text" id="bizName" placeholder="e.g. Main Street Grill"/>
+      </div>
+      <div class="field-group">
+        <label>Contact First Name</label>
+        <input type="text" id="contactName" placeholder="e.g. Mike"/>
+      </div>
+      <div class="field-group">
+        <label>Transaction Type</label>
+        <select id="txnType">
+          <option value="inperson">In-Person</option>
+          <option value="online">Online</option>
+          <option value="ach">ACH</option>
+          <option value="surcharge">Surcharge</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="fields-grid">
+      <div class="field-group">
+        <label><span id="lbl_volume">Monthly Processing Volume</span> <span id="badge_volume" class="manual-badge">manual</span></label>
+        <input type="number" id="monthlyVolume" placeholder="e.g. 85000" oninput="onFieldChange()"/>
+        <span class="helper">Total gross sales processed last month</span>
+      </div>
+      <div class="field-group">
+        <label><span id="lbl_fees">Total Fees Paid</span> <span id="badge_fees" class="manual-badge">manual</span></label>
+        <input type="number" id="totalFees" placeholder="e.g. 2800" oninput="onFieldChange()"/>
+        <span class="helper">All fees on the statement</span>
+      </div>
+      <div class="field-group">
+        <label><span id="lbl_rate">Effective Rate</span> <span id="badge_rate" class="manual-badge">manual</span></label>
+        <input type="number" id="effectiveRate" placeholder="e.g. 3.29" step="0.01" oninput="onRateInput()"/>
+        <span class="helper">% — auto-calculated or enter manually</span>
+      </div>
+      <div class="field-group">
+        <label><span>Avg Ticket Size</span> <span id="badge_ticket" class="manual-badge">manual</span></label>
+        <input type="number" id="avgTicket" placeholder="e.g. 45" oninput="onFieldChange()"/>
+        <span class="helper">Average transaction amount ($)</span>
+      </div>
+      <div class="field-group">
+        <label><span id="lbl_txns">Total Transactions</span> <span id="badge_txns" class="manual-badge">manual</span></label>
+        <input type="number" id="totalTxns" placeholder="e.g. 1800" oninput="onTxnsInput()"/>
+        <span class="helper">Auto-calculates avg ticket when combined with volume</span>
+      </div>
+      <div class="field-group">
+        <label>Your Name (Rep)</label>
+        <input type="text" id="repName" placeholder="e.g. John Polimeni"/>
+      </div>
+    </div>
+
+    <span class="raw-toggle" id="rawToggle" onclick="toggleRaw()" style="display:none;">View extracted text</span>
+    <div id="rawTextBox"></div>
+
+    <button id="analyzeBtn" onclick="runAnalysis()">Run Analysis</button>
+  </div>
+
+  <!-- Results -->
+  <div id="resultsSection">
+    <div class="section-label">Analysis Results</div>
+
+    <div class="savings-banner">
+      <div>
+        <div class="sb-label">Monthly Savings with Kashu</div>
+        <div class="sb-number" id="res_monthlySavings">—</div>
+        <div class="sb-sub" id="res_monthlySavingsSub"></div>
+      </div>
+      <div class="sb-divider"></div>
+      <div>
+        <div class="sb-label">Annual Savings</div>
+        <div class="sb-number" id="res_annualSavings">—</div>
+        <div class="sb-sub" id="res_annualSub"></div>
+      </div>
+      <div class="sb-divider"></div>
+      <div>
+        <div class="sb-label">Overpaying Per Month</div>
+        <div class="sb-number" id="res_overcharge">—</div>
+        <div class="sb-sub" id="res_overchargeSub"></div>
+      </div>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="compare-card current">
+        <div class="cc-label">Current Processor</div>
+        <div class="cc-rate" id="res_currentRate">—</div>
+        <div class="cc-monthly" id="res_currentMonthly">—</div>
+        <div class="cc-note" id="res_currentNote"></div>
+      </div>
+      <div class="compare-card kashu">
+        <div class="cc-label">With Kashu</div>
+        <div class="cc-rate" id="res_kashuRate">—</div>
+        <div class="cc-monthly" id="res_kashuMonthly">—</div>
+        <div class="cc-note">Guaranteed rate. In writing.</div>
+      </div>
+    </div>
+
+    <div class="rate-breakdown">
+      <h4>Breakdown</h4>
+      <div class="rb-row"><span class="rb-label">Monthly Volume</span><span class="rb-val" id="rb_volume">—</span></div>
+      <div class="rb-row"><span class="rb-label">Current Effective Rate</span><span class="rb-val bad" id="rb_currentRate">—</span></div>
+      <div class="rb-row"><span class="rb-label">Kashu Rate (your transaction type)</span><span class="rb-val good" id="rb_kashuRate">—</span></div>
+      <div class="rb-row"><span class="rb-label">Current Monthly Fees</span><span class="rb-val bad" id="rb_currentFees">—</span></div>
+      <div class="rb-row"><span class="rb-label">Kashu Monthly Fees</span><span class="rb-val good" id="rb_kashuFees">—</span></div>
+      <div class="rb-row"><span class="rb-label">Avg Ticket</span><span class="rb-val" id="rb_ticket">—</span></div>
+      <div class="rb-row"><span class="rb-label">Estimated Monthly Transactions</span><span class="rb-val" id="rb_txns">—</span></div>
+    </div>
+
+    <div class="pitch-card">
+      <button class="copy-btn" onclick="copyPitch()">Copy</button>
+      <h3>Pitch Script</h3>
+      <p id="pitchText">—</p>
+    </div>
+
+    <div class="actions-row">
+      <button class="btn btn-secondary" onclick="resetTool()">Analyze Another Statement</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const KASHU_RATES = {
+  inperson:  { combined: 0.022, pertxn: 0.15, label: '2.2% + $0.15' },
+  online:    { combined: 0.025, pertxn: 0.15, label: '2.5% + $0.15' },
+  ach:       { combined: 0.005, pertxn: 0.25, label: '0.50% + $0.25' },
+  surcharge: { combined: 0.00,  pertxn: 0.00, label: '0% (fees passed to customer)' }
+};
+
+let parsedFields = {};
+let rawText = '';
+
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  processFile(file);
+}
+
+const uploadZone = document.getElementById('uploadZone');
+uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+uploadZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type === 'application/pdf') processFile(file);
+});
+
+async function processFile(file) {
+  document.getElementById('uploadZone').style.display = 'none';
+  document.getElementById('parseProgress').style.display = 'block';
+  setProgress(10, 'Loading PDF...');
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    setProgress(30, 'Extracting text...');
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let text = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      // Join items with space but preserve line breaks by grouping by y-position
+      const items = content.items;
+      let lastY = null;
+      for (const item of items) {
+        const y = item.transform ? item.transform[5] : null;
+        if (lastY !== null && Math.abs(y - lastY) > 5) text += '\n';
+        text += item.str + ' ';
+        lastY = y;
+      }
+      text += '\n';
+      setProgress(30 + Math.round((i / pdf.numPages) * 40), `Reading page ${i} of ${pdf.numPages}...`);
+    }
+    rawText = text;
+    setProgress(80, 'Parsing statement data...');
+
+    // Detect image-based PDF (no meaningful text extracted)
+    const meaningfulChars = text.replace(/\s/g, '').length;
+    if (meaningfulChars < 80) {
+      rawText = '[Image-based PDF detected -- no text layer found. This is a scanned statement. Enter your numbers manually below.]';
+      setProgress(100, 'Scanned PDF detected.');
+      setTimeout(() => {
+        document.getElementById('parseProgress').style.display = 'none';
+        showDataCard({ isImagePDF: true });
+      }, 400);
+      return;
+    }
+
+    const result = parseStatement(text);
+    setProgress(100, 'Done.');
+    setTimeout(() => {
+      document.getElementById('parseProgress').style.display = 'none';
+      showDataCard(result);
+    }, 400);
+  } catch(err) {
+    rawText = '[PDF could not be read: ' + (err.message || 'unknown error') + '. Enter numbers manually.]';
+    setProgress(100, 'Could not read PDF. Enter data manually.');
+    setTimeout(() => {
+      document.getElementById('parseProgress').style.display = 'none';
+      showDataCard({ parseError: true });
+    }, 600);
+  }
+}
+
+function setProgress(pct, label) {
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = label;
+}
+
+function cleanNum(str) {
+  return parseFloat(str.replace(/[,$]/g, ''));
+}
+
+function parseStatement(text) {
+  const t = text.replace(/\s+/g, ' ');
+  const result = {};
+
+  // Volume patterns -- covers Heartland, First Data, TSYS, Worldpay, Clover, Square, Stripe, Chase, Elavon
+  const volumePatterns = [
+    /gross\s+sales?\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /total\s+(?:processing\s+)?volume\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /total\s+sales?\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /net\s+sales?\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /gross\s+amount\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /bankcard\s+(?:total|sales|volume)\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /card\s+sales?\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /total\s+card\s+(?:volume|sales?)\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /visa\s*[\/&]\s*mc(?:\/disc(?:over)?)?\s+(?:volume|sales?|total)\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /purchase\s+volume\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /total\s+purchase\s*s?\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /processing\s+volume\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /total\s+transactions?\s+amount\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /monthly\s+(?:sales|volume)\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /gross\s+receipts?\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /summary\s+(?:total|volume)\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+  ];
+  for (const p of volumePatterns) {
+    const m = t.match(p);
+    if (m) {
+      const v = cleanNum(m[1]);
+      if (v > 1000) { result.volume = v; result.volumeAuto = true; break; }
+    }
+  }
+
+  // Total fees patterns -- covers all major processors
+  const feePatterns = [
+    /total\s+fees?\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /total\s+(?:service\s+)?charges?\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /total\s+discount\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /total\s+discount\s+amount\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /processing\s+fees?\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /total\s+amount\s+(?:billed|due|charged)\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /amount\s+due\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /total\s+billed\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /merchant\s+(?:service\s+)?fees?\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /bankcard\s+fees?\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /interchange\s+(?:and\s+)?fees?\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /total\s+interchange\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /total\s+processing\s+(?:costs?|fees?)\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /statement\s+(?:total|fees?)\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+    /your\s+fees?\s*[:\$]?\s*\$?\s*([\d,]+\.?\d*)/i,
+  ];
+  for (const p of feePatterns) {
+    const m = t.match(p);
+    if (m) {
+      const v = cleanNum(m[1]);
+      if (v > 10 && v < 100000) { result.fees = v; result.feesAuto = true; break; }
+    }
+  }
+
+  // Effective rate -- many processors show this explicitly
+  const ratePatterns = [
+    /effective\s+(?:discount\s+)?rate\s*[:\$]?\s*([\d.]+)\s*%/i,
+    /blended\s+rate\s*[:\$]?\s*([\d.]+)\s*%/i,
+    /avg(?:erage)?\s+(?:discount\s+)?rate\s*[:\$]?\s*([\d.]+)\s*%/i,
+    /overall\s+rate\s*[:\$]?\s*([\d.]+)\s*%/i,
+    /effective\s+rate\s*:\s*([\d.]+)/i,
+    /cost\s+of\s+acceptance\s*[:\$]?\s*([\d.]+)\s*%/i,
+  ];
+  for (const p of ratePatterns) {
+    const m = t.match(p);
+    if (m) { result.rate = parseFloat(m[1]); result.rateAuto = true; break; }
+  }
+
+  // Transactions
+  const txnPatterns = [
+    /total\s+transactions?\s*[:\$]?\s*([\d,]+)/i,
+    /total\s+items?\s*[:\$]?\s*([\d,]+)/i,
+    /number\s+of\s+transactions?\s*[:\$]?\s*([\d,]+)/i,
+    /transaction\s+count\s*[:\$]?\s*([\d,]+)/i,
+  ];
+  for (const p of txnPatterns) {
+    const m = t.match(p);
+    if (m) { result.txns = cleanNum(m[1]); result.txnsAuto = true; break; }
+  }
+
+  // Derive what we can
+  if (result.volume && result.fees && !result.rate) {
+    result.rate = (result.fees / result.volume) * 100;
+    result.rateDerived = true;
+  }
+  if (result.volume && result.txns && !result.avgTicket) {
+    result.avgTicket = result.volume / result.txns;
+    result.ticketDerived = true;
+  }
+
+  return result;
+}
+
+function showDataCard(result) {
+  document.getElementById('dataCard').style.display = 'block';
+  parsedFields = result;
+
+  let autoCount = 0;
+  if (result.volume) { document.getElementById('monthlyVolume').value = result.volume.toFixed(2); document.getElementById('monthlyVolume').classList.add('auto-filled'); document.getElementById('badge_volume').textContent = 'parsed'; document.getElementById('badge_volume').className = 'parsed-badge'; autoCount++; }
+  if (result.fees) { document.getElementById('totalFees').value = result.fees.toFixed(2); document.getElementById('totalFees').classList.add('auto-filled'); document.getElementById('badge_fees').textContent = 'parsed'; document.getElementById('badge_fees').className = 'parsed-badge'; autoCount++; }
+  if (result.rate) { document.getElementById('effectiveRate').value = result.rate.toFixed(2); document.getElementById('effectiveRate').classList.add('auto-filled'); const badge = result.rateDerived ? 'derived' : 'parsed'; document.getElementById('badge_rate').textContent = badge; document.getElementById('badge_rate').className = 'parsed-badge'; autoCount++; }
+  if (result.txns) { document.getElementById('totalTxns').value = Math.round(result.txns); document.getElementById('totalTxns').classList.add('auto-filled'); document.getElementById('badge_txns').textContent = 'parsed'; document.getElementById('badge_txns').className = 'parsed-badge'; autoCount++; }
+  if (result.avgTicket) { document.getElementById('avgTicket').value = result.avgTicket.toFixed(2); document.getElementById('avgTicket').classList.add('auto-filled'); document.getElementById('badge_ticket').textContent = 'derived'; document.getElementById('badge_ticket').className = 'parsed-badge'; autoCount++; }
+
+  const total = 4;
+  const badge = document.getElementById('parseStatusBadge');
+  if (result.isImagePDF) {
+    badge.textContent = 'Scanned PDF detected -- no text layer. Enter your numbers below.';
+    badge.className = 'parse-status manual';
+  } else if (result.parseError) {
+    badge.textContent = 'PDF could not be read. Enter your numbers manually below.';
+    badge.className = 'parse-status manual';
+  } else if (autoCount >= total) {
+    badge.textContent = 'Statement parsed automatically';
+    badge.className = 'parse-status success';
+  } else if (autoCount >= 2) {
+    badge.textContent = `Partially parsed (${autoCount}/${total} fields). Fill in the rest.`;
+    badge.className = 'parse-status partial';
+  } else if (autoCount === 1) {
+    badge.textContent = `1 field found. Fill in the rest manually.`;
+    badge.className = 'parse-status partial';
+  } else {
+    badge.textContent = 'Format not recognized. Enter your numbers below.';
+    badge.className = 'parse-status manual';
+  }
+
+  // Always show raw text toggle so user can diagnose
+  document.getElementById('rawTextBox').textContent = rawText.slice(0, 4000) + (rawText.length > 4000 ? '\n...(truncated)' : '');
+  document.getElementById('rawToggle').style.display = 'inline-block';
+
+  document.getElementById('analyzeBtn').style.display = 'block';
+}
+
+function toggleRaw() {
+  const box = document.getElementById('rawTextBox');
+  const toggle = document.getElementById('rawToggle');
+  if (box.style.display === 'none') { box.style.display = 'block'; toggle.textContent = 'Hide extracted text'; }
+  else { box.style.display = 'none'; toggle.textContent = 'View extracted text'; }
+}
+
+function onFieldChange() {
+  const vol = parseFloat(document.getElementById('monthlyVolume').value);
+  const fees = parseFloat(document.getElementById('totalFees').value);
+  const txns = parseFloat(document.getElementById('totalTxns').value);
+  if (vol && fees) {
+    const rate = (fees / vol) * 100;
+    document.getElementById('effectiveRate').value = rate.toFixed(3);
+    document.getElementById('effectiveRate').classList.add('auto-filled');
+  }
+  if (vol && txns) {
+    document.getElementById('avgTicket').value = (vol / txns).toFixed(2);
+  }
+}
+
+function onRateInput() {
+  // rate entered manually — derive fees from volume if available
+  const vol = parseFloat(document.getElementById('monthlyVolume').value);
+  const rate = parseFloat(document.getElementById('effectiveRate').value);
+  if (vol && rate) {
+    document.getElementById('totalFees').value = (vol * rate / 100).toFixed(2);
+  }
+}
+
+function onTxnsInput() {
+  const vol = parseFloat(document.getElementById('monthlyVolume').value);
+  const txns = parseFloat(document.getElementById('totalTxns').value);
+  if (vol && txns) {
+    document.getElementById('avgTicket').value = (vol / txns).toFixed(2);
+  }
+}
+
+function fmt$(n) { return '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function fmtPct(n) { return n.toFixed(2) + '%'; }
+
+function getKashuCost(volume, avgTicket, txnType) {
+  const rate = KASHU_RATES[txnType];
+  if (!avgTicket || avgTicket === 0) return volume * rate.combined;
+  const numTxns = volume / avgTicket;
+  return (volume * rate.combined) + (numTxns * rate.pertxn);
+}
+
+function runAnalysis() {
+  const volume = parseFloat(document.getElementById('monthlyVolume').value);
+  const fees = parseFloat(document.getElementById('totalFees').value);
+  const effectiveRate = parseFloat(document.getElementById('effectiveRate').value);
+  const avgTicket = parseFloat(document.getElementById('avgTicket').value) || 50;
+  const txnType = document.getElementById('txnType').value;
+  const bizName = document.getElementById('bizName').value || 'your business';
+  const contactName = document.getElementById('contactName').value || '';
+  const repName = document.getElementById('repName').value || 'the Kashu team';
+
+  if (!volume || (!fees && !effectiveRate)) {
+    showToast('Enter at least Monthly Volume and Total Fees (or Effective Rate).');
+    return;
+  }
+
+  const currentFees = fees || (volume * effectiveRate / 100);
+  const currentRate = effectiveRate || ((fees / volume) * 100);
+  const kashuCost = getKashuCost(volume, avgTicket, txnType);
+  const kashuRate = (kashuCost / volume) * 100;
+  const monthlySavings = currentFees - kashuCost;
+  const annualSavings = monthlySavings * 12;
+  const numTxns = avgTicket ? Math.round(volume / avgTicket) : null;
+
+  // Fill results
+  document.getElementById('res_monthlySavings').textContent = fmt$(monthlySavings);
+  document.getElementById('res_monthlySavingsSub').textContent = 'per month, guaranteed';
+  document.getElementById('res_annualSavings').textContent = fmt$(annualSavings);
+  document.getElementById('res_annualSub').textContent = 'that\'s real money back in the business';
+  document.getElementById('res_overcharge').textContent = fmt$(monthlySavings);
+  document.getElementById('res_overchargeSub').textContent = 'more than they should be charging';
+
+  document.getElementById('res_currentRate').textContent = fmtPct(currentRate);
+  document.getElementById('res_currentMonthly').textContent = fmt$(currentFees) + '/mo in fees';
+  document.getElementById('res_currentNote').textContent = 'Effective blended rate on your statement';
+
+  document.getElementById('res_kashuRate').textContent = fmtPct(kashuRate);
+  document.getElementById('res_kashuMonthly').textContent = fmt$(kashuCost) + '/mo in fees';
+
+  document.getElementById('rb_volume').textContent = fmt$(volume);
+  document.getElementById('rb_currentRate').textContent = fmtPct(currentRate);
+  document.getElementById('rb_kashuRate').textContent = KASHU_RATES[txnType].label;
+  document.getElementById('rb_currentFees').textContent = fmt$(currentFees);
+  document.getElementById('rb_kashuFees').textContent = fmt$(kashuCost);
+  document.getElementById('rb_ticket').textContent = fmt$(avgTicket);
+  document.getElementById('rb_txns').textContent = numTxns ? numTxns.toLocaleString() : '—';
+
+  // Pitch
+  const first = contactName ? contactName : '';
+  const greeting = first ? `${first}, ` : '';
+  const surchargeNote = txnType === 'surcharge' ? ` And with our surcharge program, you eliminate fees entirely -- that processing cost disappears from your P&L.` : '';
+  const pitch = `${greeting}I just ran the numbers on your statement.\n\nYou're processing ${fmt$(volume)}/month and paying ${fmt$(currentFees)} in fees -- an effective rate of ${fmtPct(currentRate)}. With Kashu, that same volume runs at ${fmtPct(kashuRate)}, or ${fmt$(kashuCost)}/month.\n\nThat's ${fmt$(monthlySavings)} back in your pocket every month. ${fmt$(annualSavings)} a year.${surchargeNote}\n\nWe guarantee the rate in writing, and we get you live without missing a single day of business. The switch is frictionless.\n\nWorth a 10-minute conversation? I can show you exactly how it works for ${bizName}.\n\n-- ${repName}`;
+
+  document.getElementById('pitchText').textContent = pitch;
+
+  document.getElementById('resultsSection').style.display = 'block';
+  document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function copyPitch() {
+  const text = document.getElementById('pitchText').textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('Pitch copied.'));
+}
+
+function resetTool() {
+  document.getElementById('uploadZone').style.display = 'block';
+  document.getElementById('dataCard').style.display = 'none';
+  document.getElementById('resultsSection').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+  rawText = '';
+  parsedFields = {};
+  ['monthlyVolume','totalFees','effectiveRate','avgTicket','totalTxns','bizName','contactName','repName'].forEach(id => {
+    const el = document.getElementById(id);
+    el.value = '';
+    el.classList.remove('auto-filled');
+  });
+  ['badge_volume','badge_fees','badge_rate','badge_ticket','badge_txns'].forEach(id => {
+    document.getElementById(id).textContent = 'manual';
+    document.getElementById(id).className = 'manual-badge';
+  });
+  document.getElementById('rawTextBox').style.display = 'none';
+  document.getElementById('rawToggle').style.display = 'none';
+  document.getElementById('analyzeBtn').style.display = 'none';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+</script>
+</body>
+</html>

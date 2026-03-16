@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kashu — Credit-to-Cash Outreach Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --dark:   #0b5147; --mid:  #397168; --muted: #93adaa;
+    --green:  #01de8f; --light1: #8de6c6; --light2: #d5eae3;
+    --light3: #e1fea1; --bg: #f4f9f8; --white: #ffffff;
+    --text:   #1a2e2b; --sub:  #4a6360; --border: #c8dbd8;
+    --red:    #e05252;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); }
+  header { background: var(--dark); padding: 18px 32px; display: flex; align-items: center; gap: 14px; }
+  .logo-mark { width: 36px; height: 36px; background: var(--green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: var(--dark); }
+  header h1 { color: var(--white); font-size: 20px; font-weight: 600; }
+  header span { color: var(--muted); font-size: 14px; margin-left: auto; }
+  .layout { display: grid; grid-template-columns: 380px 1fr; min-height: calc(100vh - 62px); }
+  @media(max-width:860px){ .layout { grid-template-columns: 1fr; } }
+  .sidebar { background: var(--white); border-right: 1px solid var(--border); padding: 28px; overflow-y: auto; }
+  .sidebar h2 { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 20px; }
+  .field-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .field-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--sub); }
+  .field-group input, .field-group select {
+    border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text);
+    background: var(--white); width: 100%; transition: border 0.2s;
+  }
+  .field-group input:focus, .field-group select:focus { outline: none; border-color: var(--mid); }
+  .divider { height: 1px; background: var(--light2); margin: 20px 0; }
+  .section-label { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mid); margin-bottom: 12px; }
+  .generate-btn {
+    width: 100%; padding: 14px; background: var(--dark); color: var(--white);
+    border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s; margin-top: 4px;
+  }
+  .generate-btn:hover { background: var(--mid); }
+  .output-area { padding: 32px; overflow-y: auto; }
+  .placeholder-msg { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 400px; color: var(--muted); text-align: center; }
+  .placeholder-msg .pm-icon { font-size: 48px; margin-bottom: 16px; }
+  .placeholder-msg p { font-size: 15px; }
+
+  /* One Pager */
+  .onepager {
+    background: var(--white); border-radius: 16px; border: 1px solid var(--border);
+    overflow: hidden; max-width: 760px; margin-bottom: 24px;
+  }
+  .op-hero {
+    background: var(--dark); padding: 36px 40px;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  }
+  .op-hero-left .op-badge {
+    background: rgba(1,222,143,0.2); color: var(--green);
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(1,222,143,0.3);
+    display: inline-block; margin-bottom: 12px;
+  }
+  .op-hero-left h1 { font-size: clamp(20px, 3vw, 28px); font-weight: 800; color: var(--white); line-height: 1.2; max-width: 480px; }
+  .op-hero-left .op-sub { font-size: 15px; color: var(--muted); margin-top: 8px; line-height: 1.6; max-width: 440px; }
+  .op-hero-right { text-align: right; }
+  .op-hero-right .op-name { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+  .op-hero-right .op-company { font-size: 18px; font-weight: 700; color: var(--white); }
+
+  .op-body { padding: 36px 40px; }
+  .op-pain {
+    background: #fff8f2; border-left: 4px solid var(--red);
+    border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 28px;
+  }
+  .op-pain .op-pain-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--red); margin-bottom: 6px; }
+  .op-pain p { font-size: 14px; color: #5a2020; line-height: 1.6; }
+
+  .op-points-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+  @media(max-width:600px){ .op-points-grid { grid-template-columns: 1fr; } }
+  .op-point { background: var(--light2); border-radius: 10px; padding: 16px; }
+  .op-point .opp-icon { font-size: 20px; margin-bottom: 8px; }
+  .op-point .opp-title { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .op-point .opp-text { font-size: 13px; color: var(--sub); line-height: 1.5; }
+
+  .op-how { margin-bottom: 28px; }
+  .op-how h3 { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .op-steps { display: flex; gap: 0; }
+  @media(max-width:560px){ .op-steps { flex-direction: column; } }
+  .op-step { flex: 1; display: flex; gap: 12px; align-items: flex-start; padding-right: 16px; }
+  .op-step:last-child { padding-right: 0; }
+  .op-step-n { width: 28px; height: 28px; background: var(--dark); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .op-step-text strong { font-size: 13px; font-weight: 700; color: var(--dark); display: block; margin-bottom: 2px; }
+  .op-step-text span { font-size: 12px; color: var(--sub); }
+
+  .op-cta {
+    background: var(--dark); border-radius: 10px; padding: 20px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .op-cta p { font-size: 15px; font-weight: 600; color: var(--white); }
+  .op-cta-contact { text-align: right; }
+  .op-cta-contact .cta-name { font-size: 14px; font-weight: 700; color: var(--green); }
+  .op-cta-contact .cta-info { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* Email Card */
+  .email-card {
+    background: var(--white); border-radius: 16px; border: 1px solid var(--border);
+    padding: 28px; max-width: 760px; margin-bottom: 24px; position: relative;
+  }
+  .email-card h3 { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 16px; }
+  .email-meta { display: flex; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
+  .email-meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .email-meta-item span:first-child { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--sub); }
+  .email-meta-item span:last-child { font-size: 14px; font-weight: 600; color: var(--text); }
+  .email-body { background: var(--bg); border-radius: 8px; padding: 18px; font-size: 14px; line-height: 1.8; color: var(--text); white-space: pre-wrap; }
+  .copy-btn { position: absolute; top: 20px; right: 20px; background: var(--light2); border: none; color: var(--dark); padding: 6px 14px; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+  .copy-btn:hover { background: var(--light1); }
+
+  .actions-row { display: flex; gap: 12px; flex-wrap: wrap; max-width: 760px; }
+  .btn { padding: 11px 22px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+  .btn-primary { background: var(--green); color: var(--dark); }
+  .btn-primary:hover { background: #00c97e; }
+  .btn-outline { background: transparent; color: var(--dark); border: 1.5px solid var(--border); }
+  .btn-outline:hover { border-color: var(--mid); }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--dark); color: var(--white); padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 9999; }
+  .toast.show { opacity: 1; }
+
+  @media print {
+    header, .sidebar, .actions-row, .email-card, .copy-btn { display: none !important; }
+    .layout { display: block; }
+    .output-area { padding: 0; }
+    .onepager { box-shadow: none; border: none; }
+  }
+
+  .opp-icon:empty, .kill-icon:empty, .wo-icon:empty, .cc-icon:empty, .wf-header-icon:empty, .upload-icon:empty, .pn-item .pn-icon:empty, .ty-icon:empty, .pm-icon:empty { display:none; }
+
+  .chevron::after, .touch-chevron::after { content: "\25BC"; font-size: 10px; }
+  .check::after { content: "\2713"; font-weight: 700; }
+  .setup-check.checked::after { content: "\2713"; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">K</div>
+  <h1>Credit-to-Cash Outreach Generator</h1>
+  <span>Kashu Sales Tools</span>
+</header>
+
+<div class="layout">
+  <div class="sidebar">
+    <h2>Business Details</h2>
+
+    <div class="field-group">
+      <label>Business Name</label>
+      <input type="text" id="bizName" placeholder="e.g. Rivera Contractors LLC"/>
+    </div>
+    <div class="field-group">
+      <label>Contact First Name</label>
+      <input type="text" id="contactName" placeholder="e.g. Carlos"/>
+    </div>
+    <div class="field-group">
+      <label>Business Type</label>
+      <select id="niche" onchange="updateFields()">
+        <option value="contractor">Contractor / Construction</option>
+        <option value="restaurant">Restaurant / Food & Bev</option>
+        <option value="retail">Retail / Inventory Business</option>
+        <option value="realestate">Real Estate / Property</option>
+        <option value="franchise">Franchise Owner</option>
+        <option value="ecommerce">E-Commerce / Amazon Seller</option>
+        <option value="medical">Medical / Healthcare Practice</option>
+        <option value="trucking">Trucking / Logistics</option>
+        <option value="salon">Salon / Spa / Service</option>
+        <option value="startup">Startup / Growth-Stage Business</option>
+        <option value="other">Other Business</option>
+      </select>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Cash Need</div>
+
+    <div class="field-group">
+      <label>Estimated Available Credit</label>
+      <input type="number" id="availCredit" placeholder="e.g. 80000" oninput="livePreview()"/>
+    </div>
+    <div class="field-group">
+      <label>Primary Cash Need</label>
+      <select id="cashNeed">
+        <option value="vendors">Pay vendors / suppliers</option>
+        <option value="payroll">Cover payroll gap</option>
+        <option value="inventory">Fund inventory purchase</option>
+        <option value="downpayment">Down payment / deposit</option>
+        <option value="expansion">Fund business expansion</option>
+        <option value="equipment">Equipment purchase</option>
+        <option value="operations">Cover operating expenses</option>
+        <option value="general">General working capital</option>
+      </select>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Your Info</div>
+
+    <div class="field-group">
+      <label>Your Name</label>
+      <input type="text" id="repName" placeholder="e.g. John Polimeni"/>
+    </div>
+    <div class="field-group">
+      <label>Your Contact Info</label>
+      <input type="text" id="repContact" placeholder="phone or email"/>
+    </div>
+
+    <button class="generate-btn" onclick="generate()">Generate One-Pager + Pitch</button>
+  </div>
+
+  <div class="output-area" id="outputArea">
+    <div class="placeholder-msg">
+      <div class="pm-icon"></div>
+      <p>Fill in the business details and hit Generate.</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const NICHES = {
+  contractor: {
+    label: 'Contractor / Construction',
+    headline: (biz) => `${biz} has credit. Kashu moves it to cash -- before the job starts.`,
+    sub: 'Materials don\'t wait for your draw schedule. Kashu bridges the gap.',
+    pain: 'You win the bid, sign the contract, then wait -- for a draw, a deposit, a bank transfer that takes three days. Meanwhile, the supplier needs payment now or the lumber goes to someone else. You have the credit. You just can\'t touch it.',
+    points: [
+      { icon: '', title: 'Fund materials before the job starts', text: 'No more waiting on draws. Push your available credit to cash and pay suppliers on your timeline.' },
+      { icon: '', title: 'Same-day access', text: 'Kashu moves funds fast. You\'re not waiting three business days while a supplier sells your materials to the next guy.' },
+      { icon: '', title: 'Pay subcontractors on time', text: 'Keep your crew loyal. Cash flow gaps cost you your best people. Kashu fills the gap.' },
+      { icon: '', title: 'Take on more jobs', text: 'Capital constraints are the only thing stopping you from running three jobs instead of one.' },
+    ],
+    steps: [
+      { t: 'Connect your credit', d: 'Link your business credit card to the Kashu platform. Takes 5 minutes.' },
+      { t: 'Move funds', d: 'Push available credit to your bank, payroll tool, or directly to a vendor.' },
+      { t: 'Keep building', d: 'No delays, no drawn-out approval process. Your credit does what it was always supposed to do.' },
+    ],
+    close: 'Your credit line exists for moments like this. Kashu just makes it accessible.',
+    emailSubject: (biz) => `materials costs shouldn\'t wait for your draw at ${biz}`,
+    emailBody: (contact, biz, credit, cashNeed, rep, repContact) => {
+      const creditStr = credit ? `$${parseInt(credit).toLocaleString()}` : 'your available credit';
+      return `${contact},
+
+Quick observation from the outside.
+
+A lot of contractors are sitting on ${creditStr} in available business credit and can't touch it when it actually matters -- before the job starts, when the supplier needs payment, when the draw hasn't come in yet.
+
+Kashu moves that credit to cash. Bank account, payroll, vendor payment -- wherever it needs to go. The process is fast, and you stay in control of the timing.
+
+${cashNeed === 'vendors' ? 'If vendor timing is the issue, that\'s exactly where we see the most impact.' : cashNeed === 'payroll' ? 'If payroll gaps are the stress point, this fills that exact hole.' : 'If capital timing is holding jobs back, this is the fix.'}
+
+Worth a 10-minute conversation?
+
+-- ${rep}${repContact ? '\n' + repContact : ''}`;
+    }
+  },
+  restaurant: {
+    label: 'Restaurant / Food & Bev',
+    headline: (biz) => `${biz} runs on cash flow. Kashu makes sure you have it.`,
+    sub: 'Food costs, payroll, and vendors don\'t wait for a good week.',
+    pain: 'The distributor invoice is due Friday. Payroll runs Tuesday. A slow week doesn\'t change either of those dates. You\'ve built the credit -- you just can\'t access it when the pressure hits.',
+    points: [
+      { icon: '', title: 'Pay food distributors on time', text: 'Sysco, US Foods, local suppliers -- they all have terms. Kashu makes sure you meet them without borrowing from one problem to solve another.' },
+      { icon: '', title: 'Never miss payroll', text: 'Your kitchen runs on your team. A payroll gap ends relationships you spent years building. Kashu bridges the slow weeks.' },
+      { icon: '', title: 'Cover the deposit on the new location', text: 'You\'ve been thinking about location two. The down payment is real. Your credit can cover it -- Kashu moves it.' },
+      { icon: '', title: 'Access cash the same day', text: 'No bank approval waiting period. No loan officer. Your credit, converted fast.' },
+    ],
+    steps: [
+      { t: 'Connect your credit', d: 'Link your business credit card to Kashu. 5 minutes.' },
+      { t: 'Push to cash', d: 'Move funds directly to your bank, your payroll platform, or a vendor.' },
+      { t: 'Stay focused on the floor', d: 'The cash flow problem is solved. Run your restaurant.' },
+    ],
+    close: 'The best operators don\'t let cash flow be the ceiling. Kashu makes sure it isn\'t.',
+    emailSubject: (biz) => `slow week shouldn\'t mean a payroll problem at ${biz}`,
+    emailBody: (contact, biz, credit, cashNeed, rep, repContact) => {
+      const creditStr = credit ? `$${parseInt(credit).toLocaleString()}` : 'your available credit';
+      return `${contact},
+
+One thing I see consistently with restaurant owners: the credit is there, the cash isn\'t -- because the two don\'t talk to each other.
+
+You\'ve built ${creditStr} in available business credit. Kashu converts it to cash and moves it wherever it needs to go -- bank, payroll, distributor. Same day.
+
+Slow weeks happen. Your obligations don\'t adjust. Kashu makes sure your credit does.
+
+10 minutes?
+
+-- ${rep}${repContact ? '\n' + repContact : ''}`;
+    }
+  },
+  retail: {
+    label: 'Retail / Inventory Business',
+    headline: (biz) => `${biz} can\'t sell what it doesn\'t have. Kashu funds the inventory.`,
+    sub: 'Turn available credit into buying power -- before the supplier sells out.',
+    pain: 'The best deals go to buyers who can move fast. Your supplier has the inventory you need, but the wire needs to happen today. Your credit is sitting there -- you just can\'t convert it quickly enough to compete.',
+    points: [
+      { icon: '', title: 'Buy inventory before it\'s gone', text: 'Move credit to cash and pay suppliers the same day. The best margin opportunities don\'t wait.' },
+      { icon: '', title: 'Stock for the busy season', text: 'Q4 doesn\'t care whether your cash is tied up. Kashu makes sure your shelves aren\'t.' },
+      { icon: '', title: 'Same-day funding', text: 'Not 3-5 business days. When the deal is available, you move.' },
+      { icon: '', title: 'No new debt', text: 'You\'re not taking a loan. You\'re accessing credit you already have and already pay for.' },
+    ],
+    steps: [
+      { t: 'Connect your credit', d: 'Link your business credit card to the Kashu platform.' },
+      { t: 'Move funds to your bank or vendor', d: 'Push your available credit directly where it\'s needed.' },
+      { t: 'Restock, sell, repeat', d: 'Kashu removes the cash flow bottleneck from your buying cycle.' },
+    ],
+    close: 'The businesses that scale fastest are the ones that can act when inventory is available. Kashu gives you that capability.',
+    emailSubject: (biz) => `your best inventory deals require cash on hand -- does ${biz} have it?`,
+    emailBody: (contact, biz, credit, cashNeed, rep, repContact) => {
+      const creditStr = credit ? `$${parseInt(credit).toLocaleString()}` : 'your available credit';
+      return `${contact},
+
+The fastest-growing retail operators I work with have one thing in common: they can move on inventory the day it becomes available.
+
+You have ${creditStr} in business credit sitting on a card. Kashu converts it to cash and sends it wherever you need it -- supplier, bank account, platform -- same day.
+
+No loan, no approval wait, no giving up equity. Just access to what you already have.
+
+If inventory timing is what\'s limiting your buying power, I\'d like to show you how this works.
+
+-- ${rep}${repContact ? '\n' + repContact : ''}`;
+    }
+  },
+  realestate: {
+    label: 'Real Estate / Property',
+    headline: (biz) => `${biz}: the deal is ready. Is the down payment?`,
+    sub: 'Available credit doesn\'t close deals. Cash does. Kashu is the bridge.',
+    pain: 'The property is right. The numbers work. But the down payment, the earnest money, the renovation deposit -- those need to be wired in days, not weeks. Your credit line is large enough. Your liquid cash isn\'t.',
+    points: [
+      { icon: '', title: 'Fund down payments fast', text: 'Move available business credit to cash and fund the deposit before someone else does.' },
+      { icon: '', title: 'Cover renovation costs', text: 'Contractors need deposits. Suppliers need payment. Kashu keeps your projects moving without a capital crunch.' },
+      { icon: '', title: 'Act on deals the same day', text: 'Real estate rewards decisive action. Kashu gives you the liquidity to move fast.' },
+      { icon: '', title: 'Bridge between deals', text: 'Capital tied up in a closing? Kashu lets you use your credit to bridge into the next opportunity.' },
+    ],
+    steps: [
+      { t: 'Connect your business credit', d: 'Link your credit card to Kashu. Five minutes.' },
+      { t: 'Convert to cash', d: 'Move funds to your bank account, title company, or contractor.' },
+      { t: 'Close the deal', d: 'Your credit works for you on deal day, not just application day.' },
+    ],
+    close: 'Every deal you\'ve had to pass on because cash wasn\'t available -- that\'s the problem Kashu solves.',
+    emailSubject: (biz) => `the deal won\'t wait for ${biz}\'s cash to move`,
+    emailBody: (contact, biz, credit, cashNeed, rep, repContact) => {
+      const creditStr = credit ? `$${parseInt(credit).toLocaleString()}` : 'your available credit';
+      return `${contact},
+
+Real estate is a timing game. The operators who win are the ones who can fund fast.
+
+You have ${creditStr} in available business credit. Kashu converts it to cash -- bank account, title company, contractor, wherever it needs to go -- same day.
+
+No lengthy approval. No new debt facility. Just access to what you already have, when you need it.
+
+If timing has ever cost you a deal, I\'d like to show you this.
+
+-- ${rep}${repContact ? '\n' + repContact : ''}`;
+    }
+  },
+  franchise: {
+    label: 'Franchise Owner',
+    headline: (biz) => `${biz}: royalties, supplies, payroll. Kashu keeps all three on time.`,
+    sub: 'Franchise obligations don\'t flex. Your cash flow shouldn\'t have to either.',
+    pain: 'Royalties are due whether revenue is up or down. Your franchisor expects inventory orders on their schedule. Payroll doesn\'t know it was a slow quarter. You\'ve built credit to handle exactly these moments -- Kashu makes it accessible.',
+    points: [
+      { icon: '', title: 'Never miss a royalty payment', text: 'Late royalties risk your franchise agreement. Kashu makes sure available credit covers the gap before it becomes a problem.' },
+      { icon: '', title: 'Fund required inventory orders', text: 'Franchise supply requirements don\'t flex. Your purchasing power needs to match. Kashu bridges it.' },
+      { icon: '', title: 'Cover the second location deposit', text: 'You\'re thinking about expanding. The franchise fee and deposit are real. Your credit can fund it.' },
+      { icon: '', title: 'Cash in hours, not days', text: 'Same-day access. No loan paperwork. No bank waiting period.' },
+    ],
+    steps: [
+      { t: 'Connect your credit', d: 'Link your business credit card to Kashu.' },
+      { t: 'Move to cash', d: 'Fund royalties, payroll, inventory, or your expansion deposit.' },
+      { t: 'Stay compliant, stay growing', d: 'Never let a cash flow gap put your franchise at risk.' },
+    ],
+    close: 'You built this franchise. Cash flow timing shouldn\'t be what holds the second unit back.',
+    emailSubject: (biz) => `franchise obligations don\'t wait -- does ${biz}\'s cash flow?`,
+    emailBody: (contact, biz, credit, cashNeed, rep, repContact) => {
+      const creditStr = credit ? `$${parseInt(credit).toLocaleString()}` : 'your available credit';
+      return `${contact},
+
+Franchise owners I work with have a consistent pressure point: the obligations are fixed, but the cash flow isn\'t.
+
+Royalties, inventory orders, payroll -- all due on a schedule that doesn\'t know about your slow months.
+
+You have ${creditStr} in available business credit. Kashu moves it to cash the same day -- wherever it needs to go.
+
+If you\'re ever bridging between a slow week and a payment due, this is the cleanest solution I\'ve seen.
+
+10 minutes?
+
+-- ${rep}${repContact ? '\n' + repContact : ''}`;
+    }
+  },
+  ecommerce: {
+    label: 'E-Commerce / Amazon Seller',
+    headline: (biz) => `${biz}: inventory capital shouldn\'t be the ceiling on your growth.`,
+    sub: 'The best sellers move fast on inventory. Kashu makes sure you can.',
+    pain: 'Your Amazon dashboard shows the velocity. The supplier needs a wire tomorrow. Your cash is tied up in transit inventory or sitting in a payout cycle. You have the credit -- the timing just never lines up.',
+    points: [
+      { icon: '', title: 'Fund inventory before the wire deadline', text: 'Supplier payment due today, payout not for three days? Kashu converts your credit to cash and sends the wire.' },
+      { icon: '', title: 'Scale into peak season', text: 'Q4 inventory needs to be ordered in September. Kashu makes sure capital timing doesn\'t limit your buy.' },
+      { icon: '', title: 'No merchant cash advance, no equity', text: 'MCA rates will eat your margin. Kashu is a cleaner solution -- you\'re using credit you already have.' },
+      { icon: '', title: 'Move fast when a deal appears', text: 'Liquidation deals, bulk discounts, supplier overstock -- they go to whoever can wire first.' },
+    ],
+    steps: [
+      { t: 'Connect your business credit', d: 'Link to Kashu\'s platform in minutes.' },
+      { t: 'Convert to cash', d: 'Push funds to your bank or directly to your supplier.' },
+      { t: 'Buy inventory, grow rank', d: 'Cash flow timing stops being the bottleneck on your growth.' },
+    ],
+    close: 'The sellers who scale fastest aren\'t smarter -- they just have access to capital when it matters. Kashu is how you get there.',
+    emailSubject: (biz) => `inventory capital timing shouldn\'t limit ${biz}\'s growth',`,
+    emailBody: (contact, biz, credit, cashNeed, rep, repContact) => {
+      const creditStr = credit ? `$${parseInt(credit).toLocaleString()}` : 'your available credit';
+      return `${contact},
+
+E-commerce growth is an inventory problem. The sellers I see scale fastest are the ones who can move on inventory the day the opportunity is there.
+
+You have ${creditStr} in available business credit. Kashu converts it to cash and sends it to your bank or supplier -- same day, no approval delay, no MCA rates eating your margin.
+
+If payout timing or inventory capital is limiting your buy volume, this is worth 10 minutes.
+
+-- ${rep}${repContact ? '\n' + repContact : ''}`;
+    }
+  },
+  medical: {
+    label: 'Medical / Healthcare Practice',
+    headline: (biz) => `${biz}: equipment, payroll, and supplies shouldn\'t wait on insurance reimbursements.`,
+    sub: 'Reimbursement cycles are slow. Business obligations aren\'t. Kashu bridges it.',
+    pain: 'The insurance reimbursement takes 45-90 days. Your equipment lease payment, your staff payroll, and your supply order don\'t wait. You\'ve built credit for exactly this situation -- Kashu makes it liquid.',
+    points: [
+      { icon: '', title: 'Bridge the reimbursement gap', text: 'Insurance cycles are long. Kashu converts your available credit to cash to cover obligations while you wait.' },
+      { icon: '', title: 'Fund equipment now', text: 'New equipment generates revenue immediately. The financing shouldn\'t be the bottleneck.' },
+      { icon: '', title: 'Cover payroll during slow billing cycles', text: 'Your staff is your practice. Kashu makes sure a billing delay never becomes their problem.' },
+      { icon: '', title: 'Same-day access to available credit', text: 'Fast, secure, and built for business use. No long approval process.' },
+    ],
+    steps: [
+      { t: 'Connect your credit', d: 'Link your business credit card to Kashu.' },
+      { t: 'Push to your bank or vendor', d: 'Cover the gap between service delivery and reimbursement.' },
+      { t: 'Stay focused on patients', d: 'Cash flow pressure is removed. Run the practice.' },
+    ],
+    close: 'You built a practice that serves people well. Don\'t let reimbursement timing be what limits it.',
+    emailSubject: (biz) => `insurance reimbursements are slow. ${biz}\'s obligations aren\'t.`,
+    emailBody: (contact, biz, credit, cashNeed, rep, repContact) => {
+      const creditStr = credit ? `$${parseInt(credit).toLocaleString()}` : 'your available credit';
+      return `${contact},
+
+Healthcare practices have a structural problem: you deliver the service, then wait 45-90 days for reimbursement. Everything else -- payroll, supplies, equipment -- is due on a much shorter timeline.
+
+You have ${creditStr} in available business credit. Kashu converts it to cash and moves it to your bank the same day. Bridge the reimbursement gap without taking on new debt.
+
+If billing cycle timing is the stress point, this is the cleanest solution.
+
+-- ${rep}${repContact ? '\n' + repContact : ''}`;
+    }
+  },
+  trucking: {
+    label: 'Trucking / Logistics',
+    headline: (biz) => `${biz}: fuel, repairs, and driver pay can\'t wait on freight payment cycles.`,
+    sub: 'Freight pays in 30-90 days. The truck needs fuel today. Kashu bridges it.',
+    pain: 'The load pays out in 45 days. Fuel, repairs, insurance, and driver settlements are due this week. You\'ve got available credit and a factoring rate that\'s eating your margin. Kashu is the cleaner bridge.',
+    points: [
+      { icon: '', title: 'Fund fuel before the load pays', text: 'Don\'t let a 45-day freight cycle mean empty tanks. Convert available credit to cash and keep the truck rolling.' },
+      { icon: '', title: 'Cover repairs the day they happen', text: 'A broken truck is a lost load. Kashu means you can get it fixed the same day without factoring.' },
+      { icon: '', title: 'Pay drivers on time, every time', text: 'Your drivers go where the pay is reliable. Kashu makes sure you\'re always that carrier.' },
+      { icon: '', title: 'Ditch the factoring company', text: 'Factoring takes 2-4% off every invoice. Kashu doesn\'t. Use your credit instead.' },
+    ],
+    steps: [
+      { t: 'Connect your credit', d: 'Link your business credit to Kashu.' },
+      { t: 'Convert to cash', d: 'Move funds to your bank, fleet card, or driver pay platform.' },
+      { t: 'Keep the wheels moving', d: 'Freight timing stops being the bottleneck on your operation.' },
+    ],
+    close: 'The carriers that grow are the ones that never have a truck sitting because of a cash flow problem. Kashu is how you become one.',
+    emailSubject: (biz) => `freight pays in 45 days. ${biz}\'s fuel bill doesn\'t.`,
+    emailBody: (contact, biz, credit, cashNeed, rep, repContact) => {
+      const creditStr = credit ? `$${parseInt(credit).toLocaleString()}` : 'your available credit';
+      return `${contact},
+
+Trucking has a cash flow problem built into the model: freight pays in 30-90 days, everything else is due this week.
+
+Factoring fixes the timing but costs 2-4% off every invoice. You have ${creditStr} in available business credit. Kashu converts it to cash and moves it to your bank the same day -- no factoring fee, no approval delay.
+
+If you\'re factoring just to cover fuel and driver pay between load payments, I\'d like to show you a cleaner way.
+
+-- ${rep}${repContact ? '\n' + repContact : ''}`;
+    }
+  },
+  salon: {
+    label: 'Salon / Spa / Service',
+    headline: (biz) => `${biz}: product costs and payroll shouldn\'t be a weekly stress.`,
+    sub: 'Your clients love you. Your suppliers and staff need to be paid on time.',
+    pain: 'Product orders come in weekly. Booth renters pay when they pay. Payroll runs Friday. The math doesn\'t always line up. You\'ve got available credit -- it just isn\'t liquid when you need it.',
+    points: [
+      { icon: '', title: 'Pay product vendors on time', text: 'Backorders and supply gaps hurt your client experience. Kashu keeps your product orders funded.' },
+      { icon: '', title: 'Never miss staff payroll', text: 'Your best stylists have options. Being reliable on pay is what keeps them.' },
+      { icon: '', title: 'Cover the equipment lease', text: 'New chairs, new stations, equipment upgrades -- Kashu makes your available credit work for the build-out.' },
+      { icon: '', title: 'Fast, simple, secure', text: 'Move credit to cash the same day. No loan, no interest rate surprise, no banker.' },
+    ],
+    steps: [
+      { t: 'Connect your credit', d: 'Link your business credit card to Kashu.' },
+      { t: 'Push funds where needed', d: 'Bank account, payroll platform, vendor payment.' },
+      { t: 'Run your salon', d: 'Cash flow stops being a weekly decision.' },
+    ],
+    close: 'You\'ve built something your clients come back to. Don\'t let a cash flow gap be the thing that disrupts it.',
+    emailSubject: (biz) => `product costs and payroll shouldn\'t be a weekly math problem at ${biz}`,
+    emailBody: (contact, biz, credit, cashNeed, rep, repContact) => {
+      const creditStr = credit ? `$${parseInt(credit).toLocaleString()}` : 'your available credit';
+      return `${contact},
+
+Salon owners I work with consistently deal with the same tension: weekly product costs, booth rent that comes in when it comes in, and payroll that runs on a fixed schedule.
+
+You have ${creditStr} in available business credit. Kashu converts it to cash and moves it where it needs to go -- vendor, payroll, bank -- same day.
+
+If cash flow timing is the weekly stress, this removes it.
+
+-- ${rep}${repContact ? '\n' + repContact : ''}`;
+    }
+  },
+  startup: {
+    label: 'Startup / Growth-Stage Business',
+    headline: (biz) => `${biz}: growth doesn\'t wait for runway to replenish. Kashu makes sure it doesn\'t have to.`,
+    sub: 'You\'ve built credit. Now make it work as hard as you do.',
+    pain: 'Payroll is the deadline that doesn\'t move. A vendor needs a deposit before the project starts. A big opportunity needs a fast deposit. Your funding round isn\'t closed yet. Kashu gives you access to the credit you\'ve already built.',
+    points: [
+      { icon: '', title: 'Bridge between funding rounds', text: 'Runway gaps happen. Kashu converts available credit to cash to cover obligations while the next round closes.' },
+      { icon: '', title: 'Make payroll on time, always', text: 'Your team stays because they trust you. Kashu makes sure a slow month never changes that.' },
+      { icon: '', title: 'Move on opportunities the same day', text: 'A big customer needs a deposit for a pilot? A vendor wants payment before the build starts? Kashu removes the cash delay.' },
+      { icon: '', title: 'No equity, no MCA', text: 'You\'re not giving up a percentage of the company or paying 40% MCA rates. Use credit you already have.' },
+    ],
+    steps: [
+      { t: 'Connect your business credit', d: 'Link to Kashu in minutes.' },
+      { t: 'Convert to cash', d: 'Move to your bank, payroll platform, or vendor.' },
+      { t: 'Keep building', d: 'Cash flow timing is removed from your list of things to manage.' },
+    ],
+    close: 'The best-run startups treat cash flow as a system, not a crisis. Kashu is part of that system.',
+    emailSubject: (biz) => `${biz} shouldn\'t let payroll timing slow down what you\'re building`,
+    emailBody: (contact, biz, credit, cashNeed, rep, repContact) => {
+      const creditStr = credit ? `$${parseInt(credit).toLocaleString()}` : 'your available credit';
+      return `${contact},
+
+Early-stage operators deal with a consistent tension: obligations are fixed, cash flow is lumpy.
+
+You have ${creditStr} in available business credit. Kashu converts it to cash and moves it to your bank, payroll platform, or vendor -- same day. No equity, no MCA rates, no approval process.
+
+If cash flow timing is something you\'re managing manually right now, I\'d like to show you how this removes it.
+
+-- ${rep}${repContact ? '\n' + repContact : ''}`;
+    }
+  },
+  other: {
+    label: 'Business',
+    headline: (biz) => `${biz}: available credit should work when you need it. Kashu makes it.`,
+    sub: 'Turn your existing credit line into same-day working capital.',
+    pain: 'You have available business credit. But when the urgent expense hits -- a vendor payment, a payroll gap, an opportunity that needs funding -- that credit doesn\'t convert fast enough. Kashu solves that.',
+    points: [
+      { icon: '', title: 'Convert credit to cash, same day', text: 'Move your available credit to your bank account, payroll platform, or directly to a vendor.' },
+      { icon: '', title: 'Fast and frictionless', text: 'No bank approval waiting period. No loan paperwork. Access to what you already have.' },
+      { icon: '', title: 'Business purposes only', text: 'Pay vendors, cover payroll, fund inventory, make a down payment -- all legitimate business use cases.' },
+      { icon: '', title: 'No new debt', text: 'You\'re using credit that already exists. Kashu just makes it liquid when it needs to be.' },
+    ],
+    steps: [
+      { t: 'Connect your credit', d: 'Link your business credit card to the Kashu platform.' },
+      { t: 'Move funds', d: 'Push to your bank, payroll tool, or a vendor payment.' },
+      { t: 'Handle the need', d: 'Cash flow timing stops being the variable that holds things up.' },
+    ],
+    close: 'You built the credit. Kashu makes sure you can actually use it.',
+    emailSubject: (biz) => `your business credit should work when you need it at ${biz}`,
+    emailBody: (contact, biz, credit, cashNeed, rep, repContact) => {
+      const creditStr = credit ? `$${parseInt(credit).toLocaleString()}` : 'your available credit';
+      return `${contact},
+
+Here\'s a consistent problem I see with business owners: they\'ve built significant credit, but it\'s not accessible when an urgent need hits.
+
+You have ${creditStr} in available business credit. Kashu converts it to cash and sends it wherever it needs to go -- bank account, payroll, vendor -- the same day.
+
+No loan, no MCA rates, no approval delay. Just access to what you already have.
+
+Worth 10 minutes to see how it works?
+
+-- ${rep}${repContact ? '\n' + repContact : ''}`;
+    }
+  }
+};
+
+const CASH_NEEDS = {
+  vendors: 'pay vendors and suppliers on time',
+  payroll: 'cover payroll during slow periods',
+  inventory: 'fund inventory purchases',
+  downpayment: 'make a down payment or deposit',
+  expansion: 'fund a business expansion',
+  equipment: 'purchase equipment',
+  operations: 'cover operating expenses',
+  general: 'access working capital'
+};
+
+function updateFields() {}
+
+function generate() {
+  const biz = document.getElementById('bizName').value.trim() || 'Your Business';
+  const contact = document.getElementById('contactName').value.trim() || 'there';
+  const nicheKey = document.getElementById('niche').value;
+  const credit = document.getElementById('availCredit').value;
+  const cashNeedKey = document.getElementById('cashNeed').value;
+  const rep = document.getElementById('repName').value.trim() || 'Kashu';
+  const repContact = document.getElementById('repContact').value.trim();
+  const n = NICHES[nicheKey];
+
+  const creditStr = credit ? `$${parseInt(credit).toLocaleString()}` : null;
+
+  const html = `
+    <div class="onepager">
+      <div class="op-hero">
+        <div class="op-hero-left">
+          <div class="op-badge">Kashu Credit-to-Cash</div>
+          <h1>${n.headline(biz)}</h1>
+          <p class="op-sub">${n.sub}</p>
+        </div>
+        <div class="op-hero-right">
+          <div class="op-name">Prepared for</div>
+          <div class="op-company">${biz}</div>
+          ${creditStr ? `<div style="font-size:13px;color:var(--green);margin-top:6px;">Available Credit: ${creditStr}</div>` : ''}
+        </div>
+      </div>
+      <div class="op-body">
+        <div class="op-pain">
+          <div class="op-pain-label">The Problem</div>
+          <p>${n.pain}</p>
+        </div>
+        <div class="op-points-grid">
+          ${n.points.map(p => `<div class="op-point"><div class="opp-icon">${p.icon}</div><div class="opp-title">${p.title}</div><div class="opp-text">${p.text}</div></div>`).join('')}
+        </div>
+        <div class="op-how">
+          <h3>How It Works</h3>
+          <div class="op-steps">
+            ${n.steps.map((s, i) => `<div class="op-step"><div class="op-step-n">${i + 1}</div><div class="op-step-text"><strong>${s.t}</strong><span>${s.d}</span></div></div>`).join('')}
+          </div>
+        </div>
+        <div class="op-cta">
+          <p>${n.close}</p>
+          <div class="op-cta-contact">
+            <div class="cta-name">${rep}</div>
+            ${repContact ? `<div class="cta-info">${repContact}</div>` : ''}
+            <div class="cta-info" style="margin-top:4px;">kashupay.com</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="email-card">
+      <button class="copy-btn" onclick="copyEmail()">Copy Email</button>
+      <h3>Pitch Email</h3>
+      <div class="email-meta">
+        <div class="email-meta-item"><span>Subject</span><span id="emailSubject">${n.emailSubject(biz)}</span></div>
+        <div class="email-meta-item"><span>To</span><span>${contact} at ${biz}</span></div>
+      </div>
+      <div class="email-body" id="emailBody">${n.emailBody(contact, biz, credit, cashNeedKey, rep, repContact)}</div>
+    </div>
+
+    <div class="actions-row">
+      <button class="btn btn-primary" onclick="window.print()">Print One-Pager</button>
+      <button class="btn btn-outline" onclick="document.getElementById('outputArea').innerHTML = '<div class=placeholder-msg><div class=pm-icon></div><p>Fill in the business details and hit Generate.</p></div>'">Clear</button>
+    </div>
+  `;
+
+  document.getElementById('outputArea').innerHTML = html;
+}
+
+function copyEmail() {
+  const subj = document.getElementById('emailSubject').textContent;
+  const body = document.getElementById('emailBody').textContent;
+  const full = `Subject: ${subj}\n\n${body}`;
+  navigator.clipboard.writeText(full).then(() => showToast('Email copied.'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+</script>
+</body>
+</html>

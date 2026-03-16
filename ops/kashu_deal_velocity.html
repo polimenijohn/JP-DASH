@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deal Velocity Tracker — Kashu</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --dark-teal: #0b5147;
+    --mid-teal: #397168;
+    --muted: #93adaa;
+    --green: #01de8f;
+    --light-bg: #f4f9f8;
+    --white: #ffffff;
+    --text: #1a2e2b;
+    --border: #c8dbd8;
+    --red: #e05252;
+    --yellow: #f59e0b;
+    --yellow-bg: #fef3c7;
+    --green-bg: #d1fae5;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--light-bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--dark-teal);
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(11,81,71,0.18);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--green);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--dark-teal);
+    flex-shrink: 0;
+  }
+
+  .header-title {
+    color: var(--white);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .badge {
+    background: var(--green);
+    color: var(--dark-teal);
+    font-weight: 700;
+    font-size: 13px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .pipeline-value {
+    color: rgba(255,255,255,0.75);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .pipeline-value span {
+    color: var(--white);
+    font-weight: 600;
+  }
+
+  /* MAIN CONTENT */
+  .main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 28px 32px 60px;
+  }
+
+  /* STALLED ALERT */
+  .stalled-alert {
+    background: #fef2f2;
+    border: 1.5px solid var(--red);
+    border-radius: 10px;
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .stalled-alert:hover { background: #fee2e2; }
+
+  .stalled-alert-text {
+    color: var(--red);
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .stalled-alert-cta {
+    font-size: 13px;
+    color: var(--red);
+    font-weight: 500;
+    text-decoration: underline;
+  }
+
+  /* STAGE SUMMARY */
+  .stage-summary {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stage-card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: box-shadow 0.15s, border-color 0.15s;
+  }
+
+  .stage-card:hover {
+    box-shadow: 0 3px 12px rgba(11,81,71,0.1);
+    border-color: var(--mid-teal);
+  }
+
+  .stage-card.active-filter {
+    border-color: var(--dark-teal);
+    box-shadow: 0 0 0 2px rgba(11,81,71,0.15);
+  }
+
+  .stage-card-name {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+
+  .stage-card-count {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stage-card-volume {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  /* Stage card color progression */
+  .stage-0 { --stage-color: #c8dbd8; }
+  .stage-1 { --stage-color: #93adaa; }
+  .stage-2 { --stage-color: #397168; }
+  .stage-3 { --stage-color: #0b5147; }
+  .stage-4 { --stage-color: #019a63; }
+  .stage-5 { --stage-color: #01de8f; }
+
+  .stage-card .stage-card-name { color: var(--stage-color); }
+  .stage-card .stage-card-count { color: var(--stage-color); }
+
+  /* CONTROLS */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    flex-wrap: wrap;
+  }
+
+  select, input[type="text"] {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+    height: 38px;
+  }
+
+  select:focus, input[type="text"]:focus {
+    border-color: var(--mid-teal);
+  }
+
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0 18px;
+    height: 38px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-primary {
+    background: var(--dark-teal);
+    color: var(--white);
+  }
+
+  .btn-primary:hover { background: var(--mid-teal); }
+
+  .btn-outline {
+    background: var(--white);
+    color: var(--dark-teal);
+    border: 1.5px solid var(--border);
+  }
+
+  .btn-outline:hover {
+    border-color: var(--dark-teal);
+    background: var(--light-bg);
+  }
+
+  .btn-stalled {
+    background: #fef2f2;
+    color: var(--red);
+    border: 1.5px solid #fca5a5;
+  }
+
+  .btn-stalled.active {
+    background: var(--red);
+    color: var(--white);
+  }
+
+  /* TABLE */
+  .table-wrapper {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead {
+    background: var(--light-bg);
+    border-bottom: 1.5px solid var(--border);
+  }
+
+  th {
+    padding: 11px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--mid-teal);
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    transition: color 0.15s;
+  }
+
+  th:hover { color: var(--dark-teal); }
+
+  th .sort-icon {
+    display: inline-block;
+    margin-left: 4px;
+    opacity: 0.4;
+    font-size: 10px;
+  }
+
+  th.sort-asc .sort-icon::after { content: ' \2191'; opacity: 1; }
+  th.sort-desc .sort-icon::after { content: ' \2193'; opacity: 1; }
+  th:not(.sort-asc):not(.sort-desc) .sort-icon::after { content: ' \2195'; }
+
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tr:hover td { background: #f0faf8; }
+
+  .biz-name {
+    font-weight: 600;
+    color: var(--dark-teal);
+    font-size: 14px;
+  }
+
+  .contact-name { color: var(--text); }
+  .contact-phone { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .volume-cell {
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  /* Stage badge */
+  .stage-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .stage-badge-0 { background: #e8f0ef; color: #4a7a74; }
+  .stage-badge-1 { background: #d4e5e2; color: #2d6059; }
+  .stage-badge-2 { background: #b8d4d0; color: #1e504a; }
+  .stage-badge-3 { background: #0b5147; color: var(--white); }
+  .stage-badge-4 { background: #019a63; color: var(--white); }
+  .stage-badge-5 { background: var(--green); color: var(--dark-teal); }
+
+  /* Days in stage */
+  .days-cell {
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 6px;
+    padding: 4px 8px;
+  }
+
+  .days-green { background: #d1fae5; color: #065f46; }
+  .days-yellow { background: var(--yellow-bg); color: #92400e; }
+  .days-red { background: #fef2f2; color: var(--red); }
+
+  .stalled-badge {
+    display: inline-block;
+    background: var(--red);
+    color: var(--white);
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  /* Next action cell */
+  .next-action-cell {
+    max-width: 160px;
+  }
+
+  .next-action-input {
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    padding: 4px 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    background: transparent;
+    transition: all 0.15s;
+    outline: none;
+  }
+
+  .next-action-input:hover {
+    border-color: var(--border);
+    background: var(--light-bg);
+  }
+
+  .next-action-input:focus {
+    border-color: var(--mid-teal);
+    background: var(--white);
+    box-shadow: 0 0 0 2px rgba(57,113,104,0.1);
+  }
+
+  /* Action buttons */
+  .action-cell {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .btn-sm {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    background: var(--white);
+    color: var(--dark-teal);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn-sm:hover {
+    background: var(--light-bg);
+    border-color: var(--mid-teal);
+  }
+
+  .btn-sm-green {
+    background: #d1fae5;
+    border-color: #6ee7b7;
+    color: #065f46;
+  }
+
+  .btn-sm-green:hover {
+    background: #a7f3d0;
+    border-color: #34d399;
+  }
+
+  .btn-sm-red {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: var(--red);
+  }
+
+  .btn-sm-red:hover {
+    background: #fee2e2;
+    border-color: var(--red);
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 72px 32px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .empty-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--light-bg);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+  }
+
+  .empty-icon svg { opacity: 0.4; }
+
+  .empty-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--dark-teal);
+    margin-bottom: 8px;
+  }
+
+  .empty-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    max-width: 340px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* SLIDE-IN PANEL */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(11,81,71,0.35);
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+
+  .overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 480px;
+    height: 100vh;
+    background: var(--white);
+    z-index: 201;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -4px 0 32px rgba(11,81,71,0.12);
+  }
+
+  .panel.open { transform: translateX(0); }
+
+  .panel-header {
+    padding: 24px 28px 20px;
+    border-bottom: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .panel-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--dark-teal);
+  }
+
+  .panel-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+
+  .panel-close:hover {
+    border-color: var(--red);
+    color: var(--red);
+    background: #fef2f2;
+  }
+
+  .panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--mid-teal);
+    margin-bottom: 6px;
+  }
+
+  .form-input {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .form-input:focus { border-color: var(--mid-teal); box-shadow: 0 0 0 3px rgba(57,113,104,0.1); }
+
+  .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .panel-footer {
+    padding: 20px 28px;
+    border-top: 1.5px solid var(--border);
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .btn-full { flex: 1; justify-content: center; }
+
+  /* Tooltip */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-wrap .tooltip-box {
+    visibility: hidden;
+    opacity: 0;
+    background: var(--dark-teal);
+    color: var(--white);
+    font-size: 11px;
+    padding: 5px 9px;
+    border-radius: 6px;
+    white-space: nowrap;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    transition: opacity 0.15s;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .tooltip-wrap:hover .tooltip-box { visibility: visible; opacity: 1; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  @media (max-width: 900px) {
+    .stage-summary { grid-template-columns: repeat(3, 1fr); }
+    .panel { width: 100%; }
+    .main { padding: 20px 16px; }
+    .header { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo-mark">K</div>
+    <span class="header-title">Deal Velocity Tracker</span>
+    <span class="badge" id="active-count-badge">0 Active Deals</span>
+  </div>
+  <div class="header-right">
+    <span class="pipeline-value">Pipeline: <span id="pipeline-total">$0</span></span>
+    <button class="btn btn-outline" onclick="exportCSV()" style="color:#fff;border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.08);">Export CSV</button>
+    <button class="btn btn-primary" style="background:var(--green);color:var(--dark-teal);" onclick="openPanel()">+ Add Deal</button>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- STALLED ALERT -->
+  <div class="stalled-alert" id="stalled-alert" style="display:none;" onclick="toggleStalledFilter()">
+    <span class="stalled-alert-text" id="stalled-alert-text"></span>
+    <span class="stalled-alert-cta" id="stalled-alert-cta">Show stalled deals</span>
+  </div>
+
+  <!-- STAGE SUMMARY -->
+  <div class="stage-summary" id="stage-summary"></div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="filter-group">
+      <select id="filter-stage" onchange="applyFilters()">
+        <option value="">All Stages</option>
+        <option value="0">New Lead</option>
+        <option value="1">Statement Requested</option>
+        <option value="2">Proposal Sent</option>
+        <option value="3">Application Out</option>
+        <option value="4">Approved — Pending Live</option>
+        <option value="5">Live</option>
+      </select>
+      <input type="text" id="filter-rep" placeholder="Filter by rep..." oninput="applyFilters()" style="width:160px;">
+      <button class="btn btn-stalled" id="stalled-filter-btn" onclick="toggleStalledFilter()">Stalled Only</button>
+    </div>
+    <button class="btn btn-outline" onclick="clearAllFilters()">Clear Filters</button>
+  </div>
+
+  <!-- TABLE / EMPTY STATE -->
+  <div id="table-container"></div>
+
+</main>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+
+<!-- SLIDE-IN PANEL -->
+<div class="panel" id="panel">
+  <div class="panel-header">
+    <span class="panel-title" id="panel-title">Add Deal</span>
+    <button class="panel-close" onclick="closePanel()">&#x2715;</button>
+  </div>
+  <div class="panel-body">
+    <input type="hidden" id="edit-id">
+    <div class="form-grid-2">
+      <div class="form-group" style="grid-column:1/-1">
+        <label class="form-label">Business Name</label>
+        <input class="form-input" type="text" id="f-biz" placeholder="Acme Restaurant Group">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contact Name</label>
+        <input class="form-input" type="text" id="f-contact" placeholder="Jane Smith">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone</label>
+        <input class="form-input" type="text" id="f-phone" placeholder="602-555-0100">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Monthly Processing Volume ($)</label>
+        <input class="form-input" type="number" id="f-volume" placeholder="50000" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Transaction Type</label>
+        <select class="form-input" id="f-type">
+          <option value="In-Person">In-Person</option>
+          <option value="Online">Online</option>
+          <option value="Surcharge">Surcharge</option>
+          <option value="ACH">ACH</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Current Stage</label>
+        <select class="form-input" id="f-stage">
+          <option value="0">New Lead</option>
+          <option value="1">Statement Requested</option>
+          <option value="2">Proposal Sent</option>
+          <option value="3">Application Out</option>
+          <option value="4">Approved — Pending Live</option>
+          <option value="5">Live</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date Entered Current Stage</label>
+        <input class="form-input" type="date" id="f-stage-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Assigned To</label>
+        <input class="form-input" type="text" id="f-rep" placeholder="Rep name">
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label class="form-label">Notes</label>
+        <textarea class="form-input" id="f-notes" rows="3" placeholder="Context, next steps, anything relevant..."></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="panel-footer">
+    <button class="btn btn-outline btn-full" onclick="closePanel()">Cancel</button>
+    <button class="btn btn-primary btn-full" onclick="saveDeal()">Save Deal</button>
+  </div>
+</div>
+
+<script>
+const STAGES = ['New Lead','Statement Requested','Proposal Sent','Application Out','Approved — Pending Live','Live'];
+const STAGE_COLORS = ['stage-badge-0','stage-badge-1','stage-badge-2','stage-badge-3','stage-badge-4','stage-badge-5'];
+const LS_KEY = 'kashu_deals_v2';
+
+let deals = [];
+let sortCol = 'stageDate';
+let sortDir = 'asc';
+let filterStage = '';
+let filterRep = '';
+let filterStalled = false;
+let editingId = null;
+
+/* ---- STORAGE ---- */
+function load() {
+  try { deals = JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch(e) { deals = []; }
+}
+function save() {
+  localStorage.setItem(LS_KEY, JSON.stringify(deals));
+}
+
+/* ---- UTILS ---- */
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+function today() { return new Date().toISOString().slice(0,10); }
+function daysBetween(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  d.setHours(0,0,0,0);
+  return Math.floor((now - d) / 86400000);
+}
+function fmtMoney(n) {
+  if (!n && n !== 0) return '—';
+  if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return '$' + (n/1000).toFixed(0) + 'K';
+  return '$' + Number(n).toLocaleString();
+}
+function fmtMoneyFull(n) {
+  return '$' + Number(n||0).toLocaleString();
+}
+
+/* ---- PANEL ---- */
+function openPanel(id) {
+  editingId = id || null;
+  document.getElementById('panel-title').textContent = id ? 'Edit Deal' : 'Add Deal';
+  if (id) {
+    const d = deals.find(x => x.id === id);
+    if (!d) return;
+    document.getElementById('f-biz').value = d.biz || '';
+    document.getElementById('f-contact').value = d.contact || '';
+    document.getElementById('f-phone').value = d.phone || '';
+    document.getElementById('f-volume').value = d.volume || '';
+    document.getElementById('f-stage').value = d.stage ?? 0;
+    document.getElementById('f-stage-date').value = d.stageDate || today();
+    document.getElementById('f-type').value = d.txType || 'In-Person';
+    document.getElementById('f-notes').value = d.notes || '';
+    document.getElementById('f-rep').value = d.rep || '';
+  } else {
+    document.getElementById('f-biz').value = '';
+    document.getElementById('f-contact').value = '';
+    document.getElementById('f-phone').value = '';
+    document.getElementById('f-volume').value = '';
+    document.getElementById('f-stage').value = 0;
+    document.getElementById('f-stage-date').value = today();
+    document.getElementById('f-type').value = 'In-Person';
+    document.getElementById('f-notes').value = '';
+    document.getElementById('f-rep').value = '';
+  }
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('f-biz').focus();
+}
+
+function closePanel() {
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('panel').classList.remove('open');
+  editingId = null;
+}
+
+function saveDeal() {
+  const biz = document.getElementById('f-biz').value.trim();
+  if (!biz) { document.getElementById('f-biz').focus(); return; }
+  const deal = {
+    id: editingId || uid(),
+    biz,
+    contact: document.getElementById('f-contact').value.trim(),
+    phone: document.getElementById('f-phone').value.trim(),
+    volume: parseFloat(document.getElementById('f-volume').value) || 0,
+    stage: parseInt(document.getElementById('f-stage').value),
+    stageDate: document.getElementById('f-stage-date').value || today(),
+    txType: document.getElementById('f-type').value,
+    notes: document.getElementById('f-notes').value.trim(),
+    rep: document.getElementById('f-rep').value.trim(),
+    nextAction: editingId ? (deals.find(x => x.id === editingId)?.nextAction || '') : ''
+  };
+  if (editingId) {
+    const idx = deals.findIndex(x => x.id === editingId);
+    if (idx >= 0) deals[idx] = deal;
+  } else {
+    deals.unshift(deal);
+  }
+  save();
+  closePanel();
+  render();
+}
+
+function deleteDeal(id) {
+  if (!confirm('Delete this deal?')) return;
+  deals = deals.filter(x => x.id !== id);
+  save();
+  render();
+}
+
+function moveStage(id) {
+  const d = deals.find(x => x.id === id);
+  if (!d || d.stage >= 5) return;
+  d.stage += 1;
+  d.stageDate = today();
+  save();
+  render();
+}
+
+function updateNextAction(id, val) {
+  const d = deals.find(x => x.id === id);
+  if (d) { d.nextAction = val; save(); }
+}
+
+/* ---- FILTERS / SORT ---- */
+function applyFilters() {
+  filterStage = document.getElementById('filter-stage').value;
+  filterRep = document.getElementById('filter-rep').value.trim().toLowerCase();
+  render();
+}
+
+function toggleStalledFilter() {
+  filterStalled = !filterStalled;
+  document.getElementById('stalled-filter-btn').classList.toggle('active', filterStalled);
+  const cta = document.getElementById('stalled-alert-cta');
+  if (cta) cta.textContent = filterStalled ? 'Show all deals' : 'Show stalled deals';
+  render();
+}
+
+function clearAllFilters() {
+  filterStage = '';
+  filterRep = '';
+  filterStalled = false;
+  document.getElementById('filter-stage').value = '';
+  document.getElementById('filter-rep').value = '';
+  document.getElementById('stalled-filter-btn').classList.remove('active');
+  render();
+}
+
+function setSort(col) {
+  if (sortCol === col) { sortDir = sortDir === 'asc' ? 'desc' : 'asc'; }
+  else { sortCol = col; sortDir = 'asc'; }
+  render();
+}
+
+function getFilteredSorted() {
+  let list = [...deals];
+  if (filterStage !== '') list = list.filter(d => d.stage === parseInt(filterStage));
+  if (filterRep) list = list.filter(d => (d.rep||'').toLowerCase().includes(filterRep));
+  if (filterStalled) list = list.filter(d => daysBetween(d.stageDate) >= 14);
+  list.sort((a, b) => {
+    let av, bv;
+    if (sortCol === 'biz') { av = a.biz.toLowerCase(); bv = b.biz.toLowerCase(); }
+    else if (sortCol === 'contact') { av = (a.contact||'').toLowerCase(); bv = (b.contact||'').toLowerCase(); }
+    else if (sortCol === 'volume') { av = a.volume || 0; bv = b.volume || 0; }
+    else if (sortCol === 'stage') { av = a.stage; bv = b.stage; }
+    else if (sortCol === 'days') { av = daysBetween(a.stageDate); bv = daysBetween(b.stageDate); }
+    else if (sortCol === 'rep') { av = (a.rep||'').toLowerCase(); bv = (b.rep||'').toLowerCase(); }
+    else { av = a.stageDate; bv = b.stageDate; }
+    if (av < bv) return sortDir === 'asc' ? -1 : 1;
+    if (av > bv) return sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  return list;
+}
+
+/* ---- STAGE FILTER from card ---- */
+function filterByStage(idx) {
+  const val = String(idx);
+  if (filterStage === val) {
+    filterStage = '';
+    document.getElementById('filter-stage').value = '';
+  } else {
+    filterStage = val;
+    document.getElementById('filter-stage').value = val;
+  }
+  render();
+}
+
+/* ---- RENDER ---- */
+function render() {
+  // Header stats
+  const totalVol = deals.reduce((s, d) => s + (d.volume||0), 0);
+  document.getElementById('active-count-badge').textContent = deals.length + ' Active Deal' + (deals.length !== 1 ? 's' : '');
+  document.getElementById('pipeline-total').textContent = fmtMoneyFull(totalVol);
+
+  // Stalled alert
+  const stalledDeals = deals.filter(d => daysBetween(d.stageDate) >= 14);
+  const alertEl = document.getElementById('stalled-alert');
+  if (stalledDeals.length > 0) {
+    alertEl.style.display = 'flex';
+    document.getElementById('stalled-alert-text').textContent = stalledDeals.length + ' deal' + (stalledDeals.length > 1 ? 's' : '') + ' need attention — stalled 14+ days';
+    document.getElementById('stalled-alert-cta').textContent = filterStalled ? 'Show all deals' : 'Show stalled deals';
+  } else {
+    alertEl.style.display = 'none';
+  }
+
+  // Stage summary
+  const summaryEl = document.getElementById('stage-summary');
+  summaryEl.innerHTML = STAGES.map((name, i) => {
+    const stageDeals = deals.filter(d => d.stage === i);
+    const stageVol = stageDeals.reduce((s, d) => s + (d.volume||0), 0);
+    const isActive = filterStage === String(i);
+    return `<div class="stage-card stage-${i} ${isActive ? 'active-filter' : ''}" onclick="filterByStage(${i})">
+      <div class="stage-card-name">${name}</div>
+      <div class="stage-card-count">${stageDeals.length}</div>
+      <div class="stage-card-volume">${fmtMoney(stageVol)}</div>
+    </div>`;
+  }).join('');
+
+  // Table
+  const list = getFilteredSorted();
+  const container = document.getElementById('table-container');
+
+  if (deals.length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0b5147" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/>
+        </svg>
+      </div>
+      <div class="empty-title">No deals yet</div>
+      <div class="empty-sub">Start tracking your pipeline. Every merchant you add here is a deal you can close.</div>
+      <button class="btn btn-primary" onclick="openPanel()" style="margin:0 auto;">Add Your First Deal</button>
+    </div>`;
+    return;
+  }
+
+  if (list.length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-title">No deals match this filter</div>
+      <div class="empty-sub">Try adjusting your filters or clearing them to see all deals.</div>
+      <button class="btn btn-outline" onclick="clearAllFilters()" style="margin:0 auto;">Clear Filters</button>
+    </div>`;
+    return;
+  }
+
+  const colDef = [
+    {key:'biz', label:'Business'},
+    {key:'contact', label:'Contact'},
+    {key:'volume', label:'Volume'},
+    {key:'stage', label:'Stage'},
+    {key:'days', label:'Days in Stage'},
+    {key:'nextAction', label:'Next Action', nosort: true},
+    {key:'rep', label:'Rep'},
+    {key:'actions', label:'Actions', nosort: true}
+  ];
+
+  const thHtml = colDef.map(c => {
+    if (c.nosort) return `<th>${c.label}</th>`;
+    let cls = '';
+    if (sortCol === c.key) cls = sortDir === 'asc' ? ' sort-asc' : ' sort-desc';
+    return `<th class="${cls}" onclick="setSort('${c.key}')">${c.label}<span class="sort-icon"></span></th>`;
+  }).join('');
+
+  const rowsHtml = list.map(d => {
+    const days = daysBetween(d.stageDate);
+    let daysClass = 'days-green';
+    let stalledBadge = '';
+    if (days >= 14) {
+      daysClass = 'days-red';
+      stalledBadge = '<span class="stalled-badge">STALLED</span>';
+    } else if (days >= 7) {
+      daysClass = 'days-yellow';
+    }
+
+    const stageCls = STAGE_COLORS[d.stage] || 'stage-badge-0';
+    const stageName = STAGES[d.stage] || '—';
+    const canAdvance = d.stage < 5;
+    const nextActionEsc = (d.nextAction||'').replace(/"/g, '&quot;');
+
+    return `<tr>
+      <td>
+        <div class="biz-name">${esc(d.biz)}</div>
+        ${d.txType ? `<div style="font-size:11px;color:var(--muted);margin-top:2px;">${esc(d.txType)}</div>` : ''}
+      </td>
+      <td>
+        <div class="contact-name">${esc(d.contact||'—')}</div>
+        <div class="contact-phone">${esc(d.phone||'')}</div>
+      </td>
+      <td class="volume-cell">${fmtMoney(d.volume)}</td>
+      <td><span class="stage-badge ${stageCls}">${stageName}</span></td>
+      <td style="text-align:center;">
+        <span class="days-cell ${daysClass}">${days}d</span>
+        ${stalledBadge}
+      </td>
+      <td class="next-action-cell">
+        <input class="next-action-input" type="text" value="${nextActionEsc}" placeholder="Add note..."
+          onblur="updateNextAction('${d.id}', this.value)"
+          onkeydown="if(event.key==='Enter')this.blur()">
+      </td>
+      <td>${esc(d.rep||'—')}</td>
+      <td>
+        <div class="action-cell">
+          <button class="btn-sm" onclick="openPanel('${d.id}')">Edit</button>
+          ${canAdvance ? `<button class="btn-sm btn-sm-green" onclick="moveStage('${d.id}')">Move Up</button>` : ''}
+          <button class="btn-sm btn-sm-red" onclick="deleteDeal('${d.id}')">Delete</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  container.innerHTML = `<div class="table-wrapper">
+    <table>
+      <thead><tr>${thHtml}</tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+  </div>`;
+}
+
+function esc(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ---- EXPORT CSV ---- */
+function exportCSV() {
+  const headers = ['Business Name','Contact','Phone','Volume','Transaction Type','Stage','Days in Stage','Next Action','Rep','Notes','Stage Date'];
+  const rows = deals.map(d => [
+    d.biz, d.contact, d.phone, d.volume, d.txType, STAGES[d.stage], daysBetween(d.stageDate), d.nextAction||'', d.rep, d.notes, d.stageDate
+  ].map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'kashu_deals_' + today() + '.csv';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+/* ---- INIT ---- */
+load();
+render();
+</script>
+</body>
+</html>

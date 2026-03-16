@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu — Expandi MRP Outreach Kit</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e8e8e8; min-height: 100vh; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%); padding: 32px 40px; border-bottom: 1px solid #1e3a5f; }
+  .header h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
+  .header p { font-size: 13px; color: #7a9fc4; margin-top: 4px; }
+  .stats-bar { display: flex; gap: 24px; padding: 16px 40px; background: #111; border-bottom: 1px solid #1e1e1e; flex-wrap: wrap; }
+  .stat { font-size: 12px; color: #666; }
+  .stat span { color: #4fc3f7; font-weight: 700; }
+  .main { display: flex; min-height: calc(100vh - 120px); }
+  .sidebar { width: 220px; min-width: 220px; background: #111; border-right: 1px solid #1e1e1e; padding: 20px 0; }
+  .sidebar-section { padding: 8px 16px 4px; font-size: 10px; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar-item { padding: 9px 20px; font-size: 13px; cursor: pointer; color: #999; transition: all 0.15s; border-left: 3px solid transparent; display: flex; align-items: center; gap: 8px; }
+  .sidebar-item:hover { background: #1a1a1a; color: #fff; }
+  .sidebar-item.active { background: #0f1e2e; color: #4fc3f7; border-left-color: #4fc3f7; }
+  .sidebar-item .badge { background: #1e3a5f; color: #4fc3f7; font-size: 10px; padding: 1px 6px; border-radius: 10px; }
+  .content { flex: 1; padding: 32px 40px; overflow-y: auto; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .section-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .section-sub { font-size: 13px; color: #666; margin-bottom: 28px; line-height: 1.5; }
+  .card { background: #111; border: 1px solid #1e1e1e; border-radius: 10px; padding: 24px; margin-bottom: 20px; }
+  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .card-title { font-size: 13px; font-weight: 700; color: #4fc3f7; text-transform: uppercase; letter-spacing: 0.5px; }
+  .char-count { font-size: 11px; color: #555; }
+  .copy-box { background: #0a0a0a; border: 1px solid #252525; border-radius: 7px; padding: 16px; font-size: 13px; line-height: 1.65; color: #ccc; white-space: pre-wrap; word-break: break-word; }
+  .copy-btn { margin-top: 10px; background: #0f3460; color: #4fc3f7; border: 1px solid #1e3a5f; padding: 7px 16px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all 0.15s; font-weight: 600; }
+  .copy-btn:hover { background: #1a4a7a; }
+  .copy-btn.copied { background: #0d3320; color: #4caf50; border-color: #1a5c32; }
+  .url-card { background: #0a1520; border: 1px solid #1e3a5f; border-radius: 7px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .url-text { font-size: 11px; color: #7a9fc4; word-break: break-all; flex: 1; }
+  .url-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .btn-sm { padding: 5px 12px; border-radius: 5px; font-size: 11px; cursor: pointer; font-weight: 600; border: none; transition: all 0.15s; }
+  .btn-open { background: #1a3a5a; color: #4fc3f7; }
+  .btn-open:hover { background: #1e4a70; }
+  .btn-copy { background: #1a2a1a; color: #66bb6a; }
+  .btn-copy:hover { background: #1e3a1e; }
+  .step { display: flex; gap: 14px; margin-bottom: 18px; }
+  .step-num { width: 28px; height: 28px; min-width: 28px; background: #0f3460; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #4fc3f7; }
+  .step-content { flex: 1; }
+  .step-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .step-desc { font-size: 12px; color: #777; line-height: 1.55; }
+  .step-desc code { background: #1a1a1a; padding: 1px 6px; border-radius: 3px; color: #f0c040; font-size: 11px; }
+  .highlight-box { background: #0f1e0f; border: 1px solid #1a4a1a; border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; font-size: 13px; color: #81c784; line-height: 1.6; }
+  .warning-box { background: #1e1500; border: 1px solid #4a3000; border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; font-size: 13px; color: #ffb74d; line-height: 1.6; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px; }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-label { color: #999; }
+  .settings-value { color: #4fc3f7; font-weight: 700; background: #0f1e2e; padding: 3px 10px; border-radius: 5px; font-size: 12px; }
+  .persona-tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; background: #1a2a3a; color: #4fc3f7; margin-bottom: 6px; }
+  .sequence-flow { display: flex; gap: 0; margin-bottom: 24px; flex-wrap: wrap; }
+  .seq-step { background: #111; border: 1px solid #1e1e1e; border-radius: 7px; padding: 10px 14px; font-size: 12px; text-align: center; position: relative; flex: 1; min-width: 100px; }
+  .seq-step .day { font-size: 10px; color: #555; margin-bottom: 2px; }
+  .seq-step .action { color: #4fc3f7; font-weight: 700; }
+  .seq-arrow { display: flex; align-items: center; padding: 0 6px; color: #333; font-size: 16px; }
+  h3 { font-size: 14px; font-weight: 700; color: #fff; margin: 24px 0 12px; }
+  .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .tag { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; background: #1a1a1a; color: #666; }
+  .tag.green { background: #0f2a0f; color: #66bb6a; }
+  .tag.blue { background: #0f1e2e; color: #4fc3f7; }
+  .tag.yellow { background: #1e1500; color: #ffb74d; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Kashu — Expandi MRP Outreach Kit</h1>
+  <p>8 personas · 4-touch sequences · LinkedIn search lists · full setup guide</p>
+</div>
+
+<div class="stats-bar">
+  <div class="stat">Daily limit: <span>20-25 requests</span></div>
+  <div class="stat">Target: <span>2-5 MRP signups/day</span></div>
+  <div class="stat">Personas: <span>8</span></div>
+  <div class="stat">Sequence touches: <span>4 per prospect</span></div>
+  <div class="stat">LinkedIn monthly: <span>500+ contacts</span></div>
+  <div class="stat">Cold email daily: <span>200–500</span></div>
+</div>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="sidebar-section">Setup</div>
+    <div class="sidebar-item active" onclick="showPanel('setup')">⚙️ Expandi Setup</div>
+    <div class="sidebar-item" onclick="showPanel('settings')">🎛️ Safety Settings</div>
+
+    <div class="sidebar-section" style="margin-top:12px">Personas</div>
+    <div class="sidebar-item" onclick="showPanel('iso')">💳 ISO / Agents <span class="badge">P1</span></div>
+    <div class="sidebar-item" onclick="showPanel('cpa')">📊 CPAs <span class="badge">P1</span></div>
+    <div class="sidebar-item" onclick="showPanel('bookkeeper')">📒 Bookkeepers <span class="badge">P1</span></div>
+    <div class="sidebar-item" onclick="showPanel('payroll')">💼 Payroll Cos <span class="badge">P2</span></div>
+    <div class="sidebar-item" onclick="showPanel('insurance')">🛡️ Insurance <span class="badge">P2</span></div>
+    <div class="sidebar-item" onclick="showPanel('attorney')">⚖️ Attorneys <span class="badge">P2</span></div>
+    <div class="sidebar-item" onclick="showPanel('realtor')">🏢 Realtors <span class="badge">P3</span></div>
+    <div class="sidebar-item" onclick="showPanel('financial')">📈 Fin. Advisors <span class="badge">P3</span></div>
+
+    <div class="sidebar-section" style="margin-top:12px">More Channels</div>
+    <div class="sidebar-item" onclick="showPanel('coldemail')">📧 Cold Email</div>
+    <div class="sidebar-item" onclick="showPanel('facebook')">👥 Facebook Groups</div>
+    <div class="sidebar-item" onclick="showPanel('reactivate')">🔄 MRP Reactivation</div>
+  </div>
+
+  <div class="content">
+
+    <!-- SETUP -->
+    <div class="panel active" id="panel-setup">
+      <div class="section-title">Expandi Campaign Setup</div>
+      <div class="section-sub">One campaign per persona. Run 2-3 simultaneously. Follow this exact sequence to stay safe.</div>
+
+      <div class="highlight-box">
+        Priority order: ISO → CPA → Bookkeeper first. These have the highest conversion to active MRPs. Stand up 3 campaigns in parallel on day one, then add the rest week 2.
+      </div>
+
+      <div class="warning-box">
+        New Expandi account: start at 10 requests/day for the first 2 weeks before going to 20-25. LinkedIn flags sudden spikes. If your account is warmed up already, go straight to 20.
+      </div>
+
+      <h3>Campaign Build Steps</h3>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Create a new Campaign</div>
+          <div class="step-desc">Expandi dashboard → Campaigns → New Campaign → Connection Campaign. Name it: <code>MRP — [Persona] — [Date]</code> e.g. "MRP — CPA — Mar 2026"</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Set the Lead Source</div>
+          <div class="step-desc">Select "LinkedIn Search" → paste in the search URL from the persona tab. Expandi will scrape the list automatically. Aim for 300-500 profiles per campaign.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Configure the sequence</div>
+          <div class="step-desc">Add 3 steps: (1) Connection Request with note → (2) Wait 3 days → (3) Message on accept → (4) Wait 5 days → (5) Follow-up message if no reply. Copy from each persona tab.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Set daily limits</div>
+          <div class="step-desc">Campaign settings → Max invitations per day: <code>20</code> → Enable random delays → Working hours: <code>8am–6pm</code> your timezone → Weekdays only.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-title">Enable Smart Limits</div>
+          <div class="step-desc">Expandi Settings → Smart Limits → ON. This auto-pauses if LinkedIn shows friction. Never turn this off.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <div class="step-title">Launch and monitor day 1</div>
+          <div class="step-desc">Hit Launch. Check back after 2 hours. If you see a LinkedIn "unusual activity" warning, pause immediately and let it rest 48 hours. Normal behavior: smooth sends, no warnings.</div>
+        </div>
+      </div>
+
+      <h3>Sequence Flow (all personas)</h3>
+      <div class="sequence-flow">
+        <div class="seq-step"><div class="day">Day 0</div><div class="action">Connect + Note</div></div>
+        <div class="seq-arrow">→</div>
+        <div class="seq-step"><div class="day">Day 2 (if accepted)</div><div class="action">Value Intro</div></div>
+        <div class="seq-arrow">→</div>
+        <div class="seq-step"><div class="day">Day 7</div><div class="action">Proof / Angle</div></div>
+        <div class="seq-arrow">→</div>
+        <div class="seq-step"><div class="day">Day 14</div><div class="action">Soft Close</div></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="panel" id="panel-settings">
+      <div class="section-title">Safety Settings</div>
+      <div class="section-sub">These settings keep your account safe. Do not go above these limits regardless of how much you want to scale.</div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">Expandi Global Settings</div></div>
+        <div class="settings-row"><div class="settings-label">Max connection requests per day</div><div class="settings-value">20</div></div>
+        <div class="settings-row"><div class="settings-label">Max messages per day</div><div class="settings-value">40</div></div>
+        <div class="settings-row"><div class="settings-label">Working hours</div><div class="settings-value">8am – 6pm local</div></div>
+        <div class="settings-row"><div class="settings-label">Active days</div><div class="settings-value">Mon – Fri</div></div>
+        <div class="settings-row"><div class="settings-label">Random delays</div><div class="settings-value">ON — always</div></div>
+        <div class="settings-row"><div class="settings-label">Smart limits</div><div class="settings-value">ON — always</div></div>
+        <div class="settings-row"><div class="settings-label">Profile views per day</div><div class="settings-value">80 max</div></div>
+        <div class="settings-row"><div class="settings-label">Follow-ups per day</div><div class="settings-value">40 max</div></div>
+      </div>
+
+      <div class="warning-box">
+        Split your 20 daily requests across campaigns. If running 3 campaigns: 7 + 7 + 6 = 20 total. Never let the sum exceed 20/day across all campaigns. Expandi's global limiter should enforce this — double check it's on.
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">Account Health Red Flags</div></div>
+        <div class="settings-row"><div class="settings-label">Rejection rate above</div><div class="settings-value">30% → PAUSE</div></div>
+        <div class="settings-row"><div class="settings-label">LinkedIn "unusual activity" warning</div><div class="settings-value">PAUSE 48hrs</div></div>
+        <div class="settings-row"><div class="settings-label">LinkedIn asks to verify phone</div><div class="settings-value">PAUSE, verify, resume slow</div></div>
+        <div class="settings-row"><div class="settings-label">Pending invites queue</div><div class="settings-value">Withdraw if &gt;500 pending</div></div>
+      </div>
+    </div>
+
+    <!-- ISO -->
+    <div class="panel" id="panel-iso">
+      <div class="persona-tag">Priority 1</div>
+      <div class="section-title">ISO / Merchant Services Agents</div>
+      <div class="section-sub">Already in payments. Give their merchants a guarantee no other processor offers -- better pricing in writing before they switch. Fastest to sign and produce because they already know the space.</div>
+      <div class="tag-row">
+        <span class="tag green">Highest producer potential</span>
+        <span class="tag blue">Fastest activation</span>
+        <span class="tag yellow">Most competitive to recruit</span>
+      </div>
+
+      <h3>LinkedIn Search URLs</h3>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=merchant+services+agent&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=merchant+services+agent&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=merchant+services+agent&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=ISO+payments+independent+sales&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=ISO+payments+independent+sales&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=ISO+payments+independent+sales&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=payment+processing+agent+merchant&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=payment+processing+agent+merchant&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=payment+processing+agent+merchant&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+
+      <h3>Step 1 — Connection Note <span style="color:#555;font-size:12px;font-weight:400">(300 char max)</span></h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Connection Request</div><div class="char-count" id="iso-note-count"></div></div>
+        <div class="copy-box" id="iso-note">Hey {firstName}, I run distribution at Kashu. We do something most platforms won't -- guarantee better pricing in writing before a merchant moves. Your agents close, we handle underwriting same day. Worth connecting.</div>
+        <button class="copy-btn" onclick="copyBox('iso-note', this)">Copy</button>
+      </div>
+
+      <h3>Step 2 — Value Intro (Day 2)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 1</div></div>
+        <div class="copy-box" id="iso-msg1">Hey {firstName}, appreciate the connect.
+
+Here's why I reached out specifically. Most ISOs have their agents grinding through the same pitch every other rep is making. We flipped it.
+
+Kashu gives your agents a guarantee they can put in front of a merchant: better pricing in writing before they switch, live the same day, zero downtime. That's not a pitch, that's a math problem the merchant solves themselves.
+
+Our MRPs aren't selling processing. They're handing merchants a signed commitment that says 'you will pay less.' I close at about 70% on those intros.
+
+Residuals are 25-50% net depending on volume. No clawbacks. Worth 15 minutes to see if it fits your operation?</div>
+        <button class="copy-btn" onclick="copyBox('iso-msg1', this)">Copy</button>
+      </div>
+
+      <h3>Step 3 — Proof / Angle (Day 7)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 2</div></div>
+        <div class="copy-box" id="iso-msg2">Hey {firstName}, one more thing I should've mentioned.
+
+We also run a surcharge program. For merchants who want it, their processing cost goes to zero and the fee passes to the customer. That's not a savings play, that's a revenue line. Most agents don't know how to pitch that because their platform doesn't make it simple. Ours does.
+
+Between the guaranteed pricing and surcharge, your agents have two angles that close themselves. Happy to walk through how a few of our current partners are running it.</div>
+        <button class="copy-btn" onclick="copyBox('iso-msg2', this)">Copy</button>
+      </div>
+
+      <h3>Step 4 — Soft Close (Day 14)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 3</div></div>
+        <div class="copy-box" id="iso-msg3">Hey {firstName}, I'll keep it short. If the timing isn't right, no worries at all.
+
+If you ever have a merchant who's on the fence about switching, send them my way. I'll put the guarantee in writing and close it. You get paid, they save money, nobody had to sell anything.
+
+Door's open whenever.</div>
+        <button class="copy-btn" onclick="copyBox('iso-msg3', this)">Copy</button>
+      </div>
+    </div>
+
+    <!-- CPA -->
+    <div class="panel" id="panel-cpa">
+      <div class="persona-tag">Priority 1</div>
+      <div class="section-title">CPAs / Accountants</div>
+      <div class="section-sub">Trusted advisors to dozens of business owners. They see the processing fees every month and know their clients are overpaying. One CPA pointing their clients toward guaranteed savings is worth more than 60 cold calls.</div>
+      <div class="tag-row">
+        <span class="tag green">High trust with clients</span>
+        <span class="tag blue">Large books of business</span>
+        <span class="tag blue">Compliance-oriented — be clean</span>
+      </div>
+
+      <h3>LinkedIn Search URLs</h3>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=CPA+small+business+owner&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=CPA+small+business+owner&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=CPA+small+business+owner&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=certified+public+accountant+accounting+firm&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=certified+public+accountant+accounting+firm&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=certified+public+accountant+accounting+firm&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=tax+advisor+accountant+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=tax+advisor+accountant+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=tax+advisor+accountant+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+
+      <h3>Step 1 — Connection Note</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Connection Request</div></div>
+        <div class="copy-box" id="cpa-note">Hey {firstName}, you see your clients overpaying on processing every month. We guarantee better rates in writing and handle the switch. Your clients save, you earn monthly residuals for the intro. Worth connecting.</div>
+        <button class="copy-btn" onclick="copyBox('cpa-note', this)">Copy</button>
+      </div>
+
+      <h3>Step 2 — Value Intro (Day 2)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 1</div></div>
+        <div class="copy-box" id="cpa-msg1">Hey {firstName}, thanks for connecting.
+
+Here's the situation. Your clients are paying processing fees every month that are 15-40% higher than they should be. You see it on the P&L. Nobody questions it.
+
+Kashu changes that. We guarantee better rates in writing before they switch. We handle the entire transition with zero downtime. And for clients who want it, we have a surcharge option that takes their processing cost to zero.
+
+All you do is mention it. One sentence: 'I noticed you're overpaying on processing, I know someone who can cut that.' I get on a call with them, show them the math, and close it. You don't pitch, support, or chase.
+
+Your clients save $500-2,000/month. You earn 25% of net residuals monthly for as long as they process. On 10-15 clients from your existing book, that's a real number.
+
+Want me to walk through how it works?</div>
+        <button class="copy-btn" onclick="copyBox('cpa-msg1', this)">Copy</button>
+      </div>
+
+      <h3>Step 3 — Proof / Angle (Day 7)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 2</div></div>
+        <div class="copy-box" id="cpa-msg2">Hey {firstName}, quick follow-up.
+
+Something I didn't mention -- we also run a surcharge program. For clients who want it, their processing cost drops to zero. The fee passes to their customer instead.
+
+For your clients, that's not just a cost savings. That's a line item that disappears from their P&L entirely. As their CPA, you're the one who can walk them through what that actually looks like on their financials.
+
+Nobody else in their life is going to bring them this. You're in the perfect seat.</div>
+        <button class="copy-btn" onclick="copyBox('cpa-msg2', this)">Copy</button>
+      </div>
+
+      <h3>Step 4 — Soft Close (Day 14)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 3</div></div>
+        <div class="copy-box" id="cpa-msg3">Hey {firstName}, last message from me on this.
+
+If you ever have a client complaining about fees or asking you to find ways to cut costs, just point them my way. I'll guarantee better pricing in writing before they move a thing. You get paid, they save. No pressure, door's open.</div>
+        <button class="copy-btn" onclick="copyBox('cpa-msg3', this)">Copy</button>
+      </div>
+    </div>
+
+    <!-- BOOKKEEPER -->
+    <div class="panel" id="panel-bookkeeper">
+      <div class="persona-tag">Priority 1</div>
+      <div class="section-title">Bookkeepers</div>
+      <div class="section-sub">Already inside client financials. They see the processing fees line item every month and know it's too high. Lowest barrier to helping their clients save because they're already in the numbers.</div>
+      <div class="tag-row">
+        <span class="tag green">Already in client financials</span>
+        <span class="tag blue">High volume of SMB clients</span>
+        <span class="tag green">Easy referral conversation</span>
+      </div>
+
+      <h3>LinkedIn Search URLs</h3>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=bookkeeper+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=bookkeeper+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=bookkeeper+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=virtual+bookkeeper+QuickBooks&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=virtual+bookkeeper+QuickBooks&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=virtual+bookkeeper+QuickBooks&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=bookkeeping+services+owner+clients&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=bookkeeping+services+owner+clients&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=bookkeeping+services+owner+clients&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+
+      <h3>Step 1 — Connection Note</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Connection Request</div></div>
+        <div class="copy-box" id="book-note">Hey {firstName}, you reconcile processing fees every month. You already know who's overpaying. Kashu guarantees lower rates in writing and handles the switch. Your clients save, you earn residuals for the intro. Wanted to connect.</div>
+        <button class="copy-btn" onclick="copyBox('book-note', this)">Copy</button>
+      </div>
+
+      <h3>Step 2 — Value Intro (Day 2)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 1</div></div>
+        <div class="copy-box" id="book-msg1">Hey {firstName}, thanks for connecting.
+
+You see something most people don't. Every month you reconcile statements and you see exactly what your clients are paying in processing fees. You know which ones are getting taken.
+
+Here's what makes Kashu different from every other processor pitch you've heard: I guarantee better pricing in writing before the merchant switches. They go live same day. Zero downtime, zero disruption to their books.
+
+You tell your client 'I found you a better deal, here's the guarantee in writing.' I get on a call with them and close it. You earn 25% of net residuals monthly, ongoing.
+
+You're not selling anything. You're doing what you already do -- looking out for your client's money -- and getting paid for it.
+
+Want me to walk you through how the numbers work on a typical merchant?</div>
+        <button class="copy-btn" onclick="copyBox('book-msg1', this)">Copy</button>
+      </div>
+
+      <h3>Step 3 — Proof / Angle (Day 7)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 2</div></div>
+        <div class="copy-box" id="book-msg2">Hey {firstName}, one more angle I wanted to share.
+
+For clients who want to eliminate processing fees entirely, we run a surcharge program where the cost passes to their customer. The merchant pays zero.
+
+From a bookkeeping standpoint, that line item just vanishes. No more reconciling a 3% haircut every month. Your client's margins go up and your job gets a little cleaner.
+
+If any of your clients would be interested, happy to show them the math.</div>
+        <button class="copy-btn" onclick="copyBox('book-msg2', this)">Copy</button>
+      </div>
+
+      <h3>Step 4 — Soft Close (Day 14)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 3</div></div>
+        <div class="copy-box" id="book-msg3">Hey {firstName}, I'll leave this one short.
+
+Next time you're looking at a client's statement and the processing fees make you wince, send them my way. I'll put a guarantee in writing. You get paid monthly. No pressure from me either way.</div>
+        <button class="copy-btn" onclick="copyBox('book-msg3', this)">Copy</button>
+      </div>
+    </div>
+
+    <!-- PAYROLL -->
+    <div class="panel" id="panel-payroll">
+      <div class="persona-tag">Priority 2</div>
+      <div class="section-title">Payroll Companies</div>
+      <div class="section-sub">Touch every business owner's operations monthly. Built-in trust. Their clients are overpaying on processing and nobody's flagged it. Natural extension of the financial conversation they're already having.</div>
+      <div class="tag-row">
+        <span class="tag green">Monthly touchpoint with clients</span>
+        <span class="tag blue">Natural fit with processing</span>
+      </div>
+
+      <h3>LinkedIn Search URLs</h3>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=payroll+services+small+business+owner&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=payroll+services+small+business+owner&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=payroll+services+small+business+owner&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=payroll+company+consultant+HR+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=payroll+company+consultant+HR+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=payroll+company+consultant+HR+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+
+      <h3>Step 1 — Connection Note</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Connection Request</div></div>
+        <div class="copy-box" id="pay-note">Hey {firstName}, your clients trust you with payroll but their processor is probably overcharging them. Kashu guarantees better rates in writing and handles the switch. Your clients save, you earn monthly residuals. One intro, I close. Worth connecting.</div>
+        <button class="copy-btn" onclick="copyBox('pay-note', this)">Copy</button>
+      </div>
+
+      <h3>Step 2 — Value Intro (Day 2)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 1</div></div>
+        <div class="copy-box" id="pay-msg1">Hey {firstName}, appreciate the connect.
+
+Here's the thing. Your clients already trust you with their payroll. That's their money, their employees, their compliance. Processing fees are the other recurring cost they pay every month and they're paying it to someone who hasn't earned that trust.
+
+Kashu lets you capture that. You tell your client 'I found a processor that guarantees better pricing in writing. Here's the commitment.' I get on a call with them and handle everything. They go live same day, no disruption.
+
+You earn 25-50% of net residuals monthly. That's a second income stream off clients you're already talking to every pay period.
+
+Worth a quick call to look at what that could mean for your book?</div>
+        <button class="copy-btn" onclick="copyBox('pay-msg1', this)">Copy</button>
+      </div>
+
+      <h3>Step 3 — Proof / Angle (Day 7)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 2</div></div>
+        <div class="copy-box" id="pay-msg2">Hey {firstName}, quick thought.
+
+Most of your clients are probably processing $30-80K/month in card payments. On our surcharge program, that entire cost goes to zero for the merchant. On standard pricing, we beat whatever they're paying now, guaranteed in writing.
+
+Either way you're bringing your client a win they didn't know existed and getting paid monthly for it. The referral takes about 60 seconds. I do the rest.
+
+Happy to show you the numbers on a couple of your clients if you want to see what it looks like.</div>
+        <button class="copy-btn" onclick="copyBox('pay-msg2', this)">Copy</button>
+      </div>
+
+      <h3>Step 4 — Soft Close (Day 14)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 3</div></div>
+        <div class="copy-box" id="pay-msg3">Hey {firstName}, last one from me.
+
+If this isn't the right time, totally fine. But if you ever have a client frustrated about costs or asking you for advice beyond payroll, processing fees are the easiest win you can hand them. I guarantee better pricing in writing, you get paid. Door's always open.</div>
+        <button class="copy-btn" onclick="copyBox('pay-msg3', this)">Copy</button>
+      </div>
+    </div>
+
+    <!-- INSURANCE -->
+    <div class="panel" id="panel-insurance">
+      <div class="persona-tag">Priority 2</div>
+      <div class="section-title">Insurance Agents</div>
+      <div class="section-sub">Commercial and business insurance agents have deep trust with business owners. Their clients are overpaying on processing and nobody's told them. One intro from their trusted advisor changes that. They already understand residual income.</div>
+      <div class="tag-row">
+        <span class="tag green">Referral mindset already</span>
+        <span class="tag blue">Commercial clients = higher volume</span>
+      </div>
+
+      <h3>LinkedIn Search URLs</h3>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=commercial+insurance+agent+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=commercial+insurance+agent+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=commercial+insurance+agent+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=business+insurance+broker+P%26C+commercial&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=business+insurance+broker+P%26C+commercial&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=business+insurance+broker+P%26C+commercial&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+
+      <h3>Step 1 — Connection Note</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Connection Request</div></div>
+        <div class="copy-box" id="ins-note">Hey {firstName}, your commercial clients trust you to watch their back. Most are overpaying on processing and nobody's told them. Kashu guarantees lower rates in writing. Your clients save, you earn residuals for the intro. Wanted to connect.</div>
+        <button class="copy-btn" onclick="copyBox('ins-note', this)">Copy</button>
+      </div>
+
+      <h3>Step 2 — Value Intro (Day 2)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 1</div></div>
+        <div class="copy-box" id="ins-msg1">Hey {firstName}, thanks for connecting.
+
+You already have the hardest part of this business figured out -- trust. Your commercial clients call you when something matters. Processing fees aren't exciting, but they're bleeding money every month and most of them have no idea.
+
+Here's what makes this different from the usual 'refer and earn' pitch. Kashu guarantees better pricing in writing before the merchant moves. I get on a call with them personally and close it. They go live the same day, no interruption to their business.
+
+You're not selling processing. You're telling your client 'hey I found you a guaranteed savings, here's the commitment letter.' That's the kind of thing that deepens a client relationship, not cheapens it.
+
+Residuals are 25% of net, paid monthly, for as long as they process. On a $50K/month merchant that's $60-80/month to you. Stack 15-20 of those from your book and it adds up.
+
+Want me to walk through how a couple of our insurance partners are doing it?</div>
+        <button class="copy-btn" onclick="copyBox('ins-msg1', this)">Copy</button>
+      </div>
+
+      <h3>Step 3 — Proof / Angle (Day 7)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 2</div></div>
+        <div class="copy-box" id="ins-msg2">Hey {firstName}, one more thing worth knowing.
+
+We run a surcharge program where the merchant's processing cost drops to zero. The fee passes to their customer. For your commercial clients, that means an expense line just disappears.
+
+When you're sitting with a client doing their annual review and you can say 'by the way, I eliminated your processing fees entirely,' that's a conversation that earns you the next 10 years of renewals.
+
+Happy to show you how it works if any of your clients might be a fit.</div>
+        <button class="copy-btn" onclick="copyBox('ins-msg2', this)">Copy</button>
+      </div>
+
+      <h3>Step 4 — Soft Close (Day 14)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 3</div></div>
+        <div class="copy-box" id="ins-msg3">Hey {firstName}, I'll keep it simple.
+
+Next time a client mentions costs or you're looking for a way to add value beyond the policy, processing fees are sitting right there. I guarantee better rates in writing, you get paid monthly. No pressure, whenever the timing works.</div>
+        <button class="copy-btn" onclick="copyBox('ins-msg3', this)">Copy</button>
+      </div>
+    </div>
+
+    <!-- ATTORNEY -->
+    <div class="panel" id="panel-attorney">
+      <div class="persona-tag">Priority 2</div>
+      <div class="section-title">Business Attorneys</div>
+      <div class="section-sub">Business attorneys touch owners at high-value moments. Their clients sign processing agreements without reading them and overpay for years. One mention from their attorney carries real weight. Slower to move but high-quality referrals.</div>
+      <div class="tag-row">
+        <span class="tag blue">High-quality clients</span>
+        <span class="tag yellow">Slower conversion cycle</span>
+        <span class="tag blue">Respond to clean/professional pitch</span>
+      </div>
+
+      <h3>LinkedIn Search URLs</h3>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=business+attorney+small+business+owner&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=business+attorney+small+business+owner&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=business+attorney+small+business+owner&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=transactional+attorney+corporate+law+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=transactional+attorney+corporate+law+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=transactional+attorney+corporate+law+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+
+      <h3>Step 1 — Connection Note</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Connection Request</div></div>
+        <div class="copy-box" id="att-note">Hey {firstName}, your business clients sign processing agreements without reading them. Most are overpaying significantly. We guarantee better terms in writing. Kashu pays referral partners residuals. Worth connecting.</div>
+        <button class="copy-btn" onclick="copyBox('att-note', this)">Copy</button>
+      </div>
+
+      <h3>Step 2 — Value Intro (Day 2)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 1</div></div>
+        <div class="copy-box" id="att-msg1">Hey {firstName}, appreciate the connect.
+
+Here's what I see constantly. Business owners sign processing agreements they don't understand, pay rates that are 30-50% higher than they should be, and never look at it again. As their attorney, you're probably the one person who would actually read that agreement and know they're getting taken.
+
+Kashu guarantees better pricing in writing before a merchant switches. Clean agreement, transparent terms, no hidden fees. I get on a call with them and walk through the numbers. They go live same day.
+
+You earn 25% of net residuals monthly for as long as they process. One intro can pay for years.
+
+The referral is clean and documented. No selling, no support on your end. A simple 'I found you a better deal, here's the guarantee.'
+
+Worth a quick call to look at the structure?</div>
+        <button class="copy-btn" onclick="copyBox('att-msg1', this)">Copy</button>
+      </div>
+
+      <h3>Step 3 — Proof / Angle (Day 7)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 2</div></div>
+        <div class="copy-box" id="att-msg2">Hey {firstName}, quick thought.
+
+A lot of your clients probably signed their current processing agreement years ago and have no idea what they're actually paying. We see effective rates of 3.5-4.5% regularly on merchants who think they're paying 2%.
+
+If you ever want to do a statement audit for a client as a value-add, I can run the numbers in 10 minutes and give you a side-by-side. If we can beat it, I put the guarantee in writing. If we can't, no harm done.
+
+Either way it positions you as the person who saved them real money.</div>
+        <button class="copy-btn" onclick="copyBox('att-msg2', this)">Copy</button>
+      </div>
+
+      <h3>Step 4 — Soft Close (Day 14)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 3</div></div>
+        <div class="copy-box" id="att-msg3">Hey {firstName}, last one from me.
+
+If this isn't your thing, I get it. But if you ever have a client asking about cost reduction or renegotiating vendor agreements, processing is usually the easiest win. Guaranteed better pricing in writing, 10-minute review. You get paid monthly. Door's open.</div>
+        <button class="copy-btn" onclick="copyBox('att-msg3', this)">Copy</button>
+      </div>
+    </div>
+
+    <!-- REALTOR -->
+    <div class="panel" id="panel-realtor">
+      <div class="persona-tag">Priority 3</div>
+      <div class="section-title">Commercial Realtors / Business Brokers</div>
+      <div class="section-sub">Business brokers are particularly strong. Every incoming owner needs a processor and most end up overpaying. One intro from the broker who sold them the business sets them up right from day one.</div>
+      <div class="tag-row">
+        <span class="tag green">Business brokers = perfect timing</span>
+        <span class="tag blue">Commercial clients = higher volume</span>
+      </div>
+
+      <h3>LinkedIn Search URLs</h3>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=business+broker+buy+sell+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=business+broker+buy+sell+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=business+broker+buy+sell+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=commercial+real+estate+agent+retail+restaurant&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=commercial+real+estate+agent+retail+restaurant&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=commercial+real+estate+agent+retail+restaurant&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+
+      <h3>Step 1 — Connection Note</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Connection Request</div></div>
+        <div class="copy-box" id="re-note">Hey {firstName}, every business you help buy, sell, or lease needs a processor. Most end up overpaying because nobody points them to a better deal. Kashu guarantees lower rates in writing. Your clients save, you earn residuals. Worth connecting.</div>
+        <button class="copy-btn" onclick="copyBox('re-note', this)">Copy</button>
+      </div>
+
+      <h3>Step 2 — Value Intro (Day 2)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 1</div></div>
+        <div class="copy-box" id="re-msg1">Hey {firstName}, appreciate the connect.
+
+Here's something I think you'll find interesting. Every business transaction you touch has a processing component. New owner buys a restaurant, they need a processor. New tenant signs a retail lease, they need a processor. And most of them either keep the old one (which is usually overpriced) or pick whatever comes up first on Google.
+
+You're already in the room at the right moment. If you say 'by the way, I know a platform that guarantees better processing rates in writing,' that's a value-add that costs you nothing and pays you monthly.
+
+I get on a call with them, show the math, close it. You earn 25% of net residuals for as long as they process. On a $50K/month merchant that's about $60-80/month.
+
+The timing advantage you have is massive. Nobody else is in the room when a business is making every other vendor decision.
+
+Worth a quick call to see how a few of our broker partners are structuring this?</div>
+        <button class="copy-btn" onclick="copyBox('re-msg1', this)">Copy</button>
+      </div>
+
+      <h3>Step 3 — Proof / Angle (Day 7)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 2</div></div>
+        <div class="copy-box" id="re-msg2">Hey {firstName}, one more angle.
+
+For new business owners or tenants who are worried about startup costs, we run a surcharge program where their processing cost is zero. The fee passes to their customer. That's one less expense on day one.
+
+When you're helping someone close on a business and you can hand them a processing solution that costs them nothing, that's the kind of extra value that earns referrals back to you.
+
+Happy to put together a quick overview you can share with your clients.</div>
+        <button class="copy-btn" onclick="copyBox('re-msg2', this)">Copy</button>
+      </div>
+
+      <h3>Step 4 — Soft Close (Day 14)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 3</div></div>
+        <div class="copy-box" id="re-msg3">Hey {firstName}, last message.
+
+Next time you have a deal closing and the buyer asks about vendors or operations, processing is the easiest handoff. I guarantee better rates in writing, handle everything, and you get paid monthly. No pitch needed, just an intro. Whenever the timing works.</div>
+        <button class="copy-btn" onclick="copyBox('re-msg3', this)">Copy</button>
+      </div>
+    </div>
+
+    <!-- FINANCIAL ADVISOR -->
+    <div class="panel" id="panel-financial">
+      <div class="persona-tag">Priority 3</div>
+      <div class="section-title">Financial Advisors / Fractional CFOs</div>
+      <div class="section-sub">Working directly on business owner financials. Fractional CFOs especially -- they're actively looking for cost reductions. Processing fees are the easiest win they can hand their clients, and most haven't thought to touch it.</div>
+      <div class="tag-row">
+        <span class="tag green">Cost-reduction mindset</span>
+        <span class="tag blue">Fractional CFOs are ideal</span>
+        <span class="tag blue">High trust, recurring access</span>
+      </div>
+
+      <h3>LinkedIn Search URLs</h3>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=fractional+CFO+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=fractional+CFO+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=fractional+CFO+small+business&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+      <div class="url-card">
+        <div class="url-text">https://www.linkedin.com/search/results/people/?keywords=financial+advisor+consultant+small+business+owner&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH</div>
+        <div class="url-actions">
+          <button class="btn-sm btn-open" onclick="window.open('https://www.linkedin.com/search/results/people/?keywords=financial+advisor+consultant+small+business+owner&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH')">Open</button>
+          <button class="btn-sm btn-copy" onclick="copyText('https://www.linkedin.com/search/results/people/?keywords=financial+advisor+consultant+small+business+owner&geoUrn=%5B%22103644278%22%5D&origin=FACETED_SEARCH', this)">Copy URL</button>
+        </div>
+      </div>
+
+      <h3>Step 1 — Connection Note</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Connection Request</div></div>
+        <div class="copy-box" id="fa-note">Hey {firstName}, you optimize your clients' finances for a living. Processing fees are usually the first place I find hidden money. Kashu guarantees lower rates in writing. Your clients save, you earn residuals for the intro. I do the closing. Worth connecting.</div>
+        <button class="copy-btn" onclick="copyBox('fa-note', this)">Copy</button>
+      </div>
+
+      <h3>Step 2 — Value Intro (Day 2)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 1</div></div>
+        <div class="copy-box" id="fa-msg1">Hey {firstName}, thanks for connecting.
+
+As a financial advisor or fractional CFO, processing fees are probably one of the first line items you flag when you take on a new client. Most businesses are paying an effective rate of 3-4.5% and think they're paying 2% because that's what their processor told them.
+
+Here's what Kashu does differently. I guarantee better pricing in writing before the merchant switches. Not a quote, not an estimate. A signed commitment. They go live the same day, zero disruption.
+
+You tell your client 'I found guaranteed savings on your processing.' I get on a call and close it. You earn 25% of net residuals monthly, ongoing.
+
+For your clients, their costs go down. For you, it's a recurring income stream on top of your advisory fees. And you're the one who delivered the savings, which makes you harder to replace.
+
+Want me to show you how the math works on a typical merchant?</div>
+        <button class="copy-btn" onclick="copyBox('fa-msg1', this)">Copy</button>
+      </div>
+
+      <h3>Step 3 — Proof / Angle (Day 7)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 2</div></div>
+        <div class="copy-box" id="fa-msg2">Hey {firstName}, quick follow-up.
+
+Two things I should mention. First, we run a surcharge program where the merchant's processing cost drops to zero. For a client trying to improve margins, that's an entire expense category eliminated.
+
+Second, if you want to do a statement audit for any client, send me their current statement and I'll give you a side-by-side in 10 minutes. If I can beat it, I put the guarantee in writing. If I can't, you lose nothing.
+
+Either way you look like the advisor who's actually digging into the numbers, not just reviewing them.</div>
+        <button class="copy-btn" onclick="copyBox('fa-msg2', this)">Copy</button>
+      </div>
+
+      <h3>Step 4 — Soft Close (Day 14)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Message 3</div></div>
+        <div class="copy-box" id="fa-msg3">Hey {firstName}, I'll wrap this up.
+
+If you ever have a client asking about cost reduction or you're looking for quick wins during an engagement, processing fees are the lowest-hanging fruit in most businesses. Guaranteed better pricing, 10-minute review, you get paid monthly. I'm here whenever it makes sense.</div>
+        <button class="copy-btn" onclick="copyBox('fa-msg3', this)">Copy</button>
+      </div>
+    </div>
+
+    <!-- COLD EMAIL -->
+    <div class="panel" id="panel-coldemail">
+      <div class="section-title">Cold Email — MRP Outreach at Scale</div>
+      <div class="section-sub">200-500 outreaches/day. Completely separate from LinkedIn. Uses Apollo.io for lead lists and Instantly.ai for sending. Runs 24/7 without you.</div>
+
+      <div class="highlight-box">
+        Stack: Apollo.io (lead scraping) → Instantly.ai (sending + warmup) → GHL (follow-up sequences for anyone who replies). Secondary domain required to protect kashupay.com deliverability.
+      </div>
+
+      <h3>Setup (one-time, ~2 hours)</h3>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Get a secondary domain</div>
+          <div class="step-desc">Buy <code>kashupayments.com</code> or <code>kashupay.co</code> or <code>getkashu.com</code>. Never cold email from kashupay.com — it will hurt deliverability on your primary domain. $12/year on Namecheap.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Set up Instantly.ai</div>
+          <div class="step-desc">Connect your secondary domain. Add 3-5 sending inboxes (john@kashupayments.com, j.polimeni@kashupayments.com, etc). Enable email warmup — run for 2 weeks before sending. Limit: 30-50 emails/day per inbox to start, scale to 100 after 30 days.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Build lead lists in Apollo.io</div>
+          <div class="step-desc">Filter by: Job Title (CPA, Bookkeeper, Payroll Manager, Insurance Agent, etc.) + Country: US + Company size: 1-50 employees. Export 500-1,000 contacts per persona. Verify emails before importing.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Load sequences into Instantly</div>
+          <div class="step-desc">One campaign per persona. Paste subject line + email body. Set sending window: 8am-5pm, Mon-Fri. Enable open/reply tracking. Connect reply → GHL workflow via Zapier for instant follow-up.</div>
+        </div>
+      </div>
+
+      <h3>Email — CPA / Bookkeeper / Financial Advisor</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Subject Line</div></div>
+        <div class="copy-box" id="ce-cpa-sub">Quick question about your clients</div>
+        <button class="copy-btn" onclick="copyBox('ce-cpa-sub', this)">Copy</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Email Body</div></div>
+        <div class="copy-box" id="ce-cpa-body">Hey {firstName},
+
+Your clients are paying processing fees every month. The question is whether you're getting paid on it.
+
+Kashu is a merchant processing platform. We pay CPAs, bookkeepers, and financial advisors 25% of net residuals on every business they refer — monthly, ongoing.
+
+No selling on your end. You refer a client, we onboard them. You get paid as long as they process.
+
+Average referral earns $75-150/month. 10 referrals = $750-1,500/month passive.
+
+Worth a 15-minute call?
+
+John Polimeni
+CRO, Kashu
+john@kashupay.com</div>
+        <button class="copy-btn" onclick="copyBox('ce-cpa-body', this)">Copy</button>
+      </div>
+
+      <h3>Email — ISO / Merchant Services Agent</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Subject Line</div></div>
+        <div class="copy-box" id="ce-iso-sub">Adding a residual stream to what you're already doing</div>
+        <button class="copy-btn" onclick="copyBox('ce-iso-sub', this)">Copy</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Email Body</div></div>
+        <div class="copy-box" id="ce-iso-body">Hey {firstName},
+
+I'll keep it short — Kashu is a processing platform paying ISOs 25-50% of net residuals. Tier 2 at under $5M/month, tier 1 at $5M+.
+
+If you're already working with merchants, this is just a better place to send them.
+
+Our top partners are clearing $3-8K/month on 20-30 merchants. Same effort, better split.
+
+Worth 15 minutes to walk through the numbers?
+
+John Polimeni
+CRO, Kashu
+john@kashupay.com</div>
+        <button class="copy-btn" onclick="copyBox('ce-iso-body', this)">Copy</button>
+      </div>
+
+      <h3>Email — Insurance / Attorney / Realtor</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Subject Line</div></div>
+        <div class="copy-box" id="ce-ins-sub">Your clients are already paying this — you could be getting a cut</div>
+        <button class="copy-btn" onclick="copyBox('ce-ins-sub', this)">Copy</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Email Body</div></div>
+        <div class="copy-box" id="ce-ins-body">Hey {firstName},
+
+You work with business owners. They're all paying credit card processing fees every month.
+
+Kashu pays referral partners 25% of net residuals on every merchant they send us. Monthly, for as long as that business processes.
+
+One referral to the right merchant can pay $100+/month for years. No selling, no support. Just an intro.
+
+Happy to show you the numbers — worth a quick call?
+
+John Polimeni
+CRO, Kashu
+john@kashupay.com</div>
+        <button class="copy-btn" onclick="copyBox('ce-ins-body', this)">Copy</button>
+      </div>
+
+      <h3>Email — Payroll Companies</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Subject Line</div></div>
+        <div class="copy-box" id="ce-pay-sub">You're capturing payroll — are you capturing processing too?</div>
+        <button class="copy-btn" onclick="copyBox('ce-pay-sub', this)">Copy</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Email Body</div></div>
+        <div class="copy-box" id="ce-pay-body">Hey {firstName},
+
+Your clients run payroll through you. They also process credit cards somewhere else.
+
+Kashu pays referral partners 25-50% of net residuals on every merchant they refer. If you're already talking to these businesses monthly, you're one conversation away from a second revenue stream off each of them.
+
+No selling, no support. You introduce, we convert. You earn monthly.
+
+Worth 15 minutes?
+
+John Polimeni
+CRO, Kashu
+john@kashupay.com</div>
+        <button class="copy-btn" onclick="copyBox('ce-pay-body', this)">Copy</button>
+      </div>
+    </div>
+
+    <!-- FACEBOOK GROUPS -->
+    <div class="panel" id="panel-facebook">
+      <div class="section-title">Facebook Groups — Organic Scale</div>
+      <div class="section-sub">One post to the right group reaches thousands of the exact people you want. Zero cost, zero automation risk. Post 2-3x per week across multiple groups.</div>
+
+      <div class="warning-box">
+        Don't pitch directly in the post. Lead with value — savings calculator, free statement review, rate check. The pitch comes in the DM after they respond.
+      </div>
+
+      <h3>Target Groups</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Groups to Join and Post In</div></div>
+        <div class="copy-box" id="fb-groups">BUSINESS OWNERS (direct merchant outreach):
+- Small Business Owners Network (search on FB)
+- Restaurant Owners Network
+- Retail Business Owners
+- Contractors & Trades Business Owners
+- Entrepreneurs & Business Owners
+
+CPA / BOOKKEEPER (MRP recruiting):
+- CPA Network / Accounting Professionals
+- QuickBooks ProAdvisor Community
+- Bookkeepers & Accounting Professionals
+- Small Business Accountants Network
+
+ISO / PAYMENTS:
+- Merchant Services Professionals
+- Payment Processing Industry Network
+- ISO & Merchant Services Agents</div>
+        <button class="copy-btn" onclick="copyBox('fb-groups', this)">Copy</button>
+      </div>
+
+      <h3>Post — Business Owner Groups (merchant outreach)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Post Copy</div></div>
+        <div class="copy-box" id="fb-merchant-post">Quick question for business owners who take credit cards —
+
+When did you last actually audit your processing statement?
+
+Most owners I talk to are paying 3-4% effective rate and don't realize it until they run the numbers. We've been helping businesses switch to better rates — some saving $1,500-5,000/month depending on volume.
+
+Happy to do a free statement review for anyone who wants to see where they stand. No pitch, just the numbers.
+
+Drop a comment or DM me if you want me to take a look. Takes about 10 minutes.</div>
+        <button class="copy-btn" onclick="copyBox('fb-merchant-post', this)">Copy</button>
+      </div>
+
+      <h3>Post — CPA / Bookkeeper Groups (MRP recruiting)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Post Copy</div></div>
+        <div class="copy-box" id="fb-cpa-post">Question for CPAs and bookkeepers —
+
+Are any of you getting paid on your clients' merchant processing referrals?
+
+I ask because most aren't, and it's one of the easiest passive income streams to add. You're already in your clients' financials — you see the processing fees line every month.
+
+We pay referral partners 25% of net residuals on every merchant they send us. Monthly, ongoing. Average referral earns $75-150/month depending on volume.
+
+Not trying to pitch anyone — just want to know how many people are already doing this. Happy to explain the structure if there's interest.</div>
+        <button class="copy-btn" onclick="copyBox('fb-cpa-post', this)">Copy</button>
+      </div>
+
+      <h3>DM After They Comment/Reply</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">DM Copy</div></div>
+        <div class="copy-box" id="fb-dm">Hey {firstName} — saw your comment. Happy to walk you through it.
+
+I'm John, CRO at Kashu. [For merchant outreach: Takes 10 minutes to review your statement and show you exactly what better rates would look like for your volume.] [For MRP: The structure is simple — you refer, we handle everything, you get paid monthly.]
+
+When's a good time for a quick call?</div>
+        <button class="copy-btn" onclick="copyBox('fb-dm', this)">Copy</button>
+      </div>
+    </div>
+
+    <!-- MRP REACTIVATION -->
+    <div class="panel" id="panel-reactivate">
+      <div class="section-title">MRP Reactivation</div>
+      <div class="section-sub">Every dormant MRP already said yes once. Reactivating one costs nothing and can produce immediately. Run this sequence on any MRP who signed but hasn't referred in 60+ days.</div>
+
+      <div class="highlight-box">
+        Priority: go through your current MRP list in GHL right now. Tag anyone who signed 60+ days ago with zero referrals as "Dormant." That's your immediate reactivation list.
+      </div>
+
+      <h3>Text Message (send first — highest open rate)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Text</div></div>
+        <div class="copy-box" id="react-text">Hey {firstName} — John from Kashu. Wanted to check in and see if there's anything I can do to make it easier for you to refer your first merchant. You're set up and ready to go — just need one intro. What's getting in the way?</div>
+        <button class="copy-btn" onclick="copyBox('react-text', this)">Copy</button>
+      </div>
+
+      <h3>Email (send same day as text)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Subject</div></div>
+        <div class="copy-box" id="react-email-sub">Checking in — John at Kashu</div>
+        <button class="copy-btn" onclick="copyBox('react-email-sub', this)">Copy</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Email Body</div></div>
+        <div class="copy-box" id="react-email-body">Hey {firstName},
+
+Wanted to check in on your Kashu partnership.
+
+You're set up and your referral link is live. I know the first referral can feel like the hardest one — that's pretty normal.
+
+A couple of things that might help:
+- I can send you updated one-pagers for any specific vertical you're targeting
+- If you have a prospect who's warm but hasn't committed, loop me in — I'll close it for you
+- If you want to do a quick call to sharpen your pitch, I'm available this week
+
+The residuals compound fast once the first one's in. What would make this easier for you?
+
+John
+
+John Polimeni
+CRO, Kashu
+john@kashupay.com</div>
+        <button class="copy-btn" onclick="copyBox('react-email-body', this)">Copy</button>
+      </div>
+
+      <h3>Follow-Up Call Script (3 days later if no response)</h3>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Call Script</div></div>
+        <div class="copy-box" id="react-call">"Hey {firstName}, it's John from Kashu. I sent you a text and email a few days ago — just wanted to follow up live. I know life gets busy. I'm not calling to pressure you — I just want to know if there's anything on our end making it harder to get that first referral across. Is there a specific type of business you're targeting that I can build you a pitch around?"
+
+[If they're warm]: "Perfect. Let me send you the one-pager for that vertical today. And if you get someone on the fence, loop me in — I'll jump on a call with them and close it."
+
+[If they've gone cold]: "No worries at all. If the timing changes, I'm here. Can I send you the updated rate sheet just so you have it handy?"</div>
+        <button class="copy-btn" onclick="copyBox('react-call', this)">Copy</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.target.closest('.sidebar-item').classList.add('active');
+}
+
+function copyBox(id, btn) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy URL'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>

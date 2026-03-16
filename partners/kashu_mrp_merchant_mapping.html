@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu | Merchant ICP x MRP Referral Mapping</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; color: #1a1a1a; background: #ffffff; font-size: 16px; line-height: 1.8; }
+
+  .header { background: #0b5147; color: #ffffff; padding: 48px 60px 40px; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
+  .logo { font-size: 36px; font-weight: 800; letter-spacing: -0.5px; }
+  .logo span { color: #01de8f; }
+  .badge { background: #01de8f; color: #0b5147; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .header h1 { font-size: 28px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
+  .header .subtitle { font-size: 16px; color: #8de6c6; font-weight: 500; font-style: italic; margin-bottom: 4px; }
+  .header .meta { font-size: 13px; color: #93adaa; }
+
+  .how-to-use { background: #e0ebe7; border-left: 4px solid #01de8f; padding: 24px 32px; margin: 32px 60px 0; border-radius: 0 8px 8px 0; }
+  .how-to-use h3 { font-size: 18px; font-weight: 700; color: #0b5147; margin-bottom: 8px; }
+  .how-to-use p { font-size: 15px; color: #397168; line-height: 1.7; }
+
+  .content { padding: 40px 60px 20px; }
+
+  .category-section { margin-bottom: 40px; }
+  .category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 0; padding-bottom: 12px; border-bottom: 3px solid #0b5147; }
+  .category-header h2 { font-size: 22px; font-weight: 800; color: #0b5147; }
+
+  table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  thead th { background: #0b5147; color: #ffffff; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; padding: 14px 18px; text-align: left; }
+  thead th:first-child { width: 40px; border-radius: 8px 0 0 0; }
+  thead th:nth-child(2) { width: 28%; }
+  thead th:nth-child(3) { width: 34%; }
+  thead th:last-child { border-radius: 0 8px 0 0; width: 34%; }
+  tbody tr { border-bottom: 1px solid #d5eae3; }
+  tbody tr:hover { background: #f0f7f5; }
+  tbody td { padding: 14px 18px; font-size: 14px; vertical-align: top; }
+  tbody td:first-child { font-weight: 700; color: #0b5147; text-align: center; }
+  tbody td:nth-child(2) { font-weight: 600; color: #0b5147; }
+  tbody td:nth-child(3) { color: #397168; }
+  tbody td:last-child { color: #555; }
+  tbody tr:nth-child(even) { background: #f8fbfa; }
+  tbody tr:nth-child(even):hover { background: #f0f7f5; }
+
+  .footer-note { background: #0b5147; color: #93adaa; padding: 32px 60px; margin-top: 40px; font-size: 13px; line-height: 1.7; font-style: italic; }
+  .footer-note strong { color: #01de8f; font-style: normal; }
+  .footer { background: #0b5147; border-top: 1px solid #397168; padding: 20px 60px; display: flex; justify-content: space-between; align-items: center; }
+  .footer span { color: #93adaa; font-size: 13px; }
+  .footer .brand { color: #01de8f; font-weight: 700; }
+
+  @media print {
+    body { font-size: 10px; }
+    .header { padding: 24px 30px 20px; }
+    .content { padding: 20px 30px 10px; }
+    .how-to-use { margin: 16px 30px 0; padding: 16px 20px; }
+    thead th, tbody td { padding: 8px 10px; font-size: 10px; }
+    .category-section { page-break-inside: avoid; }
+    .footer-note, .footer { padding-left: 30px; padding-right: 30px; }
+  }
+  @media (max-width: 768px) {
+    .header, .content, .footer-note, .footer { padding-left: 20px; padding-right: 20px; }
+    .how-to-use { margin-left: 20px; margin-right: 20px; }
+    table { font-size: 12px; }
+    thead th, tbody td { padding: 10px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo">Kashu<span>.</span></div>
+    <div class="badge">MRP Strategy</div>
+  </div>
+  <h1>Merchant ICP x MRP Referral Mapping</h1>
+  <div class="subtitle">For every auto-approval merchant ICP, who is the MRP already in that relationship?</div>
+  <div class="meta">Last Updated: March 2026 | John Polimeni, CRO</div>
+</div>
+
+<div class="how-to-use">
+  <h3>How to Use This Doc</h3>
+  <p>When recruiting an MRP, cross-reference the right column to show them exactly which of their existing clients are potential Kashu referrals. When prospecting merchants, use the MRP column to identify who already has a warm relationship with that business owner. Two birds, two stones.</p>
+</div>
+
+<div class="content">
+
+  <!-- FOOD & BEVERAGE -->
+  <div class="category-section">
+    <div class="category-header"><h2>Food & Beverage</h2></div>
+    <table>
+      <thead><tr><th>#</th><th>Merchant ICP (Auto-Approval)</th><th>Primary MRP</th><th>Secondary MRP</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Restaurants and Cafes (Full Service)</td><td>Restaurant Equipment/Supply Reps</td><td>Commercial Real Estate Brokers (retail leasing)</td></tr>
+        <tr><td>2</td><td>Fast Casual and Counter Service</td><td>Franchise Consultants</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>3</td><td>Bars and Nightclubs</td><td>Commercial Real Estate Brokers</td><td>Liquor Distributors / Beverage Sales Reps</td></tr>
+        <tr><td>4</td><td>Breweries and Wineries (Taproom)</td><td>Equipment Finance Reps (brewing/production equipment)</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>5</td><td>Coffee Shops and Cafes</td><td>Commercial Espresso/Equipment Vendors</td><td>Franchise Consultants</td></tr>
+        <tr><td>6</td><td>Food Trucks</td><td>Food Truck Equipment and Build-Out Vendors</td><td>Commercial Insurance Brokers (mobile vendor policies)</td></tr>
+        <tr><td>7</td><td>Bakeries and Specialty Food Shops</td><td>Equipment Finance Reps (commercial ovens/refrigeration)</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>8</td><td>Catering Companies</td><td>Event Venue Operators (they book caterers)</td><td>Commercial Insurance Brokers (event/catering policies)</td></tr>
+        <tr><td>9</td><td>Ice Cream Shops and Dessert Bars</td><td>Franchise Consultants</td><td>Commercial Real Estate Brokers</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- AUTOMOTIVE -->
+  <div class="category-section">
+    <div class="category-header"><h2>Automotive</h2></div>
+    <table>
+      <thead><tr><th>#</th><th>Merchant ICP (Auto-Approval)</th><th>Primary MRP</th><th>Secondary MRP</th></tr></thead>
+      <tbody>
+        <tr><td>10</td><td>Auto Repair and Service Shops</td><td>Auto Parts Distributors (NAPA, O'Reilly reps)</td><td>Equipment Finance Reps (lifts, diagnostic equipment)</td></tr>
+        <tr><td>11</td><td>Auto Body and Collision Shops</td><td>Equipment Finance Reps (frame/paint equipment)</td><td>Commercial Insurance Brokers (shop liability)</td></tr>
+        <tr><td>12</td><td>Oil Change and Quick Lube</td><td>Franchise Consultants</td><td>Equipment Finance Reps</td></tr>
+        <tr><td>13</td><td>Tire Shops and Wheel/Rim Retailers</td><td>Tire Distributors and Wholesale Reps</td><td>Equipment Finance Reps</td></tr>
+        <tr><td>14</td><td>Car Washes</td><td>Equipment Finance Reps (wash systems/tunnels)</td><td>Commercial Real Estate Brokers (car wash site leases)</td></tr>
+        <tr><td>15</td><td>Parking Lots and Garages</td><td>Commercial Real Estate Brokers</td><td>Property Management Companies</td></tr>
+        <tr><td>16</td><td>Towing and Roadside Assistance</td><td>Commercial Insurance Brokers (fleet/towing policies)</td><td>Equipment Finance Reps (truck/fleet financing)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- HEALTH & WELLNESS -->
+  <div class="category-section">
+    <div class="category-header"><h2>Health & Wellness</h2></div>
+    <table>
+      <thead><tr><th>#</th><th>Merchant ICP (Auto-Approval)</th><th>Primary MRP</th><th>Secondary MRP</th></tr></thead>
+      <tbody>
+        <tr><td>17</td><td>Medical and Dental Practices</td><td>Healthcare Practice Consultants / Brokers</td><td>Medical Equipment Finance Reps</td></tr>
+        <tr><td>18</td><td>Urgent Care Clinics</td><td>Healthcare Real Estate Brokers</td><td>Medical Equipment Finance Reps</td></tr>
+        <tr><td>19</td><td>Physical Therapy Practices</td><td>Healthcare Practice Brokers</td><td>Medical Equipment Finance Reps</td></tr>
+        <tr><td>20</td><td>Chiropractic Offices</td><td>Chiropractic Practice Management Consultants</td><td>Equipment Finance Reps (tables/diagnostic tools)</td></tr>
+        <tr><td>21</td><td>Veterinary Clinics</td><td>Veterinary Practice Brokers</td><td>Medical Equipment Finance Reps</td></tr>
+        <tr><td>22</td><td>Optometrists and Vision Centers</td><td>Optical Equipment Finance Reps</td><td>Healthcare Practice Brokers</td></tr>
+        <tr><td>23</td><td>Med Spas (Non-Pharma)</td><td>Aesthetic Equipment Finance Reps (laser/devices)</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>24</td><td>Massage Therapy and Day Spas</td><td>Commercial Real Estate Brokers</td><td>Equipment Finance Reps (massage table/sauna equipment)</td></tr>
+        <tr><td>25</td><td>Gyms and Fitness Studios</td><td>Equipment Finance Reps (commercial fitness equipment)</td><td>Franchise Consultants (franchise gym brands)</td></tr>
+        <tr><td>26</td><td>Yoga and Pilates Studios</td><td>Commercial Real Estate Brokers</td><td>Fitness Equipment Finance Reps</td></tr>
+        <tr><td>27</td><td>Martial Arts and Dance Studios</td><td>Commercial Real Estate Brokers</td><td>Franchise Consultants (franchise martial arts brands)</td></tr>
+        <tr><td>28</td><td>Tanning Salons</td><td>Tanning Equipment Finance Reps</td><td>Franchise Consultants</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PERSONAL CARE -->
+  <div class="category-section">
+    <div class="category-header"><h2>Personal Care</h2></div>
+    <table>
+      <thead><tr><th>#</th><th>Merchant ICP (Auto-Approval)</th><th>Primary MRP</th><th>Secondary MRP</th></tr></thead>
+      <tbody>
+        <tr><td>29</td><td>Hair Salons</td><td>Salon Equipment and Supply Distributors</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>30</td><td>Barbershops</td><td>Barber Supply Distributors</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>31</td><td>Nail Salons</td><td>Nail Supply Distributors (OPI, CND wholesale reps)</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>32</td><td>Dry Cleaners and Laundromats</td><td>Equipment Finance Reps (commercial washers/dryers)</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>33</td><td>Pet Groomers and Boarding</td><td>Franchise Consultants (Dogtopia, Pet Supplies Plus)</td><td>Commercial Real Estate Brokers</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- HOME SERVICES & CONSTRUCTION -->
+  <div class="category-section">
+    <div class="category-header"><h2>Home Services & Construction</h2></div>
+    <table>
+      <thead><tr><th>#</th><th>Merchant ICP (Auto-Approval)</th><th>Primary MRP</th><th>Secondary MRP</th></tr></thead>
+      <tbody>
+        <tr><td>34</td><td>General Contractors</td><td>Commercial Insurance Brokers (contractor liability/bonds)</td><td>Equipment Finance Reps (heavy equipment/tools)</td></tr>
+        <tr><td>35</td><td>Plumbers</td><td>Commercial Insurance Brokers</td><td>Equipment Finance Reps (truck/equipment)</td></tr>
+        <tr><td>36</td><td>Electricians</td><td>Commercial Insurance Brokers</td><td>Equipment Finance Reps</td></tr>
+        <tr><td>37</td><td>HVAC Companies</td><td>HVAC Equipment/Parts Distributors</td><td>Equipment Finance Reps (HVAC systems)</td></tr>
+        <tr><td>38</td><td>Roofers</td><td>Roofing Materials Distributors</td><td>Commercial Insurance Brokers</td></tr>
+        <tr><td>39</td><td>Landscaping and Lawn Care</td><td>Equipment Finance Reps (mowers/trucks/trailers)</td><td>Commercial Insurance Brokers</td></tr>
+        <tr><td>40</td><td>Cleaning and Maid Services</td><td>Franchise Consultants (Molly Maid, Jan-Pro)</td><td>Commercial Insurance Brokers (bonding)</td></tr>
+        <tr><td>41</td><td>Pool Service and Maintenance</td><td>Pool Supply Distributors</td><td>Commercial Insurance Brokers</td></tr>
+        <tr><td>42</td><td>Pest Control Companies</td><td>Franchise Consultants (Orkin, Terminix franchisees)</td><td>Commercial Insurance Brokers</td></tr>
+        <tr><td>43</td><td>Moving Companies</td><td>Commercial Insurance Brokers (cargo/liability)</td><td>Equipment Finance Reps (trucks/vans)</td></tr>
+        <tr><td>44</td><td>Hardware and Building Supply (Independent)</td><td>Equipment Finance Reps</td><td>Commercial Real Estate Brokers</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- RETAIL -->
+  <div class="category-section">
+    <div class="category-header"><h2>Retail</h2></div>
+    <table>
+      <thead><tr><th>#</th><th>Merchant ICP (Auto-Approval)</th><th>Primary MRP</th><th>Secondary MRP</th></tr></thead>
+      <tbody>
+        <tr><td>45</td><td>Retail Boutiques and Gift Shops</td><td>Commercial Real Estate Brokers</td><td>Business Brokers (boutique acquisitions)</td></tr>
+        <tr><td>46</td><td>Florists</td><td>Commercial Real Estate Brokers</td><td>Business Brokers</td></tr>
+        <tr><td>47</td><td>Jewelry Stores (Independent)</td><td>Business Brokers</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>48</td><td>Sporting Goods Stores (Independent)</td><td>Equipment Finance Reps</td><td>Business Brokers</td></tr>
+        <tr><td>49</td><td>Bike and Recreational Shops</td><td>Equipment Finance Reps</td><td>Business Brokers</td></tr>
+        <tr><td>50</td><td>Convenience Stores (Independent)</td><td>Business Brokers</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>51</td><td>Liquor Stores (Independent)</td><td>Business Brokers</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>52</td><td>Hobby and Craft Stores (Independent)</td><td>Business Brokers</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>53</td><td>Music Schools and Instrument Shops</td><td>Commercial Real Estate Brokers</td><td>Equipment Finance Reps (instruments/studio gear)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- EDUCATION & CHILDCARE -->
+  <div class="category-section">
+    <div class="category-header"><h2>Education & Childcare</h2></div>
+    <table>
+      <thead><tr><th>#</th><th>Merchant ICP (Auto-Approval)</th><th>Primary MRP</th><th>Secondary MRP</th></tr></thead>
+      <tbody>
+        <tr><td>54</td><td>Childcare and Daycare Centers</td><td>Franchise Consultants (Kiddie Academy, The Learning Experience)</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>55</td><td>Tutoring and Learning Centers</td><td>Franchise Consultants (Kumon, Sylvan, Huntington)</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>56</td><td>Preschools and Montessori (Private)</td><td>Commercial Real Estate Brokers</td><td>Business Brokers (school acquisitions)</td></tr>
+        <tr><td>57</td><td>After-School Programs and Camps</td><td>Commercial Real Estate Brokers</td><td>Commercial Insurance Brokers</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- EVENTS & ENTERTAINMENT -->
+  <div class="category-section">
+    <div class="category-header"><h2>Events & Entertainment</h2></div>
+    <table>
+      <thead><tr><th>#</th><th>Merchant ICP (Auto-Approval)</th><th>Primary MRP</th><th>Secondary MRP</th></tr></thead>
+      <tbody>
+        <tr><td>58</td><td>Wedding and Event Venues</td><td>Commercial Real Estate Brokers</td><td>Equipment Finance Reps (AV/furniture/tent systems)</td></tr>
+        <tr><td>59</td><td>Photography and Videography Studios</td><td>Equipment Finance Reps (cameras/lighting/studio gear)</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>60</td><td>Entertainment Centers and Arcades</td><td>Equipment Finance Reps (arcade/gaming machines)</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>61</td><td>Bowling Alleys</td><td>Equipment Finance Reps (lane/pin equipment)</td><td>Business Brokers</td></tr>
+        <tr><td>62</td><td>Mini Golf and Family Activity Centers</td><td>Equipment Finance Reps</td><td>Commercial Real Estate Brokers</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PROFESSIONAL SERVICES -->
+  <div class="category-section">
+    <div class="category-header"><h2>Professional Services (In-Person / MOTO)</h2></div>
+    <table>
+      <thead><tr><th>#</th><th>Merchant ICP (Auto-Approval)</th><th>Primary MRP</th><th>Secondary MRP</th></tr></thead>
+      <tbody>
+        <tr><td>63</td><td>Accounting and Bookkeeping Firms</td><td>CPAs (peer referrals within their networks)</td><td>Business Brokers</td></tr>
+        <tr><td>64</td><td>Law Firms (General Practice, Estate, Family)</td><td>Business Brokers (legal relationships)</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>65</td><td>Real Estate Agencies (Independent)</td><td>Commercial Real Estate Brokers (peer network)</td><td>Business Brokers</td></tr>
+        <tr><td>66</td><td>Insurance Agencies (Independent)</td><td>Business Brokers</td><td>Commercial Insurance Brokers (peer network)</td></tr>
+        <tr><td>67</td><td>Tax Preparation Services</td><td>CPAs</td><td>Franchise Consultants (H&R Block, Liberty Tax)</td></tr>
+        <tr><td>68</td><td>Printing and Signage Companies</td><td>Commercial Real Estate Brokers (signage for new tenants)</td><td>Equipment Finance Reps (large format printers)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SPECIALTY -->
+  <div class="category-section">
+    <div class="category-header"><h2>Specialty</h2></div>
+    <table>
+      <thead><tr><th>#</th><th>Merchant ICP (Auto-Approval)</th><th>Primary MRP</th><th>Secondary MRP</th></tr></thead>
+      <tbody>
+        <tr><td>69</td><td>Funeral Homes</td><td>Business Brokers (funeral home acquisitions are common)</td><td>Commercial Real Estate Brokers</td></tr>
+        <tr><td>70</td><td>Veterinary Specialists and Emergency Clinics</td><td>Veterinary Practice Brokers</td><td>Medical Equipment Finance Reps</td></tr>
+        <tr><td>71</td><td>Trophy, Award, and Engraving Shops</td><td>Commercial Real Estate Brokers</td><td>Equipment Finance Reps (engraving machines)</td></tr>
+        <tr><td>72</td><td>Laundromats (Coin and Card)</td><td>Equipment Finance Reps (commercial washers/dryers)</td><td>Business Brokers</td></tr>
+        <tr><td>73</td><td>Self-Storage Facilities</td><td>Commercial Real Estate Brokers</td><td>Business Brokers (storage facility acquisitions)</td></tr>
+        <tr><td>74</td><td>Car Rental (Independent)</td><td>Equipment Finance Reps (fleet financing)</td><td>Commercial Insurance Brokers (fleet policies)</td></tr>
+        <tr><td>75</td><td>Franchise Locations (New Openings)</td><td>Franchise Consultants (the highest-leverage MRP for this category)</td><td>Franchise Development Directors (internal franchisor role)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<div class="footer-note">
+  <strong>Note:</strong> Primary MRP is the professional most likely to have a direct, trusted relationship with the merchant owner at the exact moment they need processing. Secondary MRP is a strong secondary channel that overlaps with the same merchant type. Both are worth recruiting independently -- but when you land the Primary MRP, every merchant in their book is a warm pipeline.
+</div>
+
+<div class="footer">
+  <span class="brand">Kashu</span>
+  <span>John Polimeni, CRO | john@kashupay.com | March 2026</span>
+</div>
+
+</body>
+</html>

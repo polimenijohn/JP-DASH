@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu Vertical Attack Package</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-dark:   #0b5147;
+    --teal-mid:    #397168;
+    --teal-muted:  #93adaa;
+    --green-bright:#01de8f;
+    --green-mid:   #8de6c6;
+    --green-pale:  #d5eae3;
+    --green-lime:  #e1fea1;
+    --white:       #ffffff;
+    --bg:          #f2f6f5;
+    --text:        #0d1a17;
+    --text-muted:  #4a6560;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+
+  #generator {
+    max-width: 680px; margin: 44px auto;
+    background: var(--white); border-radius: 16px; padding: 44px;
+    box-shadow: 0 4px 28px rgba(11,81,71,0.10);
+  }
+  .form-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+  .form-logo .logo-mark { width: 36px; height: 36px; background: var(--teal-dark); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .form-logo .logo-text { font-size: 20px; font-weight: 800; color: var(--teal-dark); }
+  h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; color: var(--teal-dark); }
+  p.sub { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+  .section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--teal-dark); margin-bottom: 14px; margin-top: 28px;
+    padding-bottom: 8px; border-bottom: 1.5px solid var(--green-pale);
+  }
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  label .hint { font-weight: 400; color: var(--teal-muted); font-size: 12px; }
+  input, select, textarea {
+    width: 100%; padding: 11px 14px; border: 1.5px solid #d4dedc; border-radius: 8px;
+    font-size: 14px; font-family: inherit; margin-bottom: 16px; outline: none;
+    transition: border 0.2s, box-shadow 0.2s; background: var(--white); color: var(--text);
+  }
+  textarea { resize: vertical; min-height: 60px; }
+  input:focus, select:focus, textarea:focus { border-color: var(--teal-dark); box-shadow: 0 0 0 3px rgba(11,81,71,0.08); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  .angle-toggle {
+    display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .angle-toggle button {
+    padding: 8px 16px; border: 1.5px solid var(--teal-dark); border-radius: 8px;
+    background: var(--white); color: var(--teal-dark); font-family: inherit;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .angle-toggle button.active {
+    background: var(--teal-dark); color: var(--white);
+  }
+
+  .savings-preview {
+    background: var(--teal-dark); border-radius: 10px; padding: 20px 22px; margin: 20px 0;
+  }
+  .savings-preview .sp-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--green-bright); margin-bottom: 12px; }
+  .sp-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .sp-stat { text-align: center; }
+  .sp-stat .val { font-size: 20px; font-weight: 800; color: var(--white); }
+  .sp-stat .lbl { font-size: 10px; color: var(--teal-muted); margin-top: 3px; font-weight: 600; text-transform: uppercase; }
+  .sp-stat .val.green { color: var(--green-bright); }
+
+  button#generateBtn {
+    width: 100%; padding: 14px; background: var(--teal-dark); color: var(--white);
+    border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: inherit;
+    cursor: pointer; margin-top: 10px; transition: background 0.2s;
+  }
+  button#generateBtn:hover { background: var(--teal-mid); }
+
+  #output { display: none; max-width: 860px; margin: 0 auto 60px; padding: 0 10px; }
+
+  .output-header {
+    background: var(--teal-dark); border-radius: 16px; padding: 32px 40px; margin-bottom: 24px; color: var(--white); position: relative; overflow: hidden;
+  }
+  .output-header::after { content: ''; position: absolute; right: -80px; top: -80px; width: 320px; height: 320px; background: radial-gradient(circle, rgba(1,222,143,0.15) 0%, transparent 70%); pointer-events: none; }
+  .kashu-logo { font-size: 20px; font-weight: 900; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .logo-dot { width: 8px; height: 8px; background: var(--green-bright); border-radius: 50%; }
+  .output-header h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .output-header p { font-size: 14px; color: var(--teal-muted); }
+  .meta { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .meta-tag { background: rgba(1,222,143,0.15); border: 1px solid rgba(1,222,143,0.3); color: var(--green-bright); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .touch-card {
+    background: var(--white); border-radius: 14px; padding: 28px 32px; margin-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(11,81,71,0.06); border: 1px solid var(--green-pale);
+  }
+  .touch-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--green-pale); color: var(--teal-dark); font-size: 11px; font-weight: 700;
+    padding: 4px 12px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px;
+  }
+  .touch-channel {
+    display: inline-flex; align-items: center; gap: 4px; margin-left: 8px;
+    background: var(--teal-dark); color: var(--green-bright); font-size: 10px; font-weight: 700;
+    padding: 3px 10px; border-radius: 6px; text-transform: uppercase;
+  }
+  .touch-card h3 { font-size: 15px; font-weight: 700; color: var(--teal-dark); margin-bottom: 8px; }
+  .touch-card .timing { font-size: 12px; color: var(--teal-muted); font-weight: 600; margin-bottom: 12px; }
+  .touch-card .body { font-size: 14px; line-height: 1.7; color: var(--text); white-space: pre-wrap; }
+  .copy-btn {
+    margin-top: 14px; padding: 8px 18px; background: var(--green-pale); color: var(--teal-dark);
+    border: none; border-radius: 8px; font-size: 12px; font-weight: 700; font-family: inherit;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .copy-btn:hover { background: var(--green-mid); }
+  .copy-btn.copied { background: var(--green-bright); color: var(--white); }
+
+  .vertical-intel {
+    background: linear-gradient(135deg, var(--teal-dark), #0d6b5e); border-radius: 14px;
+    padding: 28px 32px; margin-bottom: 16px; color: var(--white);
+  }
+  .vertical-intel h3 { font-size: 15px; font-weight: 700; color: var(--green-bright); margin-bottom: 14px; }
+  .intel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .intel-item { }
+  .intel-item .lbl { font-size: 10px; color: var(--teal-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px; }
+  .intel-item .val { font-size: 14px; color: var(--white); font-weight: 500; line-height: 1.5; }
+
+  .surcharge-box {
+    background: var(--white); border: 2px solid var(--green-bright); border-radius: 14px;
+    padding: 24px 32px; margin-bottom: 16px;
+  }
+  .surcharge-box h3 { font-size: 15px; font-weight: 700; color: var(--teal-dark); margin-bottom: 12px; }
+  .surcharge-box .body { font-size: 14px; color: var(--text); line-height: 1.7; }
+  .surcharge-math { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .sm-stat { text-align: center; background: var(--green-pale); border-radius: 8px; padding: 14px 10px; }
+  .sm-stat .val { font-size: 18px; font-weight: 800; color: var(--teal-dark); }
+  .sm-stat .lbl { font-size: 10px; color: var(--teal-mid); font-weight: 600; margin-top: 4px; text-transform: uppercase; }
+
+  @media (max-width: 600px) {
+    #generator, .touch-card, .vertical-intel, .surcharge-box { padding: 22px; }
+    .intel-grid, .surcharge-math, .sp-grid { grid-template-columns: 1fr; }
+    .row, .row3 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="generator">
+  <div class="form-logo">
+    <div class="logo-mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#01de8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <span class="logo-text">Kashu</span>
+  </div>
+  <h1>Vertical Attack Package</h1>
+  <p class="sub">Pick a vertical. Get a full cold outreach sequence, surcharge pitch, savings math, and vertical intel. Everything you need to go after a niche.</p>
+
+  <div class="section-label">Target Vertical</div>
+  <label>Which vertical are you attacking?</label>
+  <select id="vertical">
+    <option value="">Select vertical...</option>
+    <option value="medspa">Med Spa / Aesthetics</option>
+    <option value="dental">Dental Practice</option>
+    <option value="vet">Veterinary Clinic</option>
+    <option value="auto">Auto Repair / Body Shop</option>
+    <option value="hvac">HVAC / Plumbing / Electrical</option>
+    <option value="salon">Salon / Barbershop</option>
+    <option value="fitness">Gym / Fitness Studio</option>
+    <option value="restaurant">Restaurant / QSR</option>
+  </select>
+
+  <div class="section-label">Personalization</div>
+  <div class="row">
+    <div>
+      <label>Prospect Name <span class="hint">(first name)</span></label>
+      <input type="text" id="prospectName" placeholder="Sarah">
+    </div>
+    <div>
+      <label>Business Name <span class="hint">(optional)</span></label>
+      <input type="text" id="bizName" placeholder="Glow Med Spa">
+    </div>
+  </div>
+  <div class="row">
+    <div>
+      <label>City <span class="hint">(optional)</span></label>
+      <input type="text" id="city" placeholder="Scottsdale">
+    </div>
+    <div>
+      <label>Your Name</label>
+      <input type="text" id="yourName" value="John">
+    </div>
+  </div>
+
+  <div class="section-label">Pitch Angle</div>
+  <label>Lead with:</label>
+  <div class="angle-toggle">
+    <button class="active" data-angle="surcharge" onclick="toggleAngle(this)">Surcharge (Zero Cost)</button>
+    <button data-angle="savings" onclick="toggleAngle(this)">Rate Savings</button>
+    <button data-angle="both" onclick="toggleAngle(this)">Both Angles</button>
+  </div>
+
+  <div class="section-label">Volume Estimate</div>
+  <div class="row">
+    <div>
+      <label>Est. Monthly Volume <span class="hint">$</span></label>
+      <input type="number" id="estVolume" value="75000" min="5000" step="5000">
+    </div>
+    <div>
+      <label>Their Current Rate <span class="hint">%</span></label>
+      <input type="number" id="currentRate" value="2.8" min="1" max="5" step="0.1">
+    </div>
+  </div>
+
+  <div class="savings-preview" id="savingsPreview">
+    <div class="sp-label">Savings & Surcharge Revenue Preview</div>
+    <div class="sp-grid">
+      <div class="sp-stat"><div class="val" id="prevSavings">--</div><div class="lbl">Monthly Savings</div></div>
+      <div class="sp-stat"><div class="val" id="prevSurcharge">--</div><div class="lbl">Surcharge Revenue</div></div>
+      <div class="sp-stat"><div class="val green" id="prevAnnual">--</div><div class="lbl">Annual Impact</div></div>
+    </div>
+  </div>
+
+  <button id="generateBtn" onclick="generate()">Generate Attack Package</button>
+</div>
+
+<div id="output"></div>
+
+<script>
+function toggleAngle(btn) {
+  document.querySelectorAll('.angle-toggle button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function getAngle() {
+  const active = document.querySelector('.angle-toggle button.active');
+  return active ? active.dataset.angle : 'surcharge';
+}
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+
+// Live preview
+document.getElementById('estVolume').addEventListener('input', updatePreview);
+document.getElementById('currentRate').addEventListener('input', updatePreview);
+function updatePreview() {
+  const vol = parseInt(document.getElementById('estVolume').value) || 75000;
+  const rate = parseFloat(document.getElementById('currentRate').value) || 2.8;
+  const kashuRate = 2.2;
+  const savings = vol * ((rate - kashuRate) / 100);
+  const surchargeRev = vol * 0.03; // 3% surcharge on volume
+  document.getElementById('prevSavings').textContent = fmt(savings);
+  document.getElementById('prevSurcharge').textContent = fmt(surchargeRev);
+  document.getElementById('prevAnnual').textContent = fmt((savings + surchargeRev) * 12);
+}
+updatePreview();
+
+const VERTICALS = {
+  medspa: {
+    name: 'Med Spa / Aesthetics',
+    avgVolume: '$60K-150K/month',
+    avgTicket: '$200-2,000',
+    commonProcessors: 'Square, Stripe, Clover',
+    typicalRate: '2.6-2.9%',
+    riskLevel: 'Low',
+    surchargeViability: 'High. Customers are spending $500+ per visit on elective procedures. A 3% surcharge on a $800 Botox session is $24. Nobody walks out over $24 when they drove 30 minutes for the appointment.',
+    painPoints: 'High average ticket means high processing fees. Most med spas are on Square or Stripe paying flat rate and hemorrhaging money. They think it\'s just the cost of doing business.',
+    closeAngle: 'Elective + high ticket + loyal clients = surcharge is invisible. And if they don\'t want surcharge, the rate savings alone are significant at their volume.',
+    searchTerms: 'med spa, medspa, aesthetics clinic, botox, fillers, laser clinic, skin clinic, aesthetic practice',
+    objections: [
+      { q: "My clients will push back on a surcharge fee.", a: "Your clients are paying $800 for Botox. They drove 30 minutes, booked 2 weeks ago, and they're sitting in the chair. Nobody walks over $24. And you can frame it as a small service fee or offer a cash discount instead. Most med spas that switch tell us zero clients have mentioned it." },
+      { q: "We're happy with Square, it's easy.", a: "Square is easy. It's also expensive. At your volume you're probably paying $3,000-4,000 a month in processing fees. We cut that in half or eliminate it entirely with surcharge. Same ease of use, way less money walking out the door." },
+      { q: "We just renewed our processing contract.", a: "Most processing agreements don't have early termination fees for rate changes. And even if there's a small fee, the savings pay for it in the first month. Send me your statement and I'll show you the exact math." }
+    ]
+  },
+  dental: {
+    name: 'Dental Practice',
+    avgVolume: '$80K-200K/month',
+    avgTicket: '$150-5,000',
+    commonProcessors: 'Worldpay, Heartland, Square, Stripe',
+    typicalRate: '2.5-3.0%',
+    riskLevel: 'Low',
+    surchargeViability: 'Very high. Patients are already used to co-pays and out-of-pocket costs. A 3% fee on a $2,000 crown is $60 on a procedure they need. Nobody switches dentists over processing fees.',
+    painPoints: 'High volume, high average ticket on procedures. Most dental practices are on legacy processors with terrible rates or on Square paying flat rate on large transactions. They\'re leaving thousands on the table every month.',
+    closeAngle: 'Necessary service + high ticket + patient loyalty = surcharge is a no-brainer. Patients need the work done. They\'re not shopping processors.',
+    searchTerms: 'dental practice, dentist, dental office, orthodontist, oral surgeon, dental clinic, cosmetic dentist',
+    objections: [
+      { q: "Our patients might not like an extra fee.", a: "Patients paying $3,000 for a crown aren't leaving over $90. They chose you because of your reputation, not your payment processing. And most dental practices frame it as a convenience fee for card payments with a cash discount option. Zero patient complaints in practice." },
+      { q: "We use our PMS integrated processor.", a: "Most practice management systems are processor-agnostic. Dentrix, Eaglesoft, Open Dental, they all work with external processors. We integrate seamlessly. Same workflow, better rates." },
+      { q: "I'd have to talk to my office manager about this.", a: "Perfect. I'll put together a one-page savings breakdown your office manager can review in 2 minutes. Usually they're the ones pushing for it once they see the numbers because they watch those costs more than anyone." }
+    ]
+  },
+  vet: {
+    name: 'Veterinary Clinic',
+    avgVolume: '$50K-120K/month',
+    avgTicket: '$100-3,000',
+    commonProcessors: 'Square, Stripe, Worldpay',
+    typicalRate: '2.6-3.0%',
+    riskLevel: 'Low',
+    surchargeViability: 'Very high. Pet owners are emotionally invested. When your dog needs surgery, you\'re not haggling over a 3% convenience fee. This is one of the highest surcharge-acceptance verticals in the market.',
+    painPoints: 'Emergency visits and surgeries drive high ticket transactions. Most vets are on simple flat-rate processors paying way too much. They\'re focused on animals, not their processing statement.',
+    closeAngle: 'Emotional purchase + no alternatives (your pet is sick) + high trust relationship = surcharge acceptance is nearly 100%. Vet clinics that switch to surcharge are shocked at how much they save.',
+    searchTerms: 'veterinary clinic, vet hospital, animal hospital, veterinarian, pet clinic, emergency vet',
+    objections: [
+      { q: "I don't want to nickel and dime pet owners during a stressful time.", a: "I hear you. But here's the thing, pet owners are paying $2,000 for emergency surgery. They're not thinking about a $60 processing fee. And you can position it as a small convenience fee for card payments. Most vet clinics report zero pushback because the owner is focused on their pet, not the receipt." },
+      { q: "We're a small practice, is it worth switching?", a: "Small practices benefit the most. If you're doing $50K/month on Square at 2.6%, you're paying $1,300/month in fees. We either cut that in half or eliminate it with surcharge. That's $7,800-15,600 back in your pocket every year. For a small practice, that's a new piece of equipment." },
+      { q: "Our staff won't want to deal with a new system.", a: "There's nothing new to deal with. Same terminal, same workflow. We handle the entire setup and your staff taps the same buttons they always have. The only difference is the statement looks better at the end of the month." }
+    ]
+  },
+  auto: {
+    name: 'Auto Repair / Body Shop',
+    avgVolume: '$60K-200K/month',
+    avgTicket: '$200-5,000',
+    commonProcessors: 'Square, Clover, Heartland, PayPal',
+    typicalRate: '2.6-3.0%',
+    riskLevel: 'Low',
+    surchargeViability: 'Very high. The car is already on the lift. Customer needs the work done. Average ticket is $500+. A 3% fee on a $1,200 brake job is $36. The customer is picking up their car, they\'re not walking away over $36.',
+    painPoints: 'High ticket repairs, high volume shops. Most are on flat-rate processors or have been on the same legacy processor for years without reviewing their rates. They\'re mechanics, not finance people.',
+    closeAngle: 'Captive customer (car is there) + necessary service + high ticket = ideal surcharge vertical. Auto shops that implement surcharge typically see $2,000-5,000/month in recovered fees.',
+    searchTerms: 'auto repair, body shop, mechanic, auto body, collision repair, transmission shop, brake shop, tire shop',
+    objections: [
+      { q: "My customers are already complaining about repair costs.", a: "They're complaining about the repair cost, not the payment method. A 3% fee on a $1,500 repair is $45. They just approved $1,500 in work. And if you're worried about it, offer a 3% cash discount instead. Same economics, different framing. Most customers just tap their card and go." },
+      { q: "I've been with my processor for 10 years.", a: "That's actually the problem. Processors raise rates over time on accounts that don't review. You're probably paying 20-30% more than you were when you signed up. Send me a recent statement and I'll show you exactly what you're overpaying. Takes 2 minutes." },
+      { q: "I don't have time to deal with switching.", a: "That's why we handle everything. We ship the terminal, we set it up, we port over your account. You don't miss a single transaction. Most shops are fully live in 48 hours without touching anything." }
+    ]
+  },
+  hvac: {
+    name: 'HVAC / Plumbing / Electrical',
+    avgVolume: '$80K-250K/month',
+    avgTicket: '$200-10,000',
+    commonProcessors: 'Square, Stripe, PayPal, Intuit',
+    typicalRate: '2.6-2.9%',
+    riskLevel: 'Low',
+    surchargeViability: 'Extremely high. Emergency services. Your AC is out in July or your pipe burst. You\'re not negotiating a 3% surcharge when a plumber shows up at 11pm. Highest average ticket + emergency urgency = ideal surcharge candidate.',
+    painPoints: 'Very high average tickets on installs and emergency calls. Most home service companies are on Square or using PayPal invoicing and paying absurd rates on $5,000-10,000 transactions. The processing cost on a $10K HVAC install at 2.9% is $290 per job.',
+    closeAngle: 'Emergency/necessity service + extremely high tickets + field service (customer has limited options) = surcharge is a layup. A $10K HVAC install with surcharge recovers $300 per job. Do 10 installs a month and that\'s $3,000 back.',
+    searchTerms: 'HVAC, plumber, plumbing, electrician, electrical contractor, heating cooling, air conditioning, home services',
+    objections: [
+      { q: "We do a lot of insurance and warranty work, surcharge wouldn't apply.", a: "Right, surcharge only applies to card-present consumer transactions. Your insurance and warranty jobs go through as normal. But your cash-pay customers, the emergency calls, the upgrades, the service contracts paid by card, that's where surcharge recovers your fees." },
+      { q: "We invoice most of our jobs, not card-present.", a: "Even better. Online and invoiced transactions typically have higher rates, 2.5% + $0.15 with us versus the 2.9-3.5% you're probably paying now. And you can add a surcharge to invoiced payments too. On a $8,000 install, that's $240 back in your pocket." },
+      { q: "Our techs use their phones to process in the field.", a: "We support mobile processing. SwipeSimple, virtual terminal, whatever your techs are comfortable with. Same workflow they use now, just better rates. And if they're using Square in the field, they're paying 2.6% per swipe. We're at 2.2%." }
+    ]
+  },
+  salon: {
+    name: 'Salon / Barbershop',
+    avgVolume: '$20K-80K/month',
+    avgTicket: '$40-200',
+    commonProcessors: 'Square, Clover, Stripe',
+    typicalRate: '2.6-2.9%',
+    riskLevel: 'Low',
+    surchargeViability: 'Moderate to high. Lower average ticket but extremely loyal clientele. A 3% surcharge on a $75 haircut is $2.25. Customers who\'ve been going to the same stylist for years aren\'t leaving over $2. Works especially well in higher-end salons.',
+    painPoints: 'Most salons are on Square paying flat rate. Volume adds up fast with multiple stylists. The owner usually doesn\'t realize how much they\'re paying because each transaction is small but the monthly total is significant.',
+    closeAngle: 'Loyal recurring clients + relatively small surcharge per visit + high monthly aggregate volume = works great. Focus on the monthly total savings rather than per-transaction.',
+    searchTerms: 'salon, hair salon, barbershop, beauty salon, nail salon, spa, styling, hair stylist',
+    objections: [
+      { q: "My clients are price-sensitive.", a: "Your clients are relationship-sensitive. They come to you because of the stylist, not the payment method. $2 on a $75 service is invisible. And your regulars who come every 4-6 weeks aren't switching salons over it." },
+      { q: "We're on Square and it works fine.", a: "It works, but at $40K/month you're paying $1,040 in fees. With surcharge you pay zero. That's $12,480 a year. For a salon, that's a booth rent payment or a renovation budget." },
+      { q: "We have booth renters, not employees. I don't control their processing.", a: "If you're the one processing all transactions through your terminal, you control the rate. Even with booth renters, the processing runs through your merchant account. Switch that to Kashu and the savings go straight to you." }
+    ]
+  },
+  fitness: {
+    name: 'Gym / Fitness Studio',
+    avgVolume: '$30K-120K/month',
+    avgTicket: '$50-300 (memberships + packages)',
+    commonProcessors: 'Stripe, Square, Mindbody integrated',
+    typicalRate: '2.6-3.0%',
+    riskLevel: 'Low',
+    surchargeViability: 'High for class packages and personal training. Moderate for monthly memberships (recurring billing is surcharge-eligible but feels different). Best angle: apply surcharge to packages and drop-ins, keep memberships at reduced rate.',
+    painPoints: 'Recurring billing at high rates eats margin every month. Studios doing $80K/month on Stripe are paying $2,000+ in fees. Most gym owners focus on marketing and retention, not their processing costs.',
+    closeAngle: 'Recurring revenue model means consistent processing volume. Rate savings compound every month. Even without surcharge, switching from 2.9% to 2.2% on $80K/month saves $560/month or $6,720/year.',
+    searchTerms: 'gym, fitness studio, CrossFit, yoga studio, pilates, boxing gym, personal training, boutique fitness',
+    objections: [
+      { q: "We use Mindbody/Glofox/etc and processing is built in.", a: "Most fitness platforms let you use an external processor. And even if they take a cut, the rate you're paying through them is usually 2.9-3.5%. We can often integrate at a lower rate or we can handle your in-person transactions separately. Either way, you're saving money." },
+      { q: "Most of our revenue is recurring memberships.", a: "That's actually ideal. Recurring billing means consistent, predictable volume. At 2.2% instead of 2.9%, you save 0.7% every single month automatically. On $80K/month that's $560 back without doing anything different." },
+      { q: "We're a small studio, is the savings meaningful?", a: "A studio doing $30K/month saves $210/month by switching. That's $2,520/year. Not life-changing, but it's free money. And if you add surcharge on class packages and drop-ins, you could be looking at zero processing cost entirely." }
+    ]
+  },
+  restaurant: {
+    name: 'Restaurant / QSR',
+    avgVolume: '$40K-200K/month',
+    avgTicket: '$15-80',
+    commonProcessors: 'Toast, Square, Clover, Stripe',
+    typicalRate: '2.6-3.0% (Toast charges 2.99% + $0.15)',
+    riskLevel: 'Low',
+    surchargeViability: 'Moderate. Lower average ticket means surcharge is more visible per transaction. Works best in full-service restaurants with higher tickets ($40+). QSR and fast casual need to be positioned carefully. Many restaurants already doing it successfully.',
+    painPoints: 'Toast is everywhere and charges 2.99% + $0.15 per transaction. On a $50K/month restaurant, that\'s $1,570 in fees. Most restaurant owners think Toast is their only option because it came with the POS. They don\'t realize processing is separate.',
+    closeAngle: 'Toast displacement is the #1 play. Restaurant owners think Toast = their POS, but Toast processing is the most expensive in the industry. Show them the math and they switch same week.',
+    searchTerms: 'restaurant, cafe, pizzeria, bar, grill, fast casual, QSR, diner, bakery, food truck, catering',
+    objections: [
+      { q: "We can't leave Toast, our whole system runs on it.", a: "You don't have to leave Toast. Toast lets you use a third-party processor. You keep your POS, your menu, your online ordering, everything. You just route the payment processing through us at 2.2% instead of their 2.99%. Same system, way cheaper." },
+      { q: "Our margins are already thin, I can't add a surcharge.", a: "That's exactly why you should look at this. You don't have to add surcharge if it doesn't fit your concept. Just switching from 2.99% to 2.2% saves you $395/month on $50K volume. That's your food cost on a busy night." },
+      { q: "I've looked at switching before, it's always a hassle.", a: "We go live in 48 hours. We ship the terminal, we set it up, we port your account. You don't miss a single transaction. The only thing that changes is your statement looks better at the end of the month." }
+    ]
+  }
+};
+
+const SQUARE_OBJECTIONS = [
+  {
+    q: "Square is just so easy. Everything's in one place.",
+    a: "Square is easy. That's their whole play. But easy and cheap aren't the same thing. Square charges 2.6% + $0.10 in person. On $75K/month that's $2,025 in fees. We're at 2.2% + $0.15 which is $1,762. That's $263/month you're paying for 'easy.' And with surcharge you'd pay zero. Our setup is just as simple. Tap, swipe, done. Same experience for you and your customers, just way less money walking out the door."
+  },
+  {
+    q: "Square has all the tools I need. POS, invoicing, payroll, everything.",
+    a: "Square built an ecosystem so you'd feel locked in. But here's the thing. You can keep using Square for your POS, your invoicing, your appointments, all of it. You just route the payment processing through us. Square lets you use external processors. You keep every tool you like and stop overpaying for the one thing they overcharge on."
+  },
+  {
+    q: "Switching isn't worth the hassle for a small difference in rate.",
+    a: "Let's do the math real quick. At $60K/month, the difference between Square's 2.6% and our 2.2% is $240/month. That's $2,880/year. With surcharge it's not a savings, it's $21,600/year you stop paying entirely. That's not a small difference. That's a hire, a renovation, new equipment. And the 'hassle' is us shipping you a terminal and going live in 48 hours. You don't touch anything."
+  },
+  {
+    q: "I tried switching before and went right back to Square.",
+    a: "I hear that a lot. Usually it's because the other processor had bad support, clunky hardware, or made the switch painful. We're not that. We go live in 48 hours, you don't miss a transaction, and you have a direct line to a real person if anything comes up. Not a chatbot, not a ticket queue. The reason people stay on Square isn't because it's the best deal. It's because the last alternative was worse. We're not."
+  },
+  {
+    q: "My customers are used to seeing the Square reader.",
+    a: "Your customers don't care what brand is on the reader. They care that their card works. Nobody has ever walked out of a business because the terminal said PAX instead of Square. They tap, they go. The experience is identical. The only difference is what you pay at the end of the month."
+  },
+  {
+    q: "Square's reporting and analytics are really good.",
+    a: "Square's dashboard is nice. But you're paying a premium for a dashboard. Our reporting shows you everything you need, transactions, batches, chargebacks, deposits. And at 2.2% vs 2.6% you're saving enough every month to hire an accountant to read any report you want. Keep using Square's free POS app for the analytics if you like it. Just stop letting them process your payments at inflated rates."
+  },
+  {
+    q: "What about Square's next-day deposits?",
+    a: "We do next-day funding too. Most processors do at this point. Square made that a selling point 5 years ago. It's table stakes now. You'll get your money just as fast, you'll just keep more of it."
+  },
+  {
+    q: "I just don't want to deal with learning a new system.",
+    a: "There's nothing to learn. Your customer taps or swipes. You see the sale. Money hits your account next day. It's the same workflow you do right now. The terminal is different, the experience is identical. We handle the setup, you handle your business. That's it."
+  }
+];
+
+function generate() {
+  const vert = document.getElementById('vertical').value;
+  if (!vert) { alert('Select a vertical.'); return; }
+
+  const v = VERTICALS[vert];
+  const name = document.getElementById('prospectName').value.trim() || 'there';
+  const biz = document.getElementById('bizName').value.trim();
+  const city = document.getElementById('city').value.trim();
+  const you = document.getElementById('yourName').value.trim() || 'John';
+  const angle = getAngle();
+  const estVol = parseInt(document.getElementById('estVolume').value) || 75000;
+  const currentRate = parseFloat(document.getElementById('currentRate').value) || 2.8;
+
+  const kashuRate = 2.2;
+  const monthlySavings = estVol * ((currentRate - kashuRate) / 100);
+  const surchargeRev = estVol * 0.03;
+  const annualSavings = monthlySavings * 12;
+  const annualSurcharge = surchargeRev * 12;
+
+  const bizRef = biz || ('your ' + v.name.split('/')[0].trim().toLowerCase());
+  const cityRef = city ? ` in ${city}` : '';
+
+  // Build the 5-touch sequence
+  const touches = [];
+
+  // TOUCH 1: Cold Email
+  if (angle === 'surcharge' || angle === 'both') {
+    touches.push({
+      num: 1, channel: 'Email', timing: 'Day 1 -- Cold Email',
+      subject: `Quick question about ${biz || 'your processing'}`,
+      body: `${name === 'there' ? 'Hey' : name} --
+
+What if processing${biz ? ' at ' + biz : ''} cost you nothing?
+
+Most ${v.name.split('/')[0].trim().toLowerCase()}s${cityRef} are paying ${v.typicalRate} on every transaction. That's ${fmt(estVol * (currentRate/100))}/month walking out the door on ${fmt(estVol)} in volume.
+
+We set up surcharge so your customers cover the fee. Your processing cost goes to zero. You don't lose a single customer because ${v.surchargeViability.split('.').slice(1,3).join('.').trim().toLowerCase()}.
+
+Takes 48 hours to go live. No downtime, no disruption.
+
+Worth a quick look?
+
+${you}`
+    });
+  } else {
+    touches.push({
+      num: 1, channel: 'Email', timing: 'Day 1 -- Cold Email',
+      subject: `Saving ${biz || v.name.split('/')[0].trim().toLowerCase() + 's'} ${fmt(monthlySavings)}/month`,
+      body: `${name === 'there' ? 'Hey' : name} --
+
+Most ${v.name.split('/')[0].trim().toLowerCase()}s${cityRef} are paying ${v.typicalRate} on processing. At ${fmt(estVol)}/month that's ${fmt(estVol * (currentRate/100))} in fees.
+
+We guarantee 2.2% + $0.15 in writing. That's ${fmt(monthlySavings)}/month back in your pocket. ${fmt(annualSavings)}/year.
+
+Go live in 48 hours. No downtime, no hassle. We handle everything.
+
+Want me to run your numbers?
+
+${you}`
+    });
+  }
+
+  // TOUCH 2: Text
+  touches.push({
+    num: 2, channel: 'Text', timing: 'Day 2 -- Text Message',
+    subject: '',
+    body: `Hey ${name !== 'there' ? name : ''} -- ${you} here. Sent you an email yesterday about ${angle === 'savings' ? 'cutting processing costs' : 'eliminating processing fees'} at ${biz || 'your ' + v.name.split('/')[0].trim().toLowerCase()}. ${angle === 'surcharge' || angle === 'both' ? 'We set up surcharge so you pay zero. Your customers won\'t blink at it.' : 'We guarantee better rates in writing. ' + fmt(monthlySavings) + '/month savings.'} Takes 2 min to see the numbers. Want me to send them over?`
+  });
+
+  // TOUCH 3: Follow-up email with math
+  touches.push({
+    num: 3, channel: 'Email', timing: 'Day 4 -- Follow-up Email (The Math)',
+    subject: `${fmt(angle === 'surcharge' || angle === 'both' ? annualSurcharge : annualSavings)} back to ${biz || 'you'} this year`,
+    body: `${name === 'there' ? 'Hey' : name} --
+
+Wanted to put the numbers right in front of you.
+
+At ${fmt(estVol)}/month in processing volume:
+
+${angle === 'surcharge' || angle === 'both' ? `With surcharge: You pay $0 in processing fees. Your customers cover it. That's ${fmt(surchargeRev)}/month you stop losing. ${fmt(annualSurcharge)}/year.` : ''}
+${angle === 'savings' || angle === 'both' ? `On rate savings alone: ${currentRate}% down to 2.2%. That's ${fmt(monthlySavings)}/month saved. ${fmt(annualSavings)}/year.` : ''}
+
+${angle === 'both' ? `Either way you win. Surcharge = zero cost processing. Rate cut = immediate savings. Your call on which fits better.` : ''}
+
+We go live in 48 hours. No downtime. No disruption to ${biz || 'your business'}. We handle everything.
+
+If that math looks interesting, I'll run your exact numbers in a 5 minute call.
+
+${you}`
+  });
+
+  // TOUCH 4: Text with social proof
+  touches.push({
+    num: 4, channel: 'Text', timing: 'Day 6 -- Text Message',
+    subject: '',
+    body: `${name !== 'there' ? name : 'Hey'} -- just set up another ${v.name.split('/')[0].trim().toLowerCase()}${cityRef} last week. ${angle === 'surcharge' || angle === 'both' ? 'Zero processing cost from day one. Their customers haven\'t said a word about the surcharge.' : 'Saving them ' + fmt(monthlySavings) + '/month right out of the gate.'} Happy to show you the same numbers. No pressure either way.`
+  });
+
+  // TOUCH 5: Breakup email
+  touches.push({
+    num: 5, channel: 'Email', timing: 'Day 9 -- Breakup Email',
+    subject: 'Last one from me',
+    body: `${name === 'there' ? 'Hey' : name} --
+
+Not going to keep hitting you up. If the timing's off, totally get it.
+
+But if you ever look at your processing statement and think "that's a lot of money" -- you're right. Most ${v.name.split('/')[0].trim().toLowerCase()}s are overpaying by ${fmt(monthlySavings)}+ a month and just accept it.
+
+We guarantee better rates in writing${angle !== 'savings' ? ' or set up surcharge so you pay nothing' : ''}. The switch takes 48 hours and you don't miss a transaction.
+
+Standing offer. No expiration.
+
+${you}`
+  });
+
+  // Render
+  let html = `
+    <div class="output-header">
+      <div class="kashu-logo"><div class="logo-dot"></div> Kashu</div>
+      <h2>Vertical Attack: ${v.name}</h2>
+      <p>${name !== 'there' ? name : 'Prospect'}${biz ? ' at ' + biz : ''}${cityRef} -- 5-touch outbound sequence</p>
+      <div class="meta">
+        <span class="meta-tag">${v.name.split('/')[0].trim()}</span>
+        <span class="meta-tag">${angle === 'both' ? 'Surcharge + Savings' : angle === 'surcharge' ? 'Surcharge Lead' : 'Savings Lead'}</span>
+        <span class="meta-tag">5 Touches</span>
+        <span class="meta-tag">${v.riskLevel} Risk</span>
+      </div>
+    </div>
+
+    <div class="vertical-intel">
+      <h3>Vertical Intel: ${v.name}</h3>
+      <div class="intel-grid">
+        <div class="intel-item"><div class="lbl">Avg Monthly Volume</div><div class="val">${v.avgVolume}</div></div>
+        <div class="intel-item"><div class="lbl">Avg Ticket Size</div><div class="val">${v.avgTicket}</div></div>
+        <div class="intel-item"><div class="lbl">Common Processors</div><div class="val">${v.commonProcessors}</div></div>
+        <div class="intel-item"><div class="lbl">Typical Rate</div><div class="val">${v.typicalRate}</div></div>
+        <div class="intel-item"><div class="lbl">Risk Level</div><div class="val">${v.riskLevel}</div></div>
+        <div class="intel-item"><div class="lbl">Best Search Terms</div><div class="val">${v.searchTerms}</div></div>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="lbl" style="font-size:10px;color:var(--teal-muted);font-weight:600;text-transform:uppercase;margin-bottom:6px;">Pain Points</div>
+        <div style="font-size:13px;color:var(--white);line-height:1.6;">${v.painPoints}</div>
+      </div>
+      <div style="margin-top:12px;">
+        <div class="lbl" style="font-size:10px;color:var(--teal-muted);font-weight:600;text-transform:uppercase;margin-bottom:6px;">Close Angle</div>
+        <div style="font-size:13px;color:var(--green-bright);line-height:1.6;">${v.closeAngle}</div>
+      </div>
+    </div>
+
+    <div class="surcharge-box">
+      <h3>Surcharge Viability: ${v.name}</h3>
+      <div class="body">${v.surchargeViability}</div>
+      <div class="surcharge-math">
+        <div class="sm-stat"><div class="val">${fmt(monthlySavings)}</div><div class="lbl">Monthly Rate Savings</div></div>
+        <div class="sm-stat"><div class="val">${fmt(surchargeRev)}</div><div class="lbl">Surcharge Revenue</div></div>
+        <div class="sm-stat"><div class="val" style="color:var(--green-bright)">${fmt(annualSavings + annualSurcharge)}</div><div class="lbl">Combined Annual</div></div>
+      </div>
+    </div>
+  `;
+
+  // Touches
+  touches.forEach((t, i) => {
+    html += `
+      <div class="touch-card">
+        <span class="touch-badge">Touch ${t.num} <span class="touch-channel">${t.channel}</span></span>
+        <h3>${t.subject || t.channel + ' Message'}</h3>
+        <div class="timing">${t.timing}</div>
+        ${t.subject && t.channel === 'Email' ? `<div style="font-size:12px;color:var(--teal-muted);margin-bottom:8px;font-weight:600;">Subject: ${t.subject}</div>` : ''}
+        <div class="body">${t.body}</div>
+        <button class="copy-btn" onclick="copyTouch(this, ${i})">Copy</button>
+      </div>
+    `;
+  });
+
+  // Objections
+  html += `
+    <div class="touch-card">
+      <h3 style="margin-bottom:16px;">Objection Handling: ${v.name}</h3>
+      ${v.objections.map(o => `
+        <div style="margin-bottom:16px;">
+          <div style="font-size:13px;font-weight:700;color:var(--teal-dark);margin-bottom:4px;">"${o.q}"</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">${o.a}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  // Square Displacement Objections (show when Square is a common processor for this vertical)
+  if (v.commonProcessors.toLowerCase().includes('square')) {
+    html += `
+      <div class="touch-card" style="border-left: 3px solid var(--green-bright);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+          <h3 style="margin:0;">Square Displacement Playbook</h3>
+          <span style="background:var(--green-bright);color:var(--teal-dark);font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;text-transform:uppercase;">Common in ${v.name.split('/')[0].trim()}</span>
+        </div>
+        <div style="font-size:12px;color:var(--teal-muted);margin-bottom:16px;line-height:1.5;">Square is the #1 objection in this vertical. They sell convenience. You sell math. Here's how to handle every version of "but I love Square."</div>
+        ${SQUARE_OBJECTIONS.map(o => `
+          <div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--green-pale);">
+            <div style="font-size:13px;font-weight:700;color:var(--teal-dark);margin-bottom:6px;">"${o.q}"</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.7;">${o.a}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  // Copy all
+  html += `
+    <div style="text-align:center;margin-top:20px;">
+      <button class="copy-btn" onclick="copyAll()" style="padding:12px 32px;font-size:14px;">Copy Entire Package</button>
+    </div>
+  `;
+
+  document.getElementById('output').innerHTML = html;
+  document.getElementById('output').style.display = 'block';
+  document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+
+  window._touches = touches;
+  window._vert = v;
+}
+
+function copyTouch(btn, idx) {
+  const t = window._touches[idx];
+  let text = '';
+  if (t.channel === 'Email') text = `Subject: ${t.subject}\n\n${t.body}`;
+  else text = t.body;
+  navigator.clipboard.writeText(text);
+  btn.textContent = 'Copied';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+}
+
+function copyAll() {
+  const v = window._vert;
+  let full = `VERTICAL ATTACK PACKAGE: ${v.name}\n${'='.repeat(50)}\n\n`;
+  full += `Avg Volume: ${v.avgVolume}\nAvg Ticket: ${v.avgTicket}\nCommon Processors: ${v.commonProcessors}\nTypical Rate: ${v.typicalRate}\nRisk: ${v.riskLevel}\n\n`;
+  full += `PAIN POINTS: ${v.painPoints}\n\nCLOSE ANGLE: ${v.closeAngle}\n\nSURCHARGE VIABILITY: ${v.surchargeViability}\n\n`;
+  full += `${'='.repeat(50)}\nOUTBOUND SEQUENCE\n${'='.repeat(50)}\n\n`;
+  window._touches.forEach(t => {
+    full += `--- TOUCH ${t.num}: ${t.channel} (${t.timing}) ---\n`;
+    if (t.subject && t.channel === 'Email') full += `Subject: ${t.subject}\n\n`;
+    full += `${t.body}\n\n`;
+  });
+  full += `\n--- OBJECTION HANDLING ---\n\n`;
+  v.objections.forEach(o => {
+    full += `Q: "${o.q}"\nA: ${o.a}\n\n`;
+  });
+  if (v.commonProcessors.toLowerCase().includes('square')) {
+    full += `\n--- SQUARE DISPLACEMENT PLAYBOOK ---\n\n`;
+    SQUARE_OBJECTIONS.forEach(o => {
+      full += `Q: "${o.q}"\nA: ${o.a}\n\n`;
+    });
+  }
+  navigator.clipboard.writeText(full);
+  event.target.textContent = 'Copied All';
+  event.target.classList.add('copied');
+  setTimeout(() => { event.target.textContent = 'Copy Entire Package'; event.target.classList.remove('copied'); }, 2000);
+}
+</script>
+
+</body>
+</html>

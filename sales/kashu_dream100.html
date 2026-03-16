@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dream 100 Tracker | Kashu</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --dark:   #0b5147;
+    --mid:    #397168;
+    --muted:  #93adaa;
+    --green:  #01de8f;
+    --bg:     #f4f9f8;
+    --white:  #ffffff;
+    --text:   #1a2e2b;
+    --sub:    #4a6360;
+    --border: #c8dbd8;
+    --red:    #e05252;
+    --gold:   #f5a623;
+    --blue:   #3b82f6;
+    --purple: #8b5cf6;
+  }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .header {
+    background: var(--dark);
+    padding: 36px 24px 0;
+    text-align: center;
+  }
+  .logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: var(--green);
+    border-radius: 12px;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+  }
+  .header h1 {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .header .subtitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .nav-bar {
+    background: var(--dark);
+    padding: 0 24px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .nav-btn {
+    padding: 10px 20px;
+    border: 1.5px solid var(--mid);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { border-color: var(--green); color: var(--green); }
+  .nav-btn.active { background: var(--green); color: var(--dark); border-color: var(--green); }
+
+  .main {
+    background: var(--bg);
+    min-height: calc(100vh - 200px);
+    padding: 32px 24px 64px;
+    border-radius: 24px 24px 0 0;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* Stats bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--dark);
+  }
+  .stat-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+    align-items: center;
+  }
+  .search-box {
+    flex: 1;
+    min-width: 220px;
+    padding: 12px 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    background: var(--white);
+  }
+  .search-box:focus { outline: none; border-color: var(--green); }
+  .btn {
+    padding: 12px 22px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--green); color: var(--dark); }
+  .btn-primary:hover { background: #00c97e; }
+  .btn-secondary { background: var(--dark); color: var(--white); }
+  .btn-secondary:hover { background: var(--mid); }
+  .btn-danger { background: var(--red); color: var(--white); font-size: 12px; padding: 8px 14px; }
+  .btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 6px; }
+
+  select.filter-select {
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    background: var(--white);
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  /* Table */
+  .table-wrap {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead th {
+    background: var(--dark);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 14px 16px;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  thead th:hover { background: var(--mid); }
+  tbody td {
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tbody tr:hover { background: #eef6f4; }
+  tbody tr:last-child td { border-bottom: none; }
+
+  /* Touch badges */
+  .touch-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 13px;
+  }
+  .touch-cold { background: #fde8e8; color: var(--red); }
+  .touch-warm { background: #fef3e0; color: #a16e1a; }
+  .touch-hot { background: #e6faf2; color: var(--dark); }
+
+  /* Status badges */
+  .status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .status-new { background: #e8f0fe; color: #1a56db; }
+  .status-contacted { background: #fef3e0; color: #a16e1a; }
+  .status-engaged { background: #e6faf2; color: var(--dark); }
+  .status-meeting { background: var(--green); color: var(--dark); }
+  .status-closed { background: var(--dark); color: var(--green); }
+  .status-dead { background: #f3f4f6; color: #9ca3af; }
+
+  /* Category badge */
+  .cat-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .cat-merchant { background: #e6faf2; color: var(--dark); }
+  .cat-mrp { background: #f0ebfe; color: #6d28d9; }
+  .cat-pe { background: #e8f0fe; color: #1a56db; }
+
+  /* Priority */
+  .priority-high { color: var(--red); font-weight: 700; }
+  .priority-med { color: var(--gold); font-weight: 700; }
+  .priority-low { color: var(--muted); font-weight: 600; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 32px;
+    width: 90%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 20px;
+  }
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sub);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+  }
+  .form-group textarea { min-height: 80px; resize: vertical; }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { outline: none; border-color: var(--green); }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  /* Touch log in modal */
+  .touch-log {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .touch-entry {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--sub);
+  }
+  .touch-entry:last-child { border-bottom: none; }
+  .touch-entry .touch-date {
+    font-weight: 700;
+    color: var(--dark);
+    margin-right: 8px;
+  }
+  .touch-entry .touch-type {
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--dark);
+    color: var(--green);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+  }
+
+  /* Next touch indicator */
+  .next-touch {
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .next-overdue { color: var(--red); }
+  .next-today { color: var(--gold); }
+  .next-upcoming { color: var(--muted); }
+
+  /* Highlight row */
+  .highlight-info {
+    background: linear-gradient(135deg, var(--dark), var(--mid));
+    border-radius: 14px;
+    padding: 24px 28px;
+    color: var(--white);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .highlight-info p { color: rgba(255,255,255,0.85); font-size: 13px; line-height: 1.6; flex: 1; min-width: 280px; }
+  .highlight-info .big-stat { font-size: 48px; font-weight: 800; color: var(--green); }
+
+  .tab-section { display: none; }
+  .tab-section.active { display: block; }
+
+  @media (max-width: 768px) {
+    table { font-size: 12px; }
+    thead th, tbody td { padding: 10px 8px; }
+    .form-row { grid-template-columns: 1fr; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-mark">K</div>
+  <h1>Dream 100 Tracker</h1>
+  <div class="subtitle">80% of sales happen on touch 5-12. Only 10% of reps make it past 3.</div>
+</div>
+
+<div class="nav-bar">
+  <button class="nav-btn active" onclick="switchTab('all')">All Targets</button>
+  <button class="nav-btn" onclick="switchTab('merchants')">Merchants</button>
+  <button class="nav-btn" onclick="switchTab('mrps')">MRPs</button>
+  <button class="nav-btn" onclick="switchTab('pe')">PE Firms</button>
+</div>
+
+<div class="main">
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-bar" id="stats-bar"></div>
+
+  <!-- Chet Holmes reminder -->
+  <div class="highlight-info">
+    <div class="big-stat" id="persistence-score">0%</div>
+    <p><strong>Persistence Score:</strong> Percentage of your Dream 100 with 5+ touches. Chet Holmes doubled 9 divisions for Charlie Munger using this strategy. The math is simple: most of your competitors quit after 3 touches. You don't quit. The deals are sitting at touch 5-12, waiting for the rep who shows up one more time.</p>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <input type="text" class="search-box" id="searchInput" placeholder="Search by name, company, vertical..." oninput="renderTable()"/>
+    <select class="filter-select" id="statusFilter" onchange="renderTable()">
+      <option value="">All Statuses</option>
+      <option value="new">New</option>
+      <option value="contacted">Contacted</option>
+      <option value="engaged">Engaged</option>
+      <option value="meeting">Meeting Set</option>
+      <option value="closed">Closed</option>
+      <option value="dead">Dead</option>
+    </select>
+    <select class="filter-select" id="priorityFilter" onchange="renderTable()">
+      <option value="">All Priorities</option>
+      <option value="high">High</option>
+      <option value="medium">Medium</option>
+      <option value="low">Low</option>
+    </select>
+    <select class="filter-select" id="sortSelect" onchange="renderTable()">
+      <option value="next_touch">Sort: Next Touch Due</option>
+      <option value="touches_asc">Sort: Fewest Touches</option>
+      <option value="touches_desc">Sort: Most Touches</option>
+      <option value="name">Sort: Name A-Z</option>
+      <option value="priority">Sort: Priority</option>
+      <option value="last_touch">Sort: Last Touched</option>
+    </select>
+    <button class="btn btn-primary" onclick="openModal()">+ Add Target</button>
+    <button class="btn btn-secondary" onclick="exportData()">Export CSV</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Name / Company</th>
+          <th>Vertical</th>
+          <th>Est. Volume</th>
+          <th>Priority</th>
+          <th>Touches</th>
+          <th>Status</th>
+          <th>Last Touch</th>
+          <th>Next Touch</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+  <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--muted)" id="countLabel"></p>
+
+</div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h2 id="modalTitle">Add Dream Target</h2>
+    <input type="hidden" id="editId"/>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Category</label>
+        <select id="fCategory">
+          <option value="merchant">Merchant</option>
+          <option value="mrp">MRP</option>
+          <option value="pe">PE Firm</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Priority</label>
+        <select id="fPriority">
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Name / Contact</label>
+      <input type="text" id="fName" placeholder="John Smith"/>
+    </div>
+    <div class="form-group">
+      <label>Company</label>
+      <input type="text" id="fCompany" placeholder="Acme Widgets"/>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Vertical / Industry</label>
+        <input type="text" id="fVertical" placeholder="Restaurant, Retail, etc."/>
+      </div>
+      <div class="form-group">
+        <label>Est. Monthly Volume</label>
+        <input type="text" id="fVolume" placeholder="$60,000"/>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Status</label>
+        <select id="fStatus">
+          <option value="new">New</option>
+          <option value="contacted">Contacted</option>
+          <option value="engaged">Engaged</option>
+          <option value="meeting">Meeting Set</option>
+          <option value="closed">Closed</option>
+          <option value="dead">Dead</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Next Touch Date</label>
+        <input type="date" id="fNextTouch"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Phone / Email / LinkedIn</label>
+      <input type="text" id="fContact" placeholder="Contact info"/>
+    </div>
+
+    <div class="form-group">
+      <label>Notes / Strategy</label>
+      <textarea id="fNotes" placeholder="Current processor, pain points, connection path, pitch angle..."></textarea>
+    </div>
+
+    <!-- Touch log (visible when editing) -->
+    <div id="touchLogSection" style="display:none">
+      <label style="font-size:12px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:1px;">Touch History</label>
+      <div class="touch-log" id="touchLog"></div>
+      <div class="form-row" style="margin-top:12px">
+        <div class="form-group">
+          <label>Log New Touch</label>
+          <select id="fTouchType">
+            <option value="email">Email</option>
+            <option value="call">Call</option>
+            <option value="text">Text</option>
+            <option value="linkedin">LinkedIn</option>
+            <option value="meeting">Meeting</option>
+            <option value="gift">Gift/Mail</option>
+            <option value="referral">Referral Intro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Touch Note</label>
+          <input type="text" id="fTouchNote" placeholder="What happened?"/>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="addTouch()" style="margin-bottom:12px">+ Log Touch</button>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="saveTarget()" style="flex:1">Save</button>
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" id="deleteBtn" onclick="deleteTarget()" style="display:none">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'kashu_dream100';
+let currentTab = 'all';
+
+function getData() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+}
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderTable();
+}
+
+function getFiltered() {
+  let data = getData();
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const status = document.getElementById('statusFilter').value;
+  const priority = document.getElementById('priorityFilter').value;
+  const sort = document.getElementById('sortSelect').value;
+
+  if (currentTab !== 'all') {
+    const catMap = { merchants: 'merchant', mrps: 'mrp', pe: 'pe' };
+    data = data.filter(d => d.category === catMap[currentTab]);
+  }
+  if (search) {
+    data = data.filter(d => {
+      const hay = [d.name, d.company, d.vertical, d.notes, d.contact].join(' ').toLowerCase();
+      return hay.includes(search);
+    });
+  }
+  if (status) data = data.filter(d => d.status === status);
+  if (priority) data = data.filter(d => d.priority === priority);
+
+  const priOrd = { high: 0, medium: 1, low: 2 };
+  const today = new Date().toISOString().slice(0, 10);
+
+  data.sort((a, b) => {
+    if (sort === 'name') return (a.name || '').localeCompare(b.name || '');
+    if (sort === 'touches_asc') return (a.touches || []).length - (b.touches || []).length;
+    if (sort === 'touches_desc') return (b.touches || []).length - (a.touches || []).length;
+    if (sort === 'priority') return (priOrd[a.priority] || 1) - (priOrd[b.priority] || 1);
+    if (sort === 'last_touch') {
+      const aLast = a.touches && a.touches.length ? a.touches[a.touches.length - 1].date : '0';
+      const bLast = b.touches && b.touches.length ? b.touches[b.touches.length - 1].date : '0';
+      return bLast.localeCompare(aLast);
+    }
+    // next_touch (default)
+    const aNext = a.next_touch || '9999';
+    const bNext = b.next_touch || '9999';
+    return aNext.localeCompare(bNext);
+  });
+
+  return data;
+}
+
+function renderTable() {
+  const data = getFiltered();
+  const allData = getData();
+  const tbody = document.getElementById('tableBody');
+  const today = new Date().toISOString().slice(0, 10);
+
+  // Stats
+  const merchants = allData.filter(d => d.category === 'merchant');
+  const mrps = allData.filter(d => d.category === 'mrp');
+  const pes = allData.filter(d => d.category === 'pe');
+  const overdue = allData.filter(d => d.next_touch && d.next_touch < today && d.status !== 'closed' && d.status !== 'dead');
+  const fivePlus = allData.filter(d => (d.touches || []).length >= 5);
+  const persistence = allData.length > 0 ? Math.round(fivePlus.length / allData.length * 100) : 0;
+
+  document.getElementById('stats-bar').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${allData.length}</div><div class="stat-label">Total Targets</div></div>
+    <div class="stat-card"><div class="stat-num">${merchants.length}</div><div class="stat-label">Merchants</div></div>
+    <div class="stat-card"><div class="stat-num">${mrps.length}</div><div class="stat-label">MRPs</div></div>
+    <div class="stat-card"><div class="stat-num">${pes.length}</div><div class="stat-label">PE Firms</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:${overdue.length > 0 ? 'var(--red)' : 'var(--dark)'}">${overdue.length}</div><div class="stat-label">Overdue Touches</div></div>
+    <div class="stat-card"><div class="stat-num">${fivePlus.length}</div><div class="stat-label">5+ Touches</div></div>
+  `;
+  document.getElementById('persistence-score').textContent = persistence + '%';
+
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--muted)">No targets found. Add your first Dream 100 target above.</td></tr>';
+    document.getElementById('countLabel').textContent = '';
+    return;
+  }
+
+  tbody.innerHTML = data.map(d => {
+    const touches = d.touches || [];
+    const touchCount = touches.length;
+    const touchClass = touchCount < 3 ? 'touch-cold' : touchCount < 5 ? 'touch-warm' : 'touch-hot';
+    const catClass = d.category === 'merchant' ? 'cat-merchant' : d.category === 'mrp' ? 'cat-mrp' : 'cat-pe';
+    const catLabel = d.category === 'merchant' ? 'MERCHANT' : d.category === 'mrp' ? 'MRP' : 'PE';
+    const statusClass = 'status-' + (d.status || 'new');
+    const statusLabel = (d.status || 'new').charAt(0).toUpperCase() + (d.status || 'new').slice(1);
+    const priClass = d.priority === 'high' ? 'priority-high' : d.priority === 'medium' ? 'priority-med' : 'priority-low';
+    const lastTouch = touches.length > 0 ? touches[touches.length - 1].date : '--';
+    const lastTouchDisplay = lastTouch !== '--' ? formatDate(lastTouch) : '--';
+
+    let nextTouchHtml = '--';
+    if (d.next_touch && d.status !== 'closed' && d.status !== 'dead') {
+      if (d.next_touch < today) {
+        const days = Math.floor((new Date(today) - new Date(d.next_touch)) / 86400000);
+        nextTouchHtml = `<span class="next-touch next-overdue">${days}d OVERDUE</span>`;
+      } else if (d.next_touch === today) {
+        nextTouchHtml = `<span class="next-touch next-today">TODAY</span>`;
+      } else {
+        const days = Math.floor((new Date(d.next_touch) - new Date(today)) / 86400000);
+        nextTouchHtml = `<span class="next-touch next-upcoming">In ${days}d</span>`;
+      }
+    }
+
+    return `<tr onclick="openModal('${d.id}')" style="cursor:pointer">
+      <td><span class="cat-badge ${catClass}">${catLabel}</span></td>
+      <td><strong>${esc(d.name || '')}</strong>${d.company ? '<br><span style="font-size:12px;color:var(--muted)">' + esc(d.company) + '</span>' : ''}</td>
+      <td>${esc(d.vertical || '--')}</td>
+      <td>${esc(d.volume || '--')}</td>
+      <td><span class="${priClass}">${(d.priority || 'medium').toUpperCase()}</span></td>
+      <td><span class="touch-count ${touchClass}">${touchCount}</span></td>
+      <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+      <td style="font-size:12px">${lastTouchDisplay}</td>
+      <td>${nextTouchHtml}</td>
+      <td><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();quickTouch('${d.id}')">+ Touch</button></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('countLabel').textContent = `Showing ${data.length} of ${allData.length} targets`;
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '--';
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function esc(s) {
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+function openModal(id) {
+  const modal = document.getElementById('modal');
+  const isEdit = !!id;
+  document.getElementById('modalTitle').textContent = isEdit ? 'Edit Target' : 'Add Dream Target';
+  document.getElementById('deleteBtn').style.display = isEdit ? 'block' : 'none';
+  document.getElementById('touchLogSection').style.display = isEdit ? 'block' : 'none';
+
+  if (isEdit) {
+    const data = getData();
+    const t = data.find(d => d.id === id);
+    if (!t) return;
+    document.getElementById('editId').value = id;
+    document.getElementById('fCategory').value = t.category || 'merchant';
+    document.getElementById('fPriority').value = t.priority || 'medium';
+    document.getElementById('fName').value = t.name || '';
+    document.getElementById('fCompany').value = t.company || '';
+    document.getElementById('fVertical').value = t.vertical || '';
+    document.getElementById('fVolume').value = t.volume || '';
+    document.getElementById('fStatus').value = t.status || 'new';
+    document.getElementById('fNextTouch').value = t.next_touch || '';
+    document.getElementById('fContact').value = t.contact || '';
+    document.getElementById('fNotes').value = t.notes || '';
+    renderTouchLog(t.touches || []);
+  } else {
+    document.getElementById('editId').value = '';
+    document.getElementById('fCategory').value = 'merchant';
+    document.getElementById('fPriority').value = 'high';
+    document.getElementById('fName').value = '';
+    document.getElementById('fCompany').value = '';
+    document.getElementById('fVertical').value = '';
+    document.getElementById('fVolume').value = '';
+    document.getElementById('fStatus').value = 'new';
+    document.getElementById('fNextTouch').value = '';
+    document.getElementById('fContact').value = '';
+    document.getElementById('fNotes').value = '';
+    document.getElementById('touchLog').innerHTML = '';
+  }
+  modal.classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+}
+
+function renderTouchLog(touches) {
+  const log = document.getElementById('touchLog');
+  if (!touches || touches.length === 0) {
+    log.innerHTML = '<p style="font-size:13px;color:var(--muted)">No touches logged yet.</p>';
+    return;
+  }
+  log.innerHTML = [...touches].reverse().map(t =>
+    `<div class="touch-entry">
+      <span class="touch-date">${formatDate(t.date)}</span>
+      <span class="touch-type">${t.type.toUpperCase()}</span>
+      ${t.note ? esc(t.note) : ''}
+    </div>`
+  ).join('');
+}
+
+function addTouch() {
+  const id = document.getElementById('editId').value;
+  if (!id) return;
+  const data = getData();
+  const t = data.find(d => d.id === id);
+  if (!t) return;
+  if (!t.touches) t.touches = [];
+  const type = document.getElementById('fTouchType').value;
+  const note = document.getElementById('fTouchNote').value;
+  t.touches.push({
+    date: new Date().toISOString().slice(0, 10),
+    type: type,
+    note: note
+  });
+  // Auto-advance next touch by 7 days
+  const nextDate = new Date();
+  nextDate.setDate(nextDate.getDate() + 7);
+  t.next_touch = nextDate.toISOString().slice(0, 10);
+  document.getElementById('fNextTouch').value = t.next_touch;
+
+  // Auto-advance status
+  if (t.status === 'new') t.status = 'contacted';
+  document.getElementById('fStatus').value = t.status;
+
+  saveData(data);
+  document.getElementById('fTouchNote').value = '';
+  renderTouchLog(t.touches);
+  renderTable();
+}
+
+function quickTouch(id) {
+  const data = getData();
+  const t = data.find(d => d.id === id);
+  if (!t) return;
+  if (!t.touches) t.touches = [];
+  t.touches.push({
+    date: new Date().toISOString().slice(0, 10),
+    type: 'email',
+    note: 'Quick touch logged'
+  });
+  const nextDate = new Date();
+  nextDate.setDate(nextDate.getDate() + 7);
+  t.next_touch = nextDate.toISOString().slice(0, 10);
+  if (t.status === 'new') t.status = 'contacted';
+  saveData(data);
+  renderTable();
+}
+
+function saveTarget() {
+  const data = getData();
+  const editId = document.getElementById('editId').value;
+
+  const target = {
+    id: editId || 'd' + Date.now(),
+    category: document.getElementById('fCategory').value,
+    priority: document.getElementById('fPriority').value,
+    name: document.getElementById('fName').value,
+    company: document.getElementById('fCompany').value,
+    vertical: document.getElementById('fVertical').value,
+    volume: document.getElementById('fVolume').value,
+    status: document.getElementById('fStatus').value,
+    next_touch: document.getElementById('fNextTouch').value,
+    contact: document.getElementById('fContact').value,
+    notes: document.getElementById('fNotes').value,
+    touches: []
+  };
+
+  if (editId) {
+    const idx = data.findIndex(d => d.id === editId);
+    if (idx !== -1) {
+      target.touches = data[idx].touches || [];
+      data[idx] = target;
+    }
+  } else {
+    target.created = new Date().toISOString().slice(0, 10);
+    data.push(target);
+  }
+
+  saveData(data);
+  closeModal();
+  renderTable();
+}
+
+function deleteTarget() {
+  const id = document.getElementById('editId').value;
+  if (!id) return;
+  if (!confirm('Delete this target?')) return;
+  const data = getData().filter(d => d.id !== id);
+  saveData(data);
+  closeModal();
+  renderTable();
+}
+
+function exportData() {
+  const data = getFiltered();
+  if (data.length === 0) return alert('No data to export.');
+  const headers = ['Category','Name','Company','Vertical','Volume','Priority','Touches','Status','Last Touch','Next Touch','Contact','Notes'];
+  const rows = data.map(d => {
+    const touches = d.touches || [];
+    const lastTouch = touches.length > 0 ? touches[touches.length - 1].date : '';
+    return [d.category, d.name, d.company, d.vertical, d.volume, d.priority, touches.length, d.status, lastTouch, d.next_touch || '', d.contact, (d.notes || '').replace(/"/g, '""')].map(v => `"${v}"`).join(',');
+  });
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `kashu_dream100_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+// Close modal on overlay click
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Init
+renderTable();
+</script>
+</body>
+</html>

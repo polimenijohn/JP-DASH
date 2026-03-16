@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu MRP Recruiting Sequence Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-dark:   #0b5147;
+    --teal-mid:    #397168;
+    --teal-muted:  #93adaa;
+    --green-bright:#01de8f;
+    --green-mid:   #8de6c6;
+    --green-pale:  #d5eae3;
+    --green-lime:  #e1fea1;
+    --white:       #ffffff;
+    --bg:          #f2f6f5;
+    --text:        #0d1a17;
+    --text-muted:  #4a6560;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+
+  #generator {
+    max-width: 640px; margin: 44px auto;
+    background: var(--white); border-radius: 16px; padding: 44px;
+    box-shadow: 0 4px 28px rgba(11,81,71,0.10);
+  }
+  .form-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+  .form-logo .logo-mark { width: 36px; height: 36px; background: var(--teal-dark); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .form-logo .logo-text { font-size: 20px; font-weight: 800; color: var(--teal-dark); }
+  h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; color: var(--teal-dark); }
+  p.sub { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+
+  .section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--teal-dark); margin-bottom: 14px; margin-top: 28px;
+    padding-bottom: 8px; border-bottom: 1.5px solid var(--green-pale);
+  }
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  label .hint { font-weight: 400; color: var(--teal-muted); font-size: 12px; }
+  input, select {
+    width: 100%; padding: 11px 14px; border: 1.5px solid #d4dedc; border-radius: 8px;
+    font-size: 14px; font-family: inherit; margin-bottom: 16px; outline: none;
+    transition: border 0.2s, box-shadow 0.2s; background: var(--white); color: var(--text);
+  }
+  input:focus, select:focus { border-color: var(--teal-dark); box-shadow: 0 0 0 3px rgba(11,81,71,0.08); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .income-preview {
+    background: var(--teal-dark); border-radius: 10px; padding: 20px 22px; margin: 20px 0; display: none;
+  }
+  .income-preview .ip-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--green-bright); margin-bottom: 12px; }
+  .income-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .ip-stat { text-align: center; }
+  .ip-stat .val { font-size: 20px; font-weight: 800; color: var(--white); }
+  .ip-stat .lbl { font-size: 10px; color: var(--teal-muted); margin-top: 3px; font-weight: 600; text-transform: uppercase; }
+  .ip-stat .val.green { color: var(--green-bright); }
+
+  button#generateBtn {
+    width: 100%; padding: 14px; background: var(--teal-dark); color: var(--white);
+    border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: inherit;
+    cursor: pointer; margin-top: 10px; transition: background 0.2s;
+  }
+  button#generateBtn:hover { background: var(--teal-mid); }
+
+  /* OUTPUT */
+  #output { display: none; max-width: 800px; margin: 0 auto 60px; padding: 0 10px; }
+
+  .output-header {
+    background: var(--teal-dark); border-radius: 16px; padding: 32px 40px; margin-bottom: 24px; color: var(--white); position: relative; overflow: hidden;
+  }
+  .output-header::after { content: ''; position: absolute; right: -80px; top: -80px; width: 320px; height: 320px; background: radial-gradient(circle, rgba(1,222,143,0.15) 0%, transparent 70%); pointer-events: none; }
+  .kashu-logo { font-size: 20px; font-weight: 900; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .logo-dot { width: 8px; height: 8px; background: var(--green-bright); border-radius: 50%; }
+  .output-header h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .output-header p { font-size: 14px; color: var(--teal-muted); }
+  .meta { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .meta-tag { background: rgba(1,222,143,0.15); border: 1px solid rgba(1,222,143,0.3); color: var(--green-bright); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .print-bar { display: flex; gap: 12px; margin-bottom: 20px; }
+  .print-bar button { padding: 10px 22px; border-radius: 8px; border: none; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; }
+  .btn-back { background: var(--white); color: var(--text); border: 1.5px solid #d4dedc !important; }
+
+  /* income summary card */
+  .income-summary {
+    background: var(--white); border-radius: 14px; padding: 24px 28px; margin-bottom: 20px;
+    box-shadow: 0 3px 20px rgba(11,81,71,0.08);
+  }
+  .income-summary .card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--teal-dark); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1.5px solid var(--green-pale); }
+  .income-table { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .it-box { background: var(--bg); border-radius: 8px; padding: 14px 10px; text-align: center; }
+  .it-box .it-val { font-size: 20px; font-weight: 900; color: var(--teal-dark); }
+  .it-box .it-val.accent { color: var(--green-bright); background: var(--teal-dark); border-radius: 6px; padding: 4px 8px; font-size: 18px; }
+  .it-box .it-label { font-size: 10px; color: var(--text-muted); margin-top: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+  .tier-note { font-size: 12px; color: var(--text-muted); margin-top: 12px; background: var(--green-pale); border-radius: 8px; padding: 10px 14px; }
+
+  /* timeline */
+  .sequence-timeline { background: var(--white); border-radius: 14px; padding: 24px 28px; box-shadow: 0 3px 20px rgba(11,81,71,0.08); margin-bottom: 20px; }
+  .sequence-timeline h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--teal-dark); margin-bottom: 16px; }
+  .timeline-row { display: flex; }
+  .timeline-step { flex: 1; text-align: center; position: relative; }
+  .timeline-step::after { content: ''; position: absolute; top: 15px; left: 50%; width: 100%; height: 2px; background: var(--green-pale); z-index: 0; }
+  .timeline-step:last-child::after { display: none; }
+  .timeline-dot { width: 30px; height: 30px; border-radius: 50%; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; position: relative; z-index: 1; }
+  .timeline-dot.d1 { background: var(--teal-dark); color: var(--green-bright); }
+  .timeline-dot.d2 { background: var(--teal-mid); color: var(--white); }
+  .timeline-dot.d3 { background: var(--green-mid); color: var(--teal-dark); }
+  .timeline-dot.d4 { background: var(--green-mid); color: var(--teal-dark); }
+  .timeline-dot.d5 { background: #e1fea1; color: #2a4400; border: 2px solid #8ec400; }
+  .timeline-label { font-size: 11px; font-weight: 700; color: var(--teal-dark); }
+  .timeline-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+  /* touch cards */
+  .touch-card { background: var(--white); border-radius: 14px; overflow: hidden; box-shadow: 0 3px 20px rgba(11,81,71,0.08); margin-bottom: 20px; }
+  .touch-header { padding: 18px 28px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
+  .touch-header:hover { background: var(--bg); }
+  .touch-left { display: flex; align-items: center; gap: 14px; }
+  .touch-number { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; flex-shrink: 0; }
+  .touch-number.t1 { background: var(--teal-dark); color: var(--green-bright); }
+  .touch-number.t2 { background: var(--teal-mid); color: var(--white); }
+  .touch-number.t3 { background: var(--green-mid); color: var(--teal-dark); }
+  .touch-number.t4 { background: var(--green-mid); color: var(--teal-dark); }
+  .touch-number.t5 { background: #e1fea1; color: #2a4400; }
+  .touch-meta h3 { font-size: 15px; font-weight: 800; color: var(--teal-dark); }
+  .touch-meta p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .touch-timing { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--teal-muted); background: var(--bg); padding: 4px 10px; border-radius: 6px; }
+  .touch-arrow { color: var(--teal-muted); font-size: 18px; margin-left: 12px; transition: transform 0.2s; }
+  .touch-arrow.open { transform: rotate(180deg); }
+  .touch-body { padding: 0 28px 24px; display: none; }
+  .touch-body.open { display: block; }
+
+  .email-field { margin-bottom: 18px; }
+  .email-field-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--teal-mid); margin-bottom: 8px; }
+  .email-field-content { background: var(--bg); border: 1.5px solid #d4dedc; border-radius: 10px; padding: 14px 16px; font-size: 14px; color: var(--text); white-space: pre-wrap; line-height: 1.75; font-family: inherit; }
+  .copy-btn { display: inline-block; margin-top: 8px; padding: 7px 18px; background: var(--white); border: 1.5px solid #d4dedc; border-radius: 6px; font-size: 12px; font-weight: 700; font-family: inherit; cursor: pointer; color: var(--teal-dark); transition: all 0.15s; }
+  .copy-btn:hover { background: var(--green-pale); border-color: var(--teal-muted); }
+  .copy-btn.copied { background: #e1fea1; border-color: #8ec400; color: #2a4400; }
+  .ghl-note { background: var(--green-pale); border-left: 3px solid var(--green-bright); border-radius: 8px; padding: 12px 16px; font-size: 13px; color: var(--teal-dark); font-weight: 500; margin-top: 6px; }
+
+  @media print {
+    #generator, .print-bar { display: none !important; }
+    body { background: var(--white); }
+    .touch-body { display: block !important; }
+  }
+
+  .opp-icon:empty, .kill-icon:empty, .wo-icon:empty, .cc-icon:empty, .wf-header-icon:empty, .upload-icon:empty, .pn-item .pn-icon:empty, .ty-icon:empty, .pm-icon:empty { display:none; }
+
+  .chevron::after, .touch-chevron::after { content: "\25BC"; font-size: 10px; }
+  .check::after { content: "\2713"; font-weight: 700; }
+  .setup-check.checked::after { content: "\2713"; }
+</style>
+</head>
+<body>
+
+<div id="generator">
+  <div class="form-logo">
+    <div class="logo-mark">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="7" stroke="#01de8f" stroke-width="2.5"/>
+        <path d="M7 10h6M10 7v6" stroke="#01de8f" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="logo-text">Kashu</span>
+  </div>
+
+  <h1>MRP Recruiting Sequence Generator</h1>
+  <p class="sub">Build a 5-touch sequence to recruit new Merchant Referral Partners. Target people who already have merchant relationships -- they're already halfway there.</p>
+
+  <div class="section-label">Prospect Info</div>
+
+  <label>Prospect Name <span class="hint">(optional)</span></label>
+  <input type="text" id="prospectName" placeholder="e.g. Mike">
+
+  <label>Prospect's Profession / Persona</label>
+  <select id="persona">
+    <option value="bookkeeper">Bookkeeper / CPA / Accountant</option>
+    <option value="insurance">Insurance Broker / Agent</option>
+    <option value="advisor">Financial Advisor / Wealth Manager</option>
+    <option value="banker">Business Banker / Loan Officer</option>
+    <option value="b2b">B2B Sales Rep</option>
+    <option value="cre">Commercial Real Estate Broker</option>
+    <option value="coach">Business Coach / Consultant</option>
+    <option value="payroll">Payroll / HR Consultant</option>
+    <option value="networker">Chamber / Networking Connector</option>
+  </select>
+
+  <div class="section-label">Income Illustration</div>
+  <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Show the prospect what the residual income looks like at different portfolio sizes.</p>
+
+  <div class="row">
+    <div>
+      <label>Avg Merchant Monthly Volume ($) <span class="hint">for illustration</span></label>
+      <input type="number" id="avgMerchantVol" value="45000" min="1000" oninput="calcIncome()">
+    </div>
+    <div>
+      <label>Net Residual Rate (%) <span class="hint">Kashu's margin</span></label>
+      <input type="number" id="netRate" value="0.35" min="0.01" step="0.01" oninput="calcIncome()">
+    </div>
+  </div>
+
+  <div class="income-preview" id="incomePreview">
+    <div class="ip-label">Projected Monthly Residuals (T2 -- 25%)</div>
+    <div class="income-grid">
+      <div class="ip-stat"><div class="val" id="inc-5">--</div><div class="lbl">5 Merchants</div></div>
+      <div class="ip-stat"><div class="val green" id="inc-20">--</div><div class="lbl">20 Merchants</div></div>
+      <div class="ip-stat"><div class="val" id="inc-50">--</div><div class="lbl">50 Merchants</div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Your Info</div>
+  <div class="row">
+    <div>
+      <label>Your Name</label>
+      <input type="text" id="repName" placeholder="e.g. John Polimeni">
+    </div>
+    <div>
+      <label>Your Phone or Email</label>
+      <input type="text" id="repContact" placeholder="e.g. 602-555-0100">
+    </div>
+  </div>
+
+  <button id="generateBtn" onclick="generate()">Generate 5-Touch Recruiting Sequence</button>
+</div>
+
+<div id="output">
+  <div class="print-bar">
+    <button class="btn-back" onclick="goBack()">Back</button>
+  </div>
+
+  <div class="output-header">
+    <div class="kashu-logo">Kashu <span class="logo-dot"></span></div>
+    <h2 id="out-headline"></h2>
+    <p>5-touch MRP recruiting sequence. Each email stands alone -- no "following up" language.</p>
+    <div class="meta" id="out-meta"></div>
+  </div>
+
+  <div class="income-summary" id="incomeSummary"></div>
+
+  <div class="sequence-timeline">
+    <h3>Sequence Timeline</h3>
+    <div class="timeline-row">
+      <div class="timeline-step"><div class="timeline-dot d1">1</div><div class="timeline-label">Day 1</div><div class="timeline-sub">The Insight</div></div>
+      <div class="timeline-step"><div class="timeline-dot d2">2</div><div class="timeline-label">Day 3</div><div class="timeline-sub">The Math</div></div>
+      <div class="timeline-step"><div class="timeline-dot d3">3</div><div class="timeline-label">Day 7</div><div class="timeline-sub">The Easy Yes</div></div>
+      <div class="timeline-step"><div class="timeline-dot d4">4</div><div class="timeline-label">Day 14</div><div class="timeline-sub">The Compound</div></div>
+      <div class="timeline-step"><div class="timeline-dot d5">5</div><div class="timeline-label">Day 21</div><div class="timeline-sub">The Close</div></div>
+    </div>
+  </div>
+
+  <div id="touchCards"></div>
+</div>
+
+<script>
+const personas = {
+  bookkeeper: {
+    label: "Bookkeeper / CPA / Accountant",
+    subject1: (n) => `your clients are overpaying on processing and you're the only one who sees it`,
+    insight: (n) => `You're in your clients' financials every month. You see exactly what they're paying their processor. Most of them are overpaying by 15-40% and have no idea. You're the one person who can point it out, and Kashu gives you something real to point them toward -- guaranteed lower rates in writing, zero-disruption switching, and the option to eliminate processing costs entirely.`,
+    asset: "client accounting relationships",
+    angle: "You already see the problem on their statement. Now you can fix it and earn for doing so.",
+    profession: "accounting clients"
+  },
+  insurance: {
+    label: "Insurance Broker / Agent",
+    subject1: (n) => `there's a cost your clients don't know they're overpaying`,
+    insight: (n) => `Your clients trust you to watch their back. Right now, most of them are overpaying on processing fees and nobody's told them. One intro to Kashu and they get guaranteed lower rates in writing, a seamless switch, and the option to eliminate the cost entirely. It's the kind of thing that deepens a client relationship. You earn monthly residuals for making the connection.`,
+    asset: "book of business owner clients",
+    angle: "Protect your clients' bottom line on something nobody else is watching for them.",
+    profession: "business owner clients"
+  },
+  advisor: {
+    label: "Financial Advisor / Wealth Manager",
+    subject1: (n) => `your business owner clients have a cost problem hiding in their P&L`,
+    insight: (n) => `Your business owner clients are overpaying their payment processor without knowing it. You're already managing their financial picture. Helping them cut a $500-2,000/month recurring cost is a natural extension of what you do. Kashu guarantees better rates in writing and handles everything. You earn monthly residuals for the intro.`,
+    asset: "business owner client relationships",
+    angle: "You're already optimizing their financial life. Processing fees are the line item nobody's touched.",
+    profession: "business owner clients"
+  },
+  banker: {
+    label: "Business Banker / Loan Officer",
+    subject1: (n) => `your business clients are bleeding margin on processing`,
+    insight: (n) => `You see their cash flow, their overhead, their cost structure. Processing fees are one of their biggest recurring costs and most of them are on a bad deal. One intro to Kashu and they get guaranteed lower rates, zero-disruption switching, and the option to turn processing from a cost into a revenue line with surcharge. You earn monthly residuals for making the connection.`,
+    asset: "commercial banking relationships",
+    angle: "You already see the numbers. Now you can help them fix the ones their processor won't.",
+    profession: "business banking clients"
+  },
+  b2b: {
+    label: "B2B Sales Rep",
+    subject1: (n) => `your clients have a cost problem you can solve in one conversation`,
+    insight: (n) => `You spend every day in front of business owners and decision makers. Most of them accept cards and most of them are overpaying their processor by hundreds or thousands a month. One intro to Kashu and they get guaranteed savings in writing. You earn monthly residuals for making the connection. No selling, no pitching, just a warm handoff.`,
+    asset: "existing B2B client and prospect network",
+    angle: "You're already in the room. One sentence can save them real money and earn you recurring income.",
+    profession: "business contacts"
+  },
+  cre: {
+    label: "Commercial Real Estate Broker",
+    subject1: (n) => `every tenant you place needs processing and most will overpay from day one`,
+    insight: (n) => `Every retail tenant, restaurant, or service business you place is going to need payment processing. Most end up on Square or Stripe paying 2.9% because nobody pointed them somewhere better. You can change that before they even open. Kashu gets them set up at the best rates in the market with zero hassle. You earn monthly residuals for as long as they process.`,
+    asset: "commercial tenant and buyer relationships",
+    angle: "Set your tenants up right from day one. They save money, you earn for it every month.",
+    profession: "commercial tenants and clients"
+  },
+  coach: {
+    label: "Business Coach / Consultant",
+    subject1: (n) => `your clients are losing $6,000-24,000/year on something you can fix today`,
+    insight: (n) => `Processing fees are the most consistently overlooked cost in every business you touch. Most coaching advice takes months to show results. This one shows up on the next statement. Kashu guarantees lower rates in writing and can eliminate the cost entirely with surcharge. You deliver a measurable win your client can see in 30 days. You earn monthly residuals for the referral.`,
+    asset: "business coaching client relationships",
+    angle: "Deliver a real P&L win next session. Processing fees are the low-hanging fruit nobody's picking.",
+    profession: "business coaching clients"
+  },
+  payroll: {
+    label: "Payroll / HR Consultant",
+    subject1: (n) => `your clients are quietly overpaying on processing while you manage everything else`,
+    insight: (n) => `You handle their payroll, their compliance, their most sensitive financial operations. But their processor is charging them 2.8-3.5% and nobody's said a word. Kashu gets them to 2.2% guaranteed, handles the entire switch, and can eliminate the cost entirely with surcharge. Your clients save real money. You earn monthly residuals for a one-sentence intro.`,
+    asset: "payroll and HR client relationships",
+    angle: "You already manage their money. This is one more cost you can help them cut.",
+    profession: "payroll clients"
+  },
+  networker: {
+    label: "Chamber / Networking Connector",
+    subject1: (n) => `the business owners in your network are overpaying on processing and don't know it`,
+    insight: (n) => `You're connected to more business owners than almost anyone in your market. Most of them accept cards. Most of them are on a processing deal they've never questioned and overpaying by 15-40%. One intro to Kashu and they get guaranteed savings in writing, a seamless switch, and the option to eliminate the cost entirely. You earn monthly residuals for every connection that goes live.`,
+    asset: "business community network",
+    angle: "You're already the person they trust for introductions. This one saves them real money.",
+    profession: "network contacts"
+  }
+};
+
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+
+function calcIncome() {
+  const vol = parseFloat(document.getElementById('avgMerchantVol').value) || 45000;
+  const rate = (parseFloat(document.getElementById('netRate').value) || 0.35) / 100;
+  const netPerMerchant = vol * rate;
+  const payoutPct = 0.25; // T2
+
+  const inc5  = netPerMerchant * 5  * payoutPct;
+  const inc20 = netPerMerchant * 20 * payoutPct;
+  const inc50 = netPerMerchant * 50 * payoutPct;
+
+  document.getElementById('inc-5').textContent  = fmt(inc5)  + '/mo';
+  document.getElementById('inc-20').textContent = fmt(inc20) + '/mo';
+  document.getElementById('inc-50').textContent = fmt(inc50) + '/mo';
+  document.getElementById('incomePreview').style.display = 'block';
+}
+
+function copyText(text, btnEl) {
+  navigator.clipboard.writeText(text).then(() => {
+    btnEl.textContent = 'Copied';
+    btnEl.classList.add('copied');
+    setTimeout(() => { btnEl.textContent = 'Copy'; btnEl.classList.remove('copied'); }, 2000);
+  });
+}
+
+function toggleTouch(idx) {
+  const body = document.getElementById('touch-body-' + idx);
+  const arrow = document.getElementById('touch-arrow-' + idx);
+  body.classList.toggle('open', !body.classList.contains('open'));
+  arrow.classList.toggle('open', !arrow.classList.contains('open'));
+}
+
+function generate() {
+  const prospectName = document.getElementById('prospectName').value.trim();
+  const personaKey = document.getElementById('persona').value;
+  const avgVol = parseFloat(document.getElementById('avgMerchantVol').value) || 45000;
+  const netRate = (parseFloat(document.getElementById('netRate').value) || 0.35) / 100;
+  const repName = document.getElementById('repName').value.trim();
+  const repContact = document.getElementById('repContact').value.trim();
+
+  const p = personas[personaKey];
+  const g = prospectName ? `Hey ${prospectName},` : `Hey,`;
+  const rep = repName || 'Kashu';
+  const contact = repContact || 'kashupay.com';
+
+  const netPerMerchant = avgVol * netRate;
+  const mo5  = fmt(netPerMerchant * 5  * 0.25);
+  const mo20 = fmt(netPerMerchant * 20 * 0.25);
+  const mo50 = fmt(netPerMerchant * 50 * 0.25);
+  const yr20 = fmt(netPerMerchant * 20 * 0.25 * 12);
+
+  // Income summary card
+  document.getElementById('incomeSummary').innerHTML = `
+    <div class="card-title">Merchant Savings & Your Residual Income &mdash; ${p.label}</div>
+    <div class="income-table">
+      <div class="it-box"><div class="it-val">${mo5}</div><div class="it-label">5 Merchants/mo</div></div>
+      <div class="it-box"><div class="it-val accent">${mo20}</div><div class="it-label">20 Merchants/mo</div></div>
+      <div class="it-box"><div class="it-val">${mo50}</div><div class="it-label">50 Merchants/mo</div></div>
+      <div class="it-box"><div class="it-val">${yr20}</div><div class="it-label">20 Merchants/yr</div></div>
+    </div>
+    <div class="tier-note">Based on avg ${fmt(avgVol)}/mo per merchant at T2 (25% of Net Residuals). T1 unlocks at $5M portfolio -- payout doubles to 50%. Paid monthly, approximately 45 days in arrears.</div>
+  `;
+
+  document.getElementById('out-headline').textContent = prospectName
+    ? `5-Touch Recruiting Sequence for ${prospectName}`
+    : `5-Touch Recruiting Sequence`;
+  document.getElementById('out-meta').innerHTML = `
+    <span class="meta-tag">${p.label}</span>
+    <span class="meta-tag">${mo20}/mo at 20 merchants</span>
+  `;
+
+  const touches = [
+    {
+      num: 1, timing: "Day 1", title: "The Insight", desc: "Lead with what their clients are losing. Position the MRP as the person who can fix it.",
+      subject: p.subject1(prospectName),
+      body: `${g}
+
+${p.insight(prospectName)}
+
+Kashu is a merchant processing platform. We guarantee better rates in writing, switch merchants over without missing a day of business, and offer a surcharge option that eliminates processing costs entirely. The merchants you introduce get a genuinely better deal. You earn monthly residuals for as long as they process. No selling, no onboarding, no account management on your end.
+
+${p.angle}
+
+Worth a 15-minute conversation to see if it fits?
+
+${rep}
+${contact}`
+    },
+    {
+      num: 2, timing: "Day 3", title: "The Math", desc: "Show what merchants save, then what the MRP earns as a result.",
+      subject: `what this looks like for your ${p.profession}`,
+      body: `${g}
+
+Wanted to put numbers on what this actually means for your clients.
+
+A merchant doing ${fmt(avgVol)}/month at a typical 3% effective rate is paying ${fmt(avgVol * 0.03)}/month in processing fees. With Kashu, that drops to 2.2% -- or zero with surcharge. That's ${fmt(avgVol * 0.008)}-${fmt(avgVol * 0.03)}/month back in their pocket. Per merchant.
+
+If 20 businesses from your ${p.asset} make the switch, your clients collectively save ${fmt(avgVol * 0.008 * 20)}-${fmt(avgVol * 0.03 * 20)}/month. And you earn around ${mo20}/month in residuals for making those intros. Every month, for as long as they process.
+
+The merchants get a better deal. You earn for connecting them. No cold prospecting, no new clients required.
+
+Worth 15 minutes to walk through?
+
+${rep}
+${contact}`
+    },
+    {
+      num: 3, timing: "Day 7", title: "The Easy Yes", desc: "Lead with how easy it is for the merchant. The MRP just opens the door.",
+      subject: `what happens after you make the intro`,
+      body: `${g}
+
+Here's what happens when you connect a merchant with Kashu:
+
+We guarantee them better pricing in writing before they sign anything. We switch them over without missing a single day of business. If they want surcharge, their processing cost goes to zero. We handle the sales conversation, the underwriting, the onboarding, and the ongoing support.
+
+Your entire role is the introduction. One sentence: "I know someone who can cut your processing costs, want me to connect you?" We take it from there.
+
+The merchant gets a better deal. You earn ${mo20}/month at 20 merchants. No overhead, no service responsibility, no payments expertise needed.
+
+15 minutes?
+
+${rep}
+${contact}`
+    },
+    {
+      num: 4, timing: "Day 14", title: "The Compound", desc: "Show how merchant value and MRP value compound together over time.",
+      subject: `this grows every month without additional work`,
+      body: `${g}
+
+Here's the part most people don't think about.
+
+Every merchant you introduce to Kashu saves money from month one. As their business grows, they process more volume. As they process more, your residuals grow with them. You're not starting over every month. You're building on what's already working.
+
+At 20 merchants: ${mo20}/month, ${yr20}/year.
+At 50 merchants: ${mo50}/month.
+
+And if you bring on other referral partners below you, you earn an override on their portfolio too.
+
+The merchants keep saving. You keep earning. It compounds.
+
+Still worth 15 minutes?
+
+${rep}
+${contact}`
+    },
+    {
+      num: 5, timing: "Day 21", title: "The Close", desc: "Short. Direct. One ask.",
+      subject: `last one from me`,
+      body: `${g}
+
+Last note on this.
+
+Your clients are overpaying on processing. You can change that with one intro. We guarantee better rates in writing, handle everything, and you earn recurring income for making the connection.
+
+If the timing isn't right, no problem. Reach out whenever it is.
+
+${rep}
+${contact}`
+    }
+  ];
+
+  const cards = touches.map((t, i) => {
+    const numClass = `t${t.num}`;
+    return `
+      <div class="touch-card">
+        <div class="touch-header" onclick="toggleTouch(${i})">
+          <div class="touch-left">
+            <div class="touch-number ${numClass}">${t.num}</div>
+            <div class="touch-meta">
+              <h3>${t.title}</h3>
+              <p>${t.desc}</p>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="touch-timing">${t.timing}</span>
+            <span class="touch-arrow ${i === 0 ? 'open' : ''}" id="touch-arrow-${i}">&#8964;</span>
+          </div>
+        </div>
+        <div class="touch-body ${i === 0 ? 'open' : ''}" id="touch-body-${i}">
+          <div class="email-field">
+            <div class="email-field-label">Subject Line</div>
+            <div class="email-field-content" id="subj-${i}">${t.subject}</div>
+            <button class="copy-btn" onclick="copyText(document.getElementById('subj-${i}').textContent, this)">Copy</button>
+          </div>
+          <div class="email-field">
+            <div class="email-field-label">Email Body</div>
+            <div class="email-field-content" id="body-${i}">${t.body}</div>
+            <button class="copy-btn" onclick="copyText(document.getElementById('body-${i}').textContent, this)">Copy</button>
+          </div>
+          <div class="ghl-note">GHL: Enroll prospect in recruiting workflow. Set delay to ${t.timing.toLowerCase()} from enrollment date.</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('touchCards').innerHTML = cards;
+  document.getElementById('generator').style.display = 'none';
+  document.getElementById('output').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function goBack() {
+  document.getElementById('output').style.display = 'none';
+  document.getElementById('generator').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+// Init income preview
+calcIncome();
+</script>
+</body>
+</html>

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu Multi-Touch Sequence Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-dark:   #0b5147;
+    --teal-mid:    #397168;
+    --teal-muted:  #93adaa;
+    --teal-light:  #c0cccc;
+    --green-bright:#01de8f;
+    --green-mid:   #8de6c6;
+    --green-pale:  #d5eae3;
+    --green-lime:  #e1fea1;
+    --white:       #ffffff;
+    --bg:          #f2f6f5;
+    --text:        #0d1a17;
+    --text-muted:  #4a6560;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+
+  /* FORM */
+  #generator {
+    max-width: 640px; margin: 44px auto;
+    background: var(--white); border-radius: 16px; padding: 44px;
+    box-shadow: 0 4px 28px rgba(11,81,71,0.10);
+  }
+  .form-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+  .form-logo .logo-mark {
+    width: 36px; height: 36px; background: var(--teal-dark);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  }
+  .form-logo .logo-text { font-size: 20px; font-weight: 800; color: var(--teal-dark); }
+  h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; color: var(--teal-dark); }
+  p.sub { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+  .section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--teal-dark); margin-bottom: 14px; margin-top: 28px;
+    padding-bottom: 8px; border-bottom: 1.5px solid var(--green-pale);
+  }
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  label .hint { font-weight: 400; color: var(--teal-muted); font-size: 12px; }
+  input, select {
+    width: 100%; padding: 11px 14px; border: 1.5px solid #d4dedc; border-radius: 8px;
+    font-size: 14px; font-family: inherit; margin-bottom: 16px; outline: none;
+    transition: border 0.2s, box-shadow 0.2s; background: var(--white); color: var(--text);
+  }
+  input:focus, select:focus { border-color: var(--teal-dark); box-shadow: 0 0 0 3px rgba(11,81,71,0.08); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  #savingsPreview {
+    background: var(--green-pale); border: 1.5px solid var(--green-mid);
+    border-radius: 10px; padding: 18px 20px; margin: 20px 0;
+  }
+  #savingsPreview .preview-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--teal-dark); margin-bottom: 10px; }
+  .preview-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .preview-stat { text-align: center; }
+  .preview-stat .val { font-size: 20px; font-weight: 800; color: var(--teal-dark); }
+  .preview-stat .lbl { font-size: 10px; color: var(--teal-mid); margin-top: 3px; font-weight: 600; text-transform: uppercase; }
+
+  button#generateBtn {
+    width: 100%; padding: 14px; background: var(--teal-dark); color: var(--white);
+    border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: inherit;
+    cursor: pointer; margin-top: 10px; transition: background 0.2s;
+  }
+  button#generateBtn:hover:not(:disabled) { background: var(--teal-mid); }
+  button#generateBtn:disabled { background: var(--teal-muted); cursor: not-allowed; }
+
+  /* OUTPUT */
+  #output { display: none; max-width: 800px; margin: 0 auto 60px; padding: 0 10px; }
+
+  .output-header {
+    background: var(--teal-dark); border-radius: 16px; padding: 32px 40px; margin-bottom: 24px; color: var(--white);
+  }
+  .output-header .kashu-logo { font-size: 20px; font-weight: 900; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .logo-dot { width: 8px; height: 8px; background: var(--green-bright); border-radius: 50%; display: inline-block; }
+  .output-header h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .output-header p { font-size: 14px; color: var(--teal-muted); }
+  .output-header .meta { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+  .meta-tag {
+    background: rgba(1,222,143,0.15); border: 1px solid rgba(1,222,143,0.3);
+    color: var(--green-bright); font-size: 12px; font-weight: 700;
+    padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  .print-bar { display: flex; gap: 12px; margin-bottom: 20px; }
+  .print-bar button {
+    padding: 10px 22px; border-radius: 8px; border: none;
+    font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.15s;
+  }
+  .btn-back { background: var(--white); color: var(--text); border: 1.5px solid #d4dedc !important; }
+  .btn-back:hover { background: var(--bg); }
+
+  /* TOUCH CARDS */
+  .touch-card {
+    background: var(--white); border-radius: 14px; overflow: hidden;
+    box-shadow: 0 3px 20px rgba(11,81,71,0.08); margin-bottom: 20px;
+  }
+  .touch-header {
+    padding: 18px 28px; display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer; user-select: none;
+  }
+  .touch-header:hover { background: var(--bg); }
+  .touch-left { display: flex; align-items: center; gap: 14px; }
+  .touch-number {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 800; flex-shrink: 0;
+  }
+  .touch-number.t1 { background: var(--teal-dark); color: var(--green-bright); }
+  .touch-number.t2 { background: var(--teal-mid); color: var(--white); }
+  .touch-number.t3 { background: var(--green-pale); color: var(--teal-dark); }
+  .touch-number.t4 { background: var(--green-pale); color: var(--teal-dark); }
+  .touch-number.t5 { background: #e1fea1; color: #2a4400; }
+  .touch-meta h3 { font-size: 15px; font-weight: 800; color: var(--teal-dark); }
+  .touch-meta p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .touch-timing {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--teal-muted); background: var(--bg);
+    padding: 4px 10px; border-radius: 6px;
+  }
+  .touch-arrow { color: var(--teal-muted); font-size: 18px; margin-left: 12px; transition: transform 0.2s; }
+  .touch-arrow.open { transform: rotate(180deg); }
+
+  .touch-body { padding: 0 28px 24px; display: none; }
+  .touch-body.open { display: block; }
+
+  .email-field { margin-bottom: 18px; }
+  .email-field-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--teal-mid); margin-bottom: 8px;
+  }
+  .email-field-content {
+    background: var(--bg); border: 1.5px solid #d4dedc; border-radius: 10px;
+    padding: 14px 16px; font-size: 14px; color: var(--text);
+    white-space: pre-wrap; line-height: 1.75; font-family: inherit;
+  }
+  .copy-btn {
+    display: inline-block; margin-top: 8px; padding: 7px 18px;
+    background: var(--white); border: 1.5px solid #d4dedc; border-radius: 6px;
+    font-size: 12px; font-weight: 700; font-family: inherit;
+    cursor: pointer; color: var(--teal-dark); transition: all 0.15s;
+  }
+  .copy-btn:hover { background: var(--green-pale); border-color: var(--teal-muted); }
+  .copy-btn.copied { background: #e1fea1; border-color: #8ec400; color: #2a4400; }
+
+  .ghl-note {
+    background: var(--green-pale); border-left: 3px solid var(--green-bright);
+    border-radius: 8px; padding: 12px 16px; font-size: 13px;
+    color: var(--teal-dark); font-weight: 500; margin-top: 6px;
+  }
+
+  .sequence-timeline {
+    background: var(--white); border-radius: 14px; padding: 24px 28px;
+    box-shadow: 0 3px 20px rgba(11,81,71,0.08); margin-bottom: 24px;
+  }
+  .sequence-timeline h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--teal-dark); margin-bottom: 16px; }
+  .timeline-row { display: flex; align-items: center; gap: 0; margin-bottom: 0; }
+  .timeline-step { flex: 1; text-align: center; position: relative; }
+  .timeline-step::after {
+    content: ''; position: absolute; top: 15px; left: 50%; width: 100%; height: 2px;
+    background: var(--green-pale); z-index: 0;
+  }
+  .timeline-step:last-child::after { display: none; }
+  .timeline-dot {
+    width: 30px; height: 30px; border-radius: 50%; margin: 0 auto 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; position: relative; z-index: 1;
+  }
+  .timeline-dot.d1 { background: var(--teal-dark); color: var(--green-bright); }
+  .timeline-dot.d2 { background: var(--teal-mid); color: var(--white); }
+  .timeline-dot.d3, .timeline-dot.d4 { background: var(--green-mid); color: var(--teal-dark); }
+  .timeline-dot.d5 { background: #e1fea1; color: #2a4400; border: 2px solid #8ec400; }
+  .timeline-label { font-size: 11px; font-weight: 700; color: var(--teal-dark); }
+  .timeline-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+  @media print {
+    #generator, .print-bar { display: none !important; }
+    body { background: var(--white); }
+    .touch-body { display: block !important; }
+  }
+
+  .opp-icon:empty, .kill-icon:empty, .wo-icon:empty, .cc-icon:empty, .wf-header-icon:empty, .upload-icon:empty, .pn-item .pn-icon:empty, .ty-icon:empty, .pm-icon:empty { display:none; }
+
+  .chevron::after, .touch-chevron::after { content: "\25BC"; font-size: 10px; }
+  .check::after { content: "\2713"; font-weight: 700; }
+  .setup-check.checked::after { content: "\2713"; }
+</style>
+</head>
+<body>
+
+<div id="generator">
+  <div class="form-logo">
+    <div class="logo-mark">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="7" stroke="#01de8f" stroke-width="2.5"/>
+        <path d="M7 10h6M10 7v6" stroke="#01de8f" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="logo-text">Kashu</span>
+  </div>
+
+  <h1>Multi-Touch Sequence Generator</h1>
+  <p class="sub">Fill in the merchant's details and generate a complete 5-touch follow-up sequence, ready to drop into GHL or send manually.</p>
+
+  <div class="section-label">Merchant Info</div>
+
+  <label>Business Name <span class="hint">(optional)</span></label>
+  <input type="text" id="bizName" placeholder="e.g. Tony's Auto Shop">
+
+  <label>Contact First Name</label>
+  <input type="text" id="contactName" placeholder="e.g. Tony">
+
+  <label>Business Niche</label>
+  <select id="niche">
+    <option value="restaurant">Restaurant / Food Service</option>
+    <option value="retail">Retail</option>
+    <option value="auto">Auto / Automotive</option>
+    <option value="salon">Salon / Barbershop / Spa</option>
+    <option value="contractor">Contractor / Home Services</option>
+    <option value="medical">Medical / Healthcare / Dental</option>
+    <option value="gym">Gym / Fitness</option>
+    <option value="hotel">Hospitality / Hotel</option>
+    <option value="ecommerce">eCommerce</option>
+    <option value="other">Other</option>
+  </select>
+
+  <div class="section-label">Processing Profile</div>
+
+  <label>Transaction Type</label>
+  <select id="txnType" onchange="calcSavings()">
+    <option value="inperson">In-Person</option>
+    <option value="online">Online</option>
+    <option value="ach">ACH</option>
+    <option value="surcharge">Surcharge (0% to Merchant)</option>
+  </select>
+
+  <div class="row">
+    <div>
+      <label>Monthly Processing Volume ($)</label>
+      <input type="number" id="volume" placeholder="e.g. 50000" min="0" oninput="calcSavings()">
+    </div>
+    <div>
+      <label>Avg Transaction Size ($)</label>
+      <input type="number" id="avgTicket" placeholder="e.g. 85" min="1" oninput="calcSavings()">
+    </div>
+  </div>
+
+  <div class="section-label">Current Processor Cost</div>
+
+  <label>How are you entering current cost?</label>
+  <select id="currentCostMode" onchange="toggleCostMode()">
+    <option value="fees">Monthly fees paid ($)</option>
+    <option value="rate">Effective rate (%)</option>
+  </select>
+
+  <div id="feesField">
+    <label>Current Monthly Processing Fees ($)</label>
+    <input type="number" id="currentFees" placeholder="e.g. 1800" min="0" oninput="calcSavings()">
+  </div>
+  <div id="rateField" style="display:none;">
+    <label>Current Effective Rate (%) <span class="hint">e.g. 3.2</span></label>
+    <input type="number" id="currentRate" placeholder="e.g. 3.2" min="0" step="0.01" oninput="calcSavings()">
+  </div>
+
+  <div id="savingsPreview" style="display:none;">
+    <div class="preview-label">Live Savings Estimate</div>
+    <div class="preview-grid">
+      <div class="preview-stat"><div class="val" id="prev-kashu">--</div><div class="lbl">Kashu Cost/mo</div></div>
+      <div class="preview-stat"><div class="val" id="prev-savings">--</div><div class="lbl">Monthly Savings</div></div>
+      <div class="preview-stat"><div class="val" id="prev-annual">--</div><div class="lbl">Annual Savings</div></div>
+    </div>
+    <div id="surchargeNote" style="display:none;background:#e1fea1;border-radius:8px;padding:10px 14px;font-size:13px;color:#2a4400;font-weight:500;margin-top:10px;">
+      With surcharge, this merchant pays $0 in fees. Their full current cost becomes the savings figure.
+    </div>
+  </div>
+
+  <input type="hidden" id="monthlySavings">
+  <input type="hidden" id="annualSavings">
+
+  <div class="section-label">Rep Info</div>
+  <div class="row">
+    <div>
+      <label>Your Name</label>
+      <input type="text" id="repName" placeholder="e.g. Sarah Johnson">
+    </div>
+    <div>
+      <label>Your Phone or Email</label>
+      <input type="text" id="repContact" placeholder="e.g. 602-555-0100">
+    </div>
+  </div>
+
+  <button id="generateBtn" onclick="generate()">Generate 5-Touch Sequence</button>
+</div>
+
+<div id="output">
+  <div class="print-bar">
+    <button class="btn-back" onclick="goBack()">Back</button>
+  </div>
+
+  <div class="output-header">
+    <div class="kashu-logo">Kashu <span class="logo-dot"></span></div>
+    <h2 id="out-headline"></h2>
+    <p>5-touch follow-up sequence. Copy each email into GHL or send manually.</p>
+    <div class="meta" id="out-meta"></div>
+  </div>
+
+  <div class="sequence-timeline">
+    <h3>Sequence Timeline</h3>
+    <div class="timeline-row">
+      <div class="timeline-step">
+        <div class="timeline-dot d1">1</div>
+        <div class="timeline-label">Day 1</div>
+        <div class="timeline-sub">Full Pitch</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-dot d2">2</div>
+        <div class="timeline-label">Day 3</div>
+        <div class="timeline-sub">The Guarantee</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-dot d3">3</div>
+        <div class="timeline-label">Day 7</div>
+        <div class="timeline-sub">Zero Downtime</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-dot d4">4</div>
+        <div class="timeline-label">Day 14</div>
+        <div class="timeline-sub">Revenue Flip</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-dot d5">5</div>
+        <div class="timeline-label">Day 21</div>
+        <div class="timeline-sub">No-Brainer Close</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="touchCards"></div>
+</div>
+
+<script>
+const niches = {
+  restaurant: {
+    label: "Restaurant & Food Service",
+    subject1: (biz) => `your processor charges full rate on every tip at ${biz}`,
+    insight: (biz) => `Most processors charge the same rate on tips as on the base check. On a busy week at ${biz}, that's real margin leaving the floor on every single transaction.`
+  },
+  retail: {
+    label: "Retail",
+    subject1: (biz) => `what ${biz}'s processor isn't showing you on the statement`,
+    insight: (biz) => `Retail processors are designed to be confusing -- tiered pricing, assessment fees, monthly minimums. Built so most owners don't know what they're actually paying until someone runs it for them.`
+  },
+  auto: {
+    label: "Auto & Automotive",
+    subject1: (biz) => `high-ticket transactions are where processors take the most from ${biz}`,
+    insight: (biz) => `High-ticket repairs mean high-dollar transactions -- and processors make their most money on exactly those. Most auto shop owners don't track it until someone does the math.`
+  },
+  salon: {
+    label: "Salon & Spa",
+    subject1: (biz) => `tips are costing ${biz} more than the service charge`,
+    insight: (biz) => `Every time a client tips at checkout, your processor charges the same rate on that tip as on the service. Most salon owners have never seen that broken out -- until they do, and it changes the math entirely.`
+  },
+  contractor: {
+    label: "Contractor & Home Services",
+    subject1: (biz) => `every large invoice at ${biz} costs more than the bid`,
+    insight: (biz) => `Large invoices, card-not-present payments, customers who pay on completion -- most processors charge more on all three. It's quiet overhead that doesn't show in the bid but comes out of the margin on every job.`
+  },
+  medical: {
+    label: "Medical & Healthcare",
+    subject1: (biz) => `your billing mix is costing ${biz} more than a flat rate covers`,
+    insight: (biz) => `Co-pays, self-pay invoices, large patient balances -- most processors charge one flat rate across all of it, even though the transaction profile is completely different for each type.`
+  },
+  gym: {
+    label: "Gym & Fitness",
+    subject1: (biz) => `${biz} pays to process every membership. it doesn't have to.`,
+    insight: (biz) => `Every membership renewal, every class booking, every billing cycle -- your processor takes a cut of all of it. Recurring revenue businesses lose more to processing than almost any other model.`
+  },
+  hotel: {
+    label: "Hospitality & Hotel",
+    subject1: (biz) => `high-volume properties get the worst processing deals -- ${biz} included`,
+    insight: (biz) => `Hotels run some of the most complex transaction profiles in any industry -- authorizations, holds, multi-stream settlement, high volume. Most processors don't build rates to reflect that. They just charge for it.`
+  },
+  ecommerce: {
+    label: "eCommerce",
+    subject1: (biz) => `online rates were designed for stores with walls -- not ${biz}`,
+    insight: (biz) => `Card-not-present rates exist because processors assume more risk on online transactions -- and they price that risk in hard, even when your chargeback rate is clean. Most eCommerce businesses pay brick-and-mortar penalties for running a digital-first operation.`
+  },
+  other: {
+    label: "Business",
+    subject1: (biz) => `most owners don't know what ${biz} is actually paying to process`,
+    insight: (biz) => `Processing statements are designed to be confusing. Most business owners couldn't tell you their effective rate -- not because they're not paying attention, but because their processor bets on it.`
+  }
+};
+
+const touches = [
+  {
+    num: 1, timing: "Day 1", title: "The Full Pitch", desc: "Niche-specific insight. Three-part kill. One ask.",
+    subject: (biz, n) => n.subject1(biz),
+    body: (contact, biz, mo, yr, rep, repContact, n) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      return `${g}
+
+${n.insight(biz)}
+
+Here's what makes Kashu different from every pitch you've already heard: we guarantee your rates beat what you're paying now. We get you live without missing a single day of business. And with our surcharge program, you don't just cut processing fees -- you eliminate them and add a revenue line.
+
+That's not a processor switch. That's a no-brainer.
+
+${mo}/month, ${yr}/year. Breakdown attached if you want the math.
+
+10 minutes this week?
+
+${rep || 'Your Kashu Partner'}
+${repContact || ''}`.trim();
+    }
+  },
+  {
+    num: 2, timing: "Day 3", title: "The Guarantee", desc: "Stand-alone. Most processors won't put it in writing. We will.",
+    subject: (biz, n) => `we put the pricing guarantee in writing for ${biz}`,
+    body: (contact, biz, mo, yr, rep, repContact, n) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      return `${g}
+
+Most processors won't guarantee their pricing beats your current deal. We do.
+
+If Kashu can't beat what ${biz} is paying now, the conversation ends there. No pitch, no pressure. If we can -- and we will -- we get you live without missing a single day of business, and with our surcharge program processing fees go to zero entirely.
+
+${mo}/month is the estimate. The guarantee is how we back it up.
+
+Worth 10 minutes?
+
+${rep || 'Your Kashu Partner'}
+${repContact || ''}`.trim();
+    }
+  },
+  {
+    num: 3, timing: "Day 7", title: "Zero Downtime", desc: "Kill the operational risk objection. This is the fear holding most merchants back.",
+    subject: (biz, n) => `${biz} won't miss a single day of business`,
+    body: (contact, biz, mo, yr, rep, repContact, n) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      return `${g}
+
+The biggest reason businesses don't switch processors isn't the pricing -- it's the fear of disruption.
+
+We get ${biz} live without interrupting a single transaction. Same equipment where possible, same day-to-day operation, new rates. The frictionless part is the point.
+
+${mo}/month in savings. No downtime. No risk. Breakdown's still attached if you want to take another look.
+
+${rep || 'Your Kashu Partner'}
+${repContact || ''}`.trim();
+    }
+  },
+  {
+    num: 4, timing: "Day 14", title: "The Revenue Flip", desc: "Reframe from savings to new revenue line. This changes the conversation.",
+    subject: (biz, n) => `this stopped being about saving money`,
+    body: (contact, biz, mo, yr, rep, repContact, n) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      return `${g}
+
+I've been pitching this as savings, which undersells it.
+
+With Kashu's surcharge program, ${biz} doesn't just save on processing fees. You eliminate them. Card fees pass to the customer -- legal in all 50 states, increasingly standard -- and the money you were paying your processor becomes a revenue line instead.
+
+That's ${mo}/month you weren't making before. ${yr}/year.
+
+Not a switch. A new revenue line.
+
+${rep || 'Your Kashu Partner'}
+${repContact || ''}`.trim();
+    }
+  },
+  {
+    num: 5, timing: "Day 21", title: "The No-Brainer Close", desc: "Short. Human. Final. Leave the door open.",
+    subject: (biz, n) => `last one from me`,
+    body: (contact, biz, mo, yr, rep, repContact, n) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      return `${g}
+
+Last one, I promise.
+
+Guaranteed better pricing. Live without missing a day. Zero processing fees with surcharge -- and a new revenue line instead.
+
+If the timing isn't right for ${biz} right now, completely fine. Reach out whenever it is. The math doesn't change.
+
+${rep || 'Your Kashu Partner'}
+${repContact || ''}`.trim();
+    }
+  }
+];
+
+const KASHU_RATES = {
+  inperson: { combined: 0.022, pertxn: 0.15 },
+  online:   { combined: 0.025, pertxn: 0.15 },
+  ach:      { combined: 0.005, pertxn: 0.25 },
+  surcharge:{ combined: 0.00,  pertxn: 0.00 }
+};
+
+function fmt(n) {
+  return '$' + Math.round(Number(n)).toLocaleString('en-US');
+}
+
+function toggleCostMode() {
+  const mode = document.getElementById('currentCostMode').value;
+  document.getElementById('feesField').style.display = mode === 'fees' ? 'block' : 'none';
+  document.getElementById('rateField').style.display = mode === 'rate' ? 'block' : 'none';
+  calcSavings();
+}
+
+function calcSavings() {
+  const volume = parseFloat(document.getElementById('volume').value) || 0;
+  const avgTicket = parseFloat(document.getElementById('avgTicket').value) || 0;
+  const txnType = document.getElementById('txnType').value;
+  const isSurcharge = txnType === 'surcharge';
+  const preview = document.getElementById('savingsPreview');
+
+  if (!volume || !avgTicket) { preview.style.display = 'none'; return; }
+
+  const rate = KASHU_RATES[txnType];
+  const kashuCost = isSurcharge ? 0 : (volume * rate.combined) + (volume / avgTicket) * rate.pertxn;
+
+  const mode = document.getElementById('currentCostMode').value;
+  let currentCost = null;
+  if (mode === 'fees') {
+    const v = parseFloat(document.getElementById('currentFees').value);
+    if (!isNaN(v)) currentCost = v;
+  } else {
+    const r = parseFloat(document.getElementById('currentRate').value);
+    if (!isNaN(r)) currentCost = volume * (r / 100);
+  }
+
+  const savings = isSurcharge ? (currentCost || 0) : (currentCost !== null ? Math.max(0, currentCost - kashuCost) : 0);
+  const annual = savings * 12;
+
+  document.getElementById('prev-kashu').textContent = isSurcharge ? '$0' : fmt(kashuCost);
+  document.getElementById('prev-savings').textContent = currentCost !== null ? fmt(savings) : '--';
+  document.getElementById('prev-annual').textContent = currentCost !== null ? fmt(annual) : '--';
+  document.getElementById('surchargeNote').style.display = isSurcharge ? 'block' : 'none';
+  preview.style.display = 'block';
+
+  document.getElementById('monthlySavings').value = savings;
+  document.getElementById('annualSavings').value = annual;
+}
+
+function copyText(text, btnEl) {
+  navigator.clipboard.writeText(text).then(() => {
+    btnEl.textContent = 'Copied';
+    btnEl.classList.add('copied');
+    setTimeout(() => { btnEl.textContent = 'Copy'; btnEl.classList.remove('copied'); }, 2000);
+  });
+}
+
+function toggleTouch(idx) {
+  const body = document.getElementById('touch-body-' + idx);
+  const arrow = document.getElementById('touch-arrow-' + idx);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+}
+
+
+function generate() {
+  const bizName = document.getElementById('bizName').value.trim() || 'Your Business';
+  const contactName = document.getElementById('contactName').value.trim();
+  const nicheKey = document.getElementById('niche').value;
+  const mo = parseFloat(document.getElementById('monthlySavings').value) || 0;
+  const yr = parseFloat(document.getElementById('annualSavings').value) || mo * 12;
+  const repName = document.getElementById('repName').value.trim();
+  const repContact = document.getElementById('repContact').value.trim();
+
+  const n = niches[nicheKey];
+
+  document.getElementById('out-headline').textContent = `5-Touch Sequence for ${bizName}`;
+  document.getElementById('out-meta').innerHTML = `
+    <span class="meta-tag">${n.label}</span>
+    <span class="meta-tag">${fmt(mo)}/mo savings</span>
+    <span class="meta-tag">${fmt(yr)}/yr savings</span>
+  `;
+
+  const cards = touches.map((t, i) => {
+    const subject = t.subject(bizName, n);
+    const body = t.body(contactName, bizName, fmt(mo), fmt(yr), repName, repContact, n);
+    const numClass = `t${t.num}`;
+    return `
+      <div class="touch-card">
+        <div class="touch-header" onclick="toggleTouch(${i})">
+          <div class="touch-left">
+            <div class="touch-number ${numClass}">${t.num}</div>
+            <div class="touch-meta">
+              <h3>${t.title}</h3>
+              <p>${t.desc}</p>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="touch-timing">${t.timing}</span>
+            <span class="touch-arrow" id="touch-arrow-${i}">&#8964;</span>
+          </div>
+        </div>
+        <div class="touch-body ${i === 0 ? 'open' : ''}" id="touch-body-${i}">
+          <div class="email-field">
+            <div class="email-field-label">Subject Line</div>
+            <div class="email-field-content" id="subj-${i}">${subject}</div>
+            <button class="copy-btn" onclick="copyText(document.getElementById('subj-${i}').textContent, this)">Copy</button>
+          </div>
+          <div class="email-field">
+            <div class="email-field-label">Email Body</div>
+            <div class="email-field-content" id="body-${i}">${body}</div>
+            <button class="copy-btn" onclick="copyText(document.getElementById('body-${i}').textContent, this)">Copy</button>
+          </div>
+          <div class="ghl-note">GHL: Create a workflow trigger for this contact, add an email action with the above, set the wait delay to ${t.timing.toLowerCase()} from enrollment.</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // open arrow for first card
+  document.getElementById('touchCards').innerHTML = cards;
+  document.getElementById('touch-arrow-0').classList.add('open');
+
+  document.getElementById('generator').style.display = 'none';
+  document.getElementById('output').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function goBack() {
+  document.getElementById('output').style.display = 'none';
+  document.getElementById('generator').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu | Merchant ICP List - Tier II CNP</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; color: #1a1a1a; background: #ffffff; font-size: 16px; line-height: 1.8; }
+
+  .header { background: #0b5147; color: #ffffff; padding: 48px 60px 40px; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
+  .logo { font-size: 36px; font-weight: 800; letter-spacing: -0.5px; }
+  .logo span { color: #01de8f; }
+  .badge { background: #e1fea1; color: #0b5147; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .header h1 { font-size: 28px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
+  .header .subtitle { font-size: 16px; color: #8de6c6; font-weight: 500; margin-bottom: 4px; }
+  .header .meta { font-size: 13px; color: #93adaa; }
+
+  .tier-info { background: #e0ebe7; border-left: 4px solid #01de8f; padding: 28px 32px; margin: 32px 60px 0; border-radius: 0 8px 8px 0; }
+  .tier-info h3 { font-size: 18px; font-weight: 700; color: #0b5147; margin-bottom: 12px; }
+  .tier-info p { font-size: 15px; color: #397168; line-height: 1.7; margin-bottom: 12px; }
+  .tier-info .requirements { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; margin-top: 16px; }
+  .tier-info .req-item { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; color: #0b5147; font-weight: 500; }
+  .tier-info .req-item::before { content: ''; display: inline-block; width: 8px; height: 8px; min-width: 8px; background: #01de8f; border-radius: 50%; margin-top: 7px; }
+
+  .content { padding: 40px 60px 20px; }
+
+  .category-section { margin-bottom: 44px; }
+  .category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 3px solid #0b5147; }
+  .category-header h2 { font-size: 22px; font-weight: 800; color: #0b5147; }
+  .category-count { background: #01de8f; color: #0b5147; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px; }
+
+  .merchant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .merchant-card { background: #f8fbfa; border: 1px solid #d5eae3; border-radius: 8px; padding: 20px 24px; transition: border-color 0.2s; }
+  .merchant-card:hover { border-color: #01de8f; }
+  .merchant-card .number { display: inline-block; background: #397168; color: #e1fea1; font-size: 12px; font-weight: 700; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 50%; margin-bottom: 8px; }
+  .merchant-card h4 { font-size: 16px; font-weight: 700; color: #0b5147; margin-bottom: 6px; }
+  .merchant-card p { font-size: 14px; color: #555; line-height: 1.6; }
+  .merchant-card .warning { color: #b35900; font-weight: 600; font-size: 13px; margin-top: 6px; }
+
+  .footer-note { background: #0b5147; color: #93adaa; padding: 32px 60px; margin-top: 40px; font-size: 13px; line-height: 1.7; font-style: italic; }
+  .footer-note strong { color: #01de8f; font-style: normal; }
+  .footer { background: #0b5147; border-top: 1px solid #397168; padding: 20px 60px; display: flex; justify-content: space-between; align-items: center; }
+  .footer span { color: #93adaa; font-size: 13px; }
+  .footer .brand { color: #01de8f; font-weight: 700; }
+
+  @media print {
+    body { font-size: 11px; }
+    .header { padding: 30px 40px 24px; }
+    .content { padding: 24px 40px 40px; }
+    .tier-info { margin: 16px 40px 0; }
+    .merchant-grid { gap: 10px; }
+    .merchant-card { padding: 14px 16px; }
+    .category-section { page-break-inside: avoid; }
+    .footer-note, .footer { padding-left: 40px; padding-right: 40px; }
+  }
+  @media (max-width: 768px) {
+    .header, .content, .footer-note, .footer { padding-left: 24px; padding-right: 24px; }
+    .tier-info { margin-left: 24px; margin-right: 24px; }
+    .tier-info .requirements { grid-template-columns: 1fr; }
+    .merchant-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo">Kashu<span>.</span></div>
+    <div class="badge">Tier II - Same Day Approval</div>
+  </div>
+  <h1>Merchant ICP List -- Tier II CNP</h1>
+  <div class="subtitle">Card Not Present / eCommerce / MOTO -- Same Day Approval</div>
+  <div class="meta">Luqra Underwriting Matrix Verified | Last Updated: March 2026</div>
+</div>
+
+<div class="tier-info">
+  <h3>What Tier II Means</h3>
+  <p>These merchants are clean and boardable but require slightly more documentation than Tier I Card Present accounts. Approval is same-day (not instant). Key differences from Tier I:</p>
+  <div class="requirements">
+    <div class="req-item">Reserve Addendum required</div>
+    <div class="req-item">Signer ownership over 50% must be documented</div>
+    <div class="req-item">Processing statements needed if AMV exceeds $125k or avg/high ticket exceeds $1,500</div>
+    <div class="req-item">Tax returns required above $125k AMV</div>
+    <div class="req-item">Website must have T&Cs, privacy policy, refund policy, and secure checkout for eCommerce</div>
+    <div class="req-item">FICO floor is still 550</div>
+  </div>
+  <p style="margin-top: 16px;">Nothing on the restricted or prohibited list is included. These are all legitimate, scalable merchant accounts worth going after -- just expect a slightly longer boarding conversation.</p>
+</div>
+
+<div class="content">
+
+  <!-- PROFESSIONAL SERVICES -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Professional Services</h2>
+      <span class="category-count">9 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">1</div>
+        <h4>Marketing and Creative Agencies</h4>
+        <p>Monthly retainer billing, CNP/MOTO, low chargeback. Often paying 2.9%+ through Stripe or PayPal. Strong savings opportunity and high average monthly volume.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">2</div>
+        <h4>Business Consultants and Coaches</h4>
+        <p>Project and retainer billing, CNP and MOTO. High average invoice, low chargeback. Growing market with strong overlap with the MRP network.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">3</div>
+        <h4>PR and Communications Firms</h4>
+        <p>Retainer billing, CNP/MOTO, recurring clients. Stable long-tenure accounts with predictable volume.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">4</div>
+        <h4>HR and Recruiting Firms</h4>
+        <p>Placement fee and retainer billing, CNP/MOTO, high average invoice. B2B focused with strong monthly volume at scale.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">5</div>
+        <h4>IT and Managed Service Providers (MSPs)</h4>
+        <p>Monthly recurring billing, CNP, low chargeback, loyal client base. Predictable volume and easy to retain once boarded.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">6</div>
+        <h4>Staffing Agencies</h4>
+        <p>B2B invoice billing, CNP/MOTO, high volume. Surcharge opportunity on business-to-business transactions. Well-networked and easy to find.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">7</div>
+        <h4>Graphic Design and Web Development Studios</h4>
+        <p>Project and retainer billing, CNP/MOTO. Often running through Stripe or Square with significant savings available.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">8</div>
+        <h4>Video Production Companies</h4>
+        <p>Project billing, CNP/MOTO, high average ticket. Recurring clients with strong monthly volume at scale.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">9</div>
+        <h4>Translation and Interpretation Services</h4>
+        <p>B2B project billing, CNP/MOTO. Niche but growing, high average invoice, low chargeback.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINANCIAL & INSURANCE -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Financial & Insurance (Non-Restricted)</h2>
+      <span class="category-count">3 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">10</div>
+        <h4>Independent Insurance Agencies (P&C, Life, Health)</h4>
+        <p>Premium billing, CNP/MOTO, recurring clients. Stable long-term accounts.</p>
+        <div class="warning">Wealth management, investment advisors, and broker dealers are restricted -- do not board those.</div>
+      </div>
+      <div class="merchant-card">
+        <div class="number">11</div>
+        <h4>Tax Preparation Services (Online/Remote)</h4>
+        <p>Seasonal but extremely high volume during peak. CNP for remote filers. Low chargeback, recurring annual clients.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">12</div>
+        <h4>Payroll Services (Independent Providers)</h4>
+        <p>B2B recurring billing, CNP, predictable monthly volume. Loyal client base with low chargeback.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- REAL ESTATE ADJACENT -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Real Estate Adjacent</h2>
+      <span class="category-count">4 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">13</div>
+        <h4>Property Management Companies</h4>
+        <p>Rent collection and maintenance billing, CNP/MOTO, high monthly volume. Growing card acceptance. Strong overlap with the real estate MRP channel.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">14</div>
+        <h4>Home Inspection and Environmental Testing</h4>
+        <p>Service-based, CNP/MOTO, low chargeback. Growing with the real estate market. Strong overlap with real estate MRP channel.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">15</div>
+        <h4>Appraisal Services (Real Estate and Personal Property)</h4>
+        <p>High average ticket per engagement, CNP/MOTO, recurring B2B clients. Clean accounts with predictable volume.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">16</div>
+        <h4>Title and Escrow Support Services</h4>
+        <p>High average ticket, CNP/MOTO, B2B billing. Not title companies themselves but support vendors in the space.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEALTH & WELLNESS (REMOTE/TELEHEALTH) -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Health & Wellness (Remote/Telehealth)</h2>
+      <span class="category-count">3 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">17</div>
+        <h4>Telehealth and Online Therapy Platforms</h4>
+        <p>Subscription and per-session billing, CNP. Growing rapidly. Clean accounts with recurring monthly volume and low chargeback.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">18</div>
+        <h4>Online Fitness Coaching and Personal Training</h4>
+        <p>Membership and program billing, CNP. Growing market with high volume at scale. Requires clean processing history and compliant refund policy.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">19</div>
+        <h4>Mental Health Practices (Remote Billing)</h4>
+        <p>Per-session and insurance co-pay billing, CNP/MOTO. Stable long-tenure accounts with predictable volume.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- eCOMMERCE -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>eCommerce (Clean Verticals)</h2>
+      <span class="category-count">7 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">20</div>
+        <h4>Established eCommerce -- Apparel and Accessories</h4>
+        <p>Online retailers with 3+ months processing history, clean chargeback history, compliant website. Strong volume opportunity.</p>
+        <div class="warning">Avoid new eComm with no history.</div>
+      </div>
+      <div class="merchant-card">
+        <div class="number">21</div>
+        <h4>Established eCommerce -- Home Goods and Furniture</h4>
+        <p>High average ticket, CNP, growing market. Requires processing history and compliant site. Strong volume once boarded.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">22</div>
+        <h4>Established eCommerce -- Pet Products</h4>
+        <p>Growing market, loyal customer base, clean chargeback history. Compliant website required.</p>
+        <div class="warning">Avoid anything that drifts toward pharma or supplements.</div>
+      </div>
+      <div class="merchant-card">
+        <div class="number">23</div>
+        <h4>Established eCommerce -- Baby and Kids Products</h4>
+        <p>High repeat purchase rate, CNP, loyal customer base. Clean chargeback history required. Strong monthly volume at scale.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">24</div>
+        <h4>Established eCommerce -- Sports and Outdoor Gear</h4>
+        <p>High average ticket, CNP, growing market. Processing history required.</p>
+        <div class="warning">Avoid anything that overlaps with firearms or ammunition -- that is prohibited.</div>
+      </div>
+      <div class="merchant-card">
+        <div class="number">25</div>
+        <h4>Established eCommerce -- Beauty and Skincare (Non-Supplement)</h4>
+        <p>Growing market, high repeat purchase. Compliant website required. Strictly cosmetic and skincare only.</p>
+        <div class="warning">Vitamins and supplements are restricted, do not board those.</div>
+      </div>
+      <div class="merchant-card">
+        <div class="number">26</div>
+        <h4>Established eCommerce -- Arts and Crafts Supplies</h4>
+        <p>Niche but loyal customer base, CNP, low chargeback. Growing with the creator economy.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOFTWARE & SAAS -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Software & SaaS</h2>
+      <span class="category-count">4 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">27</div>
+        <h4>SaaS and Software Companies</h4>
+        <p>Subscription billing, CNP, low chargeback if product is legitimate. Growing market with high monthly volume at scale. Requires clean processing history and compliant refund policy.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">28</div>
+        <h4>Mobile App Subscription Businesses</h4>
+        <p>Recurring billing, CNP, predictable volume. Requires compliant website and clear refund policy.</p>
+        <div class="warning">Avoid anything with free trial continuity -- that is restricted.</div>
+      </div>
+      <div class="merchant-card">
+        <div class="number">29</div>
+        <h4>Online Education and Course Platforms</h4>
+        <p>Program and subscription billing, CNP. High volume at scale with a compliant refund policy and clean processing history.</p>
+        <div class="warning">Avoid continuity/subscription traps -- those are restricted.</div>
+      </div>
+      <div class="merchant-card">
+        <div class="number">30</div>
+        <h4>Online Coaches and Course Creators (Established)</h4>
+        <p>Digital product sales, CNP. Requires clean processing history and compliant refund policy. High volume at scale. Must have 3+ months history.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- B2B SERVICES -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>B2B Services</h2>
+      <span class="category-count">7 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">31</div>
+        <h4>Commercial Cleaning and Janitorial Services</h4>
+        <p>Recurring B2B billing, CNP/MOTO, low chargeback. Stable long-tenure accounts with predictable monthly volume.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">32</div>
+        <h4>Office Supply and Equipment Vendors (Independent)</h4>
+        <p>B2B invoice billing, CNP/MOTO, recurring clients. Strong surcharge opportunity on commercial transactions.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">33</div>
+        <h4>Commercial Laundry and Linen Services</h4>
+        <p>Recurring B2B billing, CNP/MOTO, hospitality and healthcare clients. Stable predictable volume.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">34</div>
+        <h4>Courier and Delivery Services (Independent)</h4>
+        <p>B2B billing, CNP/MOTO, high frequency. Growing with the e-commerce fulfillment market.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">35</div>
+        <h4>Waste Management and Recycling (Independent)</h4>
+        <p>Recurring B2B billing, CNP/MOTO, commercial clients. Stable long-tenure accounts that rarely switch processors.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">36</div>
+        <h4>Security and Alarm Monitoring Companies</h4>
+        <p>Recurring monthly billing, CNP/MOTO, low chargeback. Loyal client base with strong retention.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">37</div>
+        <h4>Commercial Photography (Product/Real Estate)</h4>
+        <p>Project billing, CNP/MOTO, B2B clients. High average ticket, low chargeback, growing with eComm demand.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEDIA & PUBLISHING -->
+  <div class="category-section">
+    <div class="category-header">
+      <h2>Media & Publishing</h2>
+      <span class="category-count">3 ICPs</span>
+    </div>
+    <div class="merchant-grid">
+      <div class="merchant-card">
+        <div class="number">38</div>
+        <h4>Newsletter and Subscription Media</h4>
+        <p>Subscription billing, CNP, growing market. Requires clean refund policy and compliant checkout.</p>
+        <div class="warning">Avoid free trial continuity models.</div>
+      </div>
+      <div class="merchant-card">
+        <div class="number">39</div>
+        <h4>Podcasting and Audio Content (Paid)</h4>
+        <p>Membership and subscription billing, CNP. Growing creator economy vertical with recurring volume.</p>
+      </div>
+      <div class="merchant-card">
+        <div class="number">40</div>
+        <h4>Stock Photography and Digital Asset Marketplaces</h4>
+        <p>Subscription and per-download billing, CNP. Established market with clean chargeback history at scale.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-note">
+  <strong>Note:</strong> All categories above are Tier II CNP/MOTO under the Luqra underwriting matrix. Same-day approval. Reserve addendum required. Signer ownership >50% must be documented. Processing statements required above $125k AMV. Website compliance required for all eCommerce merchants. FICO 550+. Restricted and prohibited categories were excluded entirely -- this includes nutraceuticals, supplements, credit repair, travel agencies, telemarketing, subscription continuity, and all prohibited MCCs.
+</div>
+
+<div class="footer">
+  <span class="brand">Kashu</span>
+  <span>John Polimeni, CRO | john@kashupay.com | March 2026</span>
+</div>
+
+</body>
+</html>

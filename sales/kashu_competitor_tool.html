@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu — Competitive Displacement</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --dark-teal: #0b5147;
+    --mid-teal: #397168;
+    --muted: #93adaa;
+    --green: #01de8f;
+    --light-bg: #f4f9f8;
+    --white: #ffffff;
+    --text: #1a2e2b;
+    --border: #c8dbd8;
+    --red: #e05252;
+    --shadow: 0 2px 12px rgba(11,81,71,0.10);
+    --shadow-lg: 0 8px 32px rgba(11,81,71,0.14);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--light-bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--dark-teal);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  }
+  .logo-mark {
+    width: 40px;
+    height: 40px;
+    background: var(--green);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--dark-teal);
+    flex-shrink: 0;
+    letter-spacing: -1px;
+  }
+  .header-text h1 {
+    color: var(--white);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.3px;
+  }
+  .header-text p {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .compare-all-btn {
+    background: var(--green);
+    color: var(--dark-teal);
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .compare-all-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  /* MAIN CONTAINER */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  /* COMPETITOR SELECTOR */
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .competitor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 768px) { .competitor-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 420px) { .competitor-grid { grid-template-columns: 1fr 1fr; } }
+
+  .competitor-card {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+    user-select: none;
+  }
+  .competitor-card:hover {
+    border-color: var(--mid-teal);
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+  }
+  .competitor-card.active {
+    border-color: var(--dark-teal);
+    background: var(--dark-teal);
+    color: var(--white);
+    box-shadow: var(--shadow-lg);
+  }
+  .competitor-card.active .competitor-card-rate { color: var(--green); }
+  .competitor-card.active .competitor-card-name { color: var(--white); }
+  .competitor-card-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .competitor-card-rate {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* COMPARISON PANEL */
+  .comparison-panel {
+    display: none;
+    animation: slideIn 0.28s ease;
+  }
+  .comparison-panel.visible { display: block; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* RATE CARDS ROW */
+  .rate-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 640px) { .rate-row { grid-template-columns: 1fr; } }
+
+  .rate-card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 22px 18px;
+    box-shadow: var(--shadow);
+  }
+  .rate-card.kashu {
+    border-color: var(--dark-teal);
+    background: var(--dark-teal);
+    color: var(--white);
+  }
+  .rate-card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .rate-card.kashu .rate-card-label { color: var(--green); }
+  .rate-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .rate-card.kashu .rate-card-title { color: var(--white); }
+  .rate-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .rate-card.kashu .rate-line { border-bottom-color: rgba(255,255,255,0.12); }
+  .rate-line:last-child { border-bottom: none; }
+  .rate-line-label { color: var(--muted); font-weight: 500; }
+  .rate-card.kashu .rate-line-label { color: rgba(255,255,255,0.6); }
+  .rate-line-value { font-weight: 700; color: var(--text); }
+  .rate-card.kashu .rate-line-value { color: var(--white); }
+  .rate-card.kashu .rate-line-value.green { color: var(--green); }
+
+  /* CALCULATOR */
+  .calc-panel {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .calc-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+  .calc-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 500px) { .calc-inputs { grid-template-columns: 1fr; } }
+  .input-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 7px;
+  }
+  .input-wrap {
+    position: relative;
+  }
+  .input-wrap span {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 14px;
+    pointer-events: none;
+  }
+  .input-wrap input {
+    width: 100%;
+    padding: 10px 12px 10px 28px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--light-bg);
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  .input-wrap input:focus { border-color: var(--dark-teal); background: var(--white); }
+
+  .calc-results {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 560px) { .calc-results { grid-template-columns: 1fr 1fr; } }
+
+  .result-box {
+    background: var(--light-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 14px 12px;
+  }
+  .result-box.savings {
+    background: var(--dark-teal);
+    border-color: var(--dark-teal);
+    grid-column: span 1;
+  }
+  .result-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .result-box.savings .result-label { color: var(--green); }
+  .result-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  .result-box.savings .result-value { color: var(--white); font-size: 26px; }
+  .result-value.green { color: var(--green); }
+  .result-subtext {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .result-box.savings .result-subtext { color: rgba(255,255,255,0.55); }
+
+  .calc-math {
+    background: var(--light-bg);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .calc-math strong { color: var(--text); font-weight: 600; }
+  .calc-math .savings-line { color: var(--green); font-weight: 700; }
+
+  /* ANNUAL SAVINGS BIG BANNER */
+  .annual-banner {
+    background: linear-gradient(135deg, var(--dark-teal), var(--mid-teal));
+    border-radius: 12px;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    gap: 12px;
+  }
+  .annual-banner-label {
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .annual-banner-value {
+    color: var(--green);
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+  .annual-banner-note {
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  /* STORY + CLOSE */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 640px) { .bottom-grid { grid-template-columns: 1fr; } }
+
+  .story-panel, .close-panel, .watchouts-panel {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+  }
+  .panel-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .story-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .close-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--light-bg);
+    border-radius: 8px;
+    padding: 14px;
+    border-left: 3px solid var(--green);
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+  .copy-btn {
+    background: var(--light-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    padding: 8px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    letter-spacing: 0.03em;
+  }
+  .copy-btn:hover { background: var(--dark-teal); color: var(--white); border-color: var(--dark-teal); }
+  .copy-btn.copied { background: var(--green); color: var(--dark-teal); border-color: var(--green); }
+
+  /* WATCH OUTS */
+  .watchouts-panel { margin-bottom: 0; }
+  .watchout-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .watchout-item:last-child { border-bottom: none; }
+  .watchout-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  /* COMPARE ALL MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(11,40,36,0.72);
+    z-index: 200;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 32px 16px;
+    overflow-y: auto;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 18px;
+    width: 100%;
+    max-width: 900px;
+    padding: 32px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.28);
+    position: relative;
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .modal-title { font-size: 20px; font-weight: 700; }
+  .modal-close {
+    background: var(--light-bg);
+    border: none;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: background 0.15s;
+  }
+  .modal-close:hover { background: var(--border); }
+  .modal-vol-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .modal-vol-row label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .modal-vol-row .input-wrap { width: 200px; }
+
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .compare-table th {
+    background: var(--light-bg);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 2px solid var(--border);
+  }
+  .compare-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:hover td { background: var(--light-bg); }
+  .compare-table .processor-name { font-weight: 700; color: var(--text); }
+  .compare-table .their-rate { color: var(--muted); }
+  .compare-table .their-cost { font-weight: 600; color: var(--text); }
+  .compare-table .kashu-cost { font-weight: 600; color: var(--dark-teal); }
+  .compare-table .monthly-save { font-weight: 700; color: var(--green); }
+  .compare-table .annual-save { font-weight: 700; font-size: 14px; color: var(--dark-teal); }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+  /* RESPONSIVE TWEAKS */
+  @media (max-width: 768px) {
+    .header { padding: 14px 20px; }
+    .main { padding: 24px 16px 48px; }
+    .annual-banner { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .annual-banner-value { font-size: 26px; }
+    .calc-results { grid-template-columns: 1fr 1fr; }
+    .compare-table th:nth-child(3), .compare-table td:nth-child(3) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo-mark">K</div>
+  <div class="header-text">
+    <h1>Competitive Displacement</h1>
+    <p>Kashu — Rate comparison and close scripts</p>
+  </div>
+  <div class="header-right">
+    <button class="compare-all-btn" onclick="openCompareAll()">Compare All</button>
+    <button class="compare-all-btn" style="background:var(--white);color:var(--dark-teal);" onclick="exportPDF()">Export PDF</button>
+  </div>
+</header>
+
+<main class="main">
+  <div class="section-label">Select a Competitor</div>
+  <div class="competitor-grid">
+    <div class="competitor-card" data-id="square" onclick="selectCompetitor('square', this)">
+      <div class="competitor-card-name">Square</div>
+      <div class="competitor-card-rate">2.6% + $0.10</div>
+    </div>
+    <div class="competitor-card" data-id="stripe" onclick="selectCompetitor('stripe', this)">
+      <div class="competitor-card-name">Stripe</div>
+      <div class="competitor-card-rate">2.9% + $0.30</div>
+    </div>
+    <div class="competitor-card" data-id="toast" onclick="selectCompetitor('toast', this)">
+      <div class="competitor-card-name">Toast</div>
+      <div class="competitor-card-rate">2.49% + $0.15</div>
+    </div>
+    <div class="competitor-card" data-id="clover" onclick="selectCompetitor('clover', this)">
+      <div class="competitor-card-name">Clover / First Data</div>
+      <div class="competitor-card-rate">2.3–3%+</div>
+    </div>
+    <div class="competitor-card" data-id="heartland" onclick="selectCompetitor('heartland', this)">
+      <div class="competitor-card-name">Heartland</div>
+      <div class="competitor-card-rate">2.0–3.5% effective</div>
+    </div>
+    <div class="competitor-card" data-id="worldpay" onclick="selectCompetitor('worldpay', this)">
+      <div class="competitor-card-name">Worldpay</div>
+      <div class="competitor-card-rate">1.5–2.5% + fees</div>
+    </div>
+    <div class="competitor-card" data-id="paypal" onclick="selectCompetitor('paypal', this)">
+      <div class="competitor-card-name">PayPal Business</div>
+      <div class="competitor-card-rate">2.29–3.49%</div>
+    </div>
+    <div class="competitor-card" data-id="elavon" onclick="selectCompetitor('elavon', this)">
+      <div class="competitor-card-name">Elavon</div>
+      <div class="competitor-card-rate">1.5–2.7% + fees</div>
+    </div>
+    <div class="competitor-card" data-id="shopify" onclick="selectCompetitor('shopify', this)">
+      <div class="competitor-card-name">Shopify Payments</div>
+      <div class="competitor-card-rate">2.6–2.9% + $0.30</div>
+    </div>
+  </div>
+
+  <div class="comparison-panel" id="comparison-panel">
+
+    <!-- RATE CARDS -->
+    <div class="rate-row">
+      <div class="rate-card">
+        <div class="rate-card-label">Competitor Rates</div>
+        <div class="rate-card-title" id="comp-title"></div>
+        <div id="comp-rates"></div>
+        <div style="margin-top:14px; padding-top:14px; border-top: 1px solid var(--border);">
+          <div class="rate-line">
+            <span class="rate-line-label">Monthly Fee</span>
+            <span class="rate-line-value" id="comp-monthly-fee"></span>
+          </div>
+        </div>
+      </div>
+      <div class="rate-card kashu">
+        <div class="rate-card-label">Kashu Rates</div>
+        <div class="rate-card-title">Kashu</div>
+        <div class="rate-line">
+          <span class="rate-line-label">In-Person</span>
+          <span class="rate-line-value green">2.2% + $0.15</span>
+        </div>
+        <div class="rate-line">
+          <span class="rate-line-label">Online</span>
+          <span class="rate-line-value green">2.5% + $0.15</span>
+        </div>
+        <div class="rate-line">
+          <span class="rate-line-label">ACH</span>
+          <span class="rate-line-value green">0.50% + $0.25</span>
+        </div>
+        <div class="rate-line">
+          <span class="rate-line-label">Surcharge</span>
+          <span class="rate-line-value green">0% to merchant</span>
+        </div>
+        <div style="margin-top:14px; padding-top:14px; border-top: 1px solid rgba(255,255,255,0.12);">
+          <div class="rate-line">
+            <span class="rate-line-label">Monthly Fee</span>
+            <span class="rate-line-value green">$0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALCULATOR -->
+    <div class="calc-panel">
+      <div class="calc-title">Live Savings Calculator</div>
+      <div class="calc-inputs">
+        <div class="input-group">
+          <label>Monthly Volume</label>
+          <div class="input-wrap">
+            <span>$</span>
+            <input type="number" id="calc-volume" placeholder="60000" value="60000" oninput="recalculate()">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Avg Ticket Size</label>
+          <div class="input-wrap">
+            <span>$</span>
+            <input type="number" id="calc-ticket" placeholder="50" value="50" oninput="recalculate()">
+          </div>
+        </div>
+      </div>
+      <div class="calc-results">
+        <div class="result-box">
+          <div class="result-label">Their Monthly Cost</div>
+          <div class="result-value" id="res-their-cost">—</div>
+          <div class="result-subtext" id="res-their-label">competitor rate</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Kashu Monthly Cost</div>
+          <div class="result-value green" id="res-kashu-cost">—</div>
+          <div class="result-subtext">at 2.2% + $0.15/txn</div>
+        </div>
+        <div class="result-box savings">
+          <div class="result-label">Monthly Savings</div>
+          <div class="result-value" id="res-monthly-save">—</div>
+          <div class="result-subtext">switching to Kashu</div>
+        </div>
+      </div>
+      <div class="calc-math" id="calc-math-box"></div>
+      <div class="annual-banner">
+        <div>
+          <div class="annual-banner-label">Annual Savings with Kashu</div>
+          <div class="annual-banner-note" id="annual-banner-note">Based on entered monthly volume</div>
+        </div>
+        <div class="annual-banner-value" id="res-annual-save">—</div>
+      </div>
+    </div>
+
+    <!-- STORY + CLOSE -->
+    <div class="bottom-grid">
+      <div class="story-panel">
+        <div class="panel-label">Switching Story</div>
+        <div class="story-text" id="switching-story"></div>
+      </div>
+      <div class="close-panel">
+        <div class="panel-label">The Close</div>
+        <div class="close-text" id="close-script"></div>
+        <button class="copy-btn" id="copy-btn" onclick="copyClose()">Copy Close Script</button>
+      </div>
+    </div>
+
+    <!-- WATCH OUTS -->
+    <div class="watchouts-panel">
+      <div class="panel-label">Watch Outs — What They're Not Telling the Merchant</div>
+      <div id="watchouts-list"></div>
+    </div>
+
+    <!-- WHY KASHU FOR YOUR VERTICAL -->
+    <div class="vertical-panel" style="margin-top:20px;">
+      <div style="background:linear-gradient(135deg,var(--dark-teal),var(--mid-teal));border-radius:14px;padding:26px 24px;box-shadow:var(--shadow-lg);">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Why Kashu Wins</div>
+        <div style="font-size:17px;font-weight:700;color:var(--white);margin-bottom:16px;" id="vertical-headline"></div>
+        <div id="vertical-points" style="display:grid;gap:12px;"></div>
+        <div id="vertical-closer" style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.15);font-size:14px;color:rgba(255,255,255,0.85);line-height:1.6;font-style:italic;"></div>
+      </div>
+    </div>
+
+  </div><!-- end comparison-panel -->
+</main>
+
+<!-- COMPARE ALL MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">All Competitors vs Kashu</div>
+      <button class="modal-close" onclick="closeCompareAll()">x</button>
+    </div>
+    <div class="modal-vol-row">
+      <label>Monthly Volume</label>
+      <div class="input-wrap">
+        <span>$</span>
+        <input type="number" id="modal-volume" placeholder="60000" value="60000" oninput="renderCompareTable()">
+      </div>
+      <label style="margin-left:12px;">Avg Ticket</label>
+      <div class="input-wrap">
+        <span>$</span>
+        <input type="number" id="modal-ticket" placeholder="50" value="50" oninput="renderCompareTable()">
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Processor</th>
+            <th>Standard Rate</th>
+            <th>Est. Monthly Fee</th>
+            <th>Their Est. Cost</th>
+            <th>Kashu Cost</th>
+            <th>Monthly Savings</th>
+            <th>Annual Savings</th>
+          </tr>
+        </thead>
+        <tbody id="compare-tbody"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:16px; padding-top:16px; border-top: 1px solid var(--border); font-size:11px; color: var(--muted); line-height:1.6;">
+      Competitor costs use each processor's standard in-person rate applied to the full monthly volume plus transaction fees. Kashu cost uses 2.2% + $0.15/txn. Actual savings may vary based on plan tier, reseller markup, and ancillary fees.
+    </div>
+  </div>
+</div>
+
+<script>
+const KASHU_RATE = 0.022;
+const KASHU_TXN = 0.15;
+
+const COMPETITORS = {
+  square: {
+    name: "Square",
+    headline: "2.6% + $0.10 in-person",
+    rates: [
+      { label: "In-Person", value: "2.6% + $0.10/txn" },
+      { label: "Online", value: "2.9% + $0.30/txn" },
+      { label: "Keyed", value: "3.5% + $0.15/txn" },
+    ],
+    monthly_fee: "$0 base / $60 Plus / $165 Premium",
+    monthly_fee_display: "$0 (base plan)",
+    calc_rate: 0.026,
+    calc_txn: 0.10,
+    story: "Square works great when you're starting. Once you're doing real volume, you're paying a premium for simplicity you don't need anymore. At $60K a month, you're leaving $200 to $400 a month on the table versus what you'd pay with Kashu.",
+    close: "We can have your rate locked in writing and your switch done without missing a single day of sales. What did you do in volume last month?",
+    watchouts: [
+      "Account holds placed without notice — Square reserves the right to hold funds for up to 90 days with no warning, and there's no dedicated rep to call.",
+      "Not built for high-volume merchants — the pricing model is designed for low-volume sellers and becomes increasingly uncompetitive above $30K/month.",
+      "Software fee creep — the base plan is free but every feature that actually runs a real business (inventory, team management, loyalty) stacks monthly charges fast."
+    ],
+    vertical: {
+      label: "Retail, Service & Local Business",
+      headline: "Why Kashu Wins for Retail and Service Businesses",
+      points: [
+        { title: "Built for real volume", text: "Square was designed for farmers markets and pop-ups. Once you're doing $30K+ a month, you're overpaying for infrastructure you outgrew. Kashu is built for businesses that actually move volume." },
+        { title: "No account holds", text: "Retail businesses live and die on cash flow. Square can freeze your funds for 90 days without a phone call. Kashu gives you a real merchant account with a real person to call." },
+        { title: "Surcharge option", text: "Retail and service businesses have the highest in-person transaction counts. Kashu's surcharge program means you can pass processing fees to the customer and pay 0% on every swipe." },
+        { title: "No monthly platform fee", text: "Square charges $60 to $165/month for features you need at scale. Kashu is $0/month. Your margins stay yours." }
+      ],
+      closer: "Your retail business needs a processor that scales with you, not one that charges you more for growing. Kashu is that processor."
+    }
+  },
+  stripe: {
+    name: "Stripe",
+    headline: "2.9% + $0.30 online",
+    rates: [
+      { label: "Online (standard)", value: "2.9% + $0.30/txn" },
+      { label: "In-Person (Terminal)", value: "2.7% + $0.05/txn" },
+      { label: "Invoicing", value: "2.9% + $0.30/txn" },
+    ],
+    monthly_fee: "$0",
+    monthly_fee_display: "$0",
+    calc_rate: 0.029,
+    calc_txn: 0.30,
+    story: "Stripe is a developer tool that merchants use because it's easy to set up. The rate is 2.9% across the board. We're at 2.2% in-person. At $100K a month, that gap is $700 a month, every month.",
+    close: "You'd have a dedicated rep instead of a ticket queue, a better rate guaranteed in writing, and you'd keep everything you already have. What's your current monthly volume?",
+    watchouts: [
+      "Account holds with zero warning — Stripe's risk model is automated and merchants regularly find their payouts frozen for weeks with no human escalation path available to SMBs.",
+      "No human support for small and mid-size businesses — all support is ticket-based and response times for non-enterprise accounts are slow.",
+      "2.9% baseline is expensive at volume — merchants doing $100K+ per month are significantly overpaying versus interchange-plus or fixed-rate processors built for business scale."
+    ],
+    vertical: {
+      label: "E-Commerce, SaaS & Digital",
+      headline: "Why Kashu Wins for Online and Digital Businesses",
+      points: [
+        { title: "Lower online rate", text: "Stripe charges 2.9% + $0.30 across the board. Kashu is 2.5% + $0.15 for online transactions. On $100K/month in online sales, that's over $500/month back in your pocket." },
+        { title: "Human support, not a ticket queue", text: "Online businesses can't afford payout delays during peak sales. Stripe's support is automated tickets. Kashu gives you a dedicated rep who picks up the phone." },
+        { title: "No risk of automated shutdowns", text: "Stripe's algorithm flags accounts without warning. E-commerce businesses with seasonal spikes or high-ticket items get frozen regularly. Kashu underwrites you properly upfront so there are no surprises." },
+        { title: "ACH for subscriptions and recurring", text: "Digital businesses running recurring billing save even more with Kashu's ACH at 0.50% + $0.25. That's a fraction of card-based subscription billing costs." }
+      ],
+      closer: "Your online business deserves a processor that treats you like a partner, not a risk score. Kashu is built for businesses that sell online at scale."
+    }
+  },
+  toast: {
+    name: "Toast",
+    headline: "2.49% + $0.15 (standard)",
+    rates: [
+      { label: "Pay-as-you-go", value: "2.49% + $0.15/txn" },
+      { label: "Point of Sale plan", value: "2.49% + $0.15/txn" },
+      { label: "Custom (enterprise)", value: "Negotiated" },
+    ],
+    monthly_fee: "$0 to $165+/mo + hardware",
+    monthly_fee_display: "$0–$165+ plus hardware",
+    calc_rate: 0.0249,
+    calc_txn: 0.15,
+    story: "Nobody's taking your Toast POS — that's not the conversation. The conversation is the processing rate buried inside what you're paying them. We separate those, cut the processing cost, and you keep running Toast exactly as-is.",
+    close: "What does your Toast statement show as your total processing fees last month? That number alone will tell us if this is worth 10 more minutes.",
+    watchouts: [
+      "Processing fees are bundled inside the POS software cost, making it nearly impossible to see your true effective rate without doing the math manually.",
+      "Hardware exit fees and proprietary equipment lock-in — switching Toast's POS hardware requires purchasing or leasing new equipment from Toast directly.",
+      "Software fee stacking — advanced POS features, online ordering, loyalty, and reporting each carry separate monthly charges that compound quickly for multi-location operators."
+    ],
+    vertical: {
+      label: "Restaurants & Food Service",
+      headline: "Why Kashu Wins for Restaurants and Food Service",
+      points: [
+        { title: "Keep your POS, cut your rate", text: "You don't have to rip out Toast's POS. Kashu handles the processing underneath. You keep the system your staff already knows and save on every transaction." },
+        { title: "High transaction count = big savings", text: "Restaurants process hundreds of small tickets per day. Even a fraction of a percent lower on each one compounds fast. At 500 transactions a day, the per-swipe savings alone are significant." },
+        { title: "No bundled software tax", text: "Toast buries processing costs inside platform fees so you never see the real number. Kashu separates processing from software so you know exactly what you're paying and where." },
+        { title: "Surcharge keeps margins intact", text: "Restaurants run on thin margins. Kashu's surcharge program lets you pass fees to the customer, which means your food cost stays your food cost, not your food cost plus 2.5%." }
+      ],
+      closer: "Restaurants need every point of margin. Kashu gives it back to you without changing how your front of house operates."
+    }
+  },
+  clover: {
+    name: "Clover / First Data",
+    headline: "2.3–2.5%+ but often 3%+ after markup",
+    rates: [
+      { label: "In-Person (base)", value: "2.3%–2.5% + $0.10" },
+      { label: "After reseller markup", value: "Often 3.0%+" },
+      { label: "Batch / statement fees", value: "Additional" },
+    ],
+    monthly_fee: "$9.95–$39.95+ plus ancillary fees",
+    monthly_fee_display: "$9.95–$39.95+ plus fees",
+    calc_rate: 0.03,
+    calc_txn: 0.10,
+    story: "Clover is sold through resellers who build their margin into your rate. Whatever you're paying, the underlying interchange cost is probably half of it. We go direct — no middleman markup, just the rate.",
+    close: "Pull your last statement. Look at the effective rate — that's total fees divided by total volume. If it's over 2.5%, we can do better and I'll put it in writing today.",
+    watchouts: [
+      "Sold primarily through resellers and ISOs who mark up the base rate significantly — merchants rarely know what Fiserv's underlying cost is versus what the reseller added.",
+      "Multiple ancillary fees not visible in the headline rate — batch fees, PCI compliance fees, statement fees, and minimum monthly fees all appear as separate line items.",
+      "Long-term contracts common when sold through resellers — early termination fees of $300 to $500+ are standard and rarely disclosed prominently at signup."
+    ],
+    vertical: {
+      label: "Brick & Mortar, Multi-Location & Franchise",
+      headline: "Why Kashu Wins for Brick-and-Mortar and Multi-Location",
+      points: [
+        { title: "No reseller markup", text: "Clover merchants almost always have a middleman ISO adding margin. Kashu goes direct. No hidden markup layers, no surprise fee increases at renewal." },
+        { title: "Multi-location simplicity", text: "One rate across all your locations. No renegotiating per store, no different reseller terms at each site. Kashu keeps it clean as you scale." },
+        { title: "No long-term contracts", text: "Clover resellers lock you into 1 to 3 year deals with $300 to $500 ETFs. Kashu doesn't hold you hostage. You stay because the rate is better, not because a contract says you have to." },
+        { title: "Transparent statements", text: "No batch fees, no PCI non-compliance charges, no statement fees. One rate, one line item. Your bookkeeper will thank you." }
+      ],
+      closer: "Brick-and-mortar businesses need a processor that's as straightforward as the handshake that closes the sale. That's Kashu."
+    }
+  },
+  heartland: {
+    name: "Heartland",
+    headline: "2.0–3.5% effective after all fees",
+    rates: [
+      { label: "Effective rate (typical)", value: "2.8%–3.2% after fees" },
+      { label: "PCI fee", value: "$99–$150/year" },
+      { label: "Batch / statement fees", value: "Additional" },
+    ],
+    monthly_fee: "$19–$50+ plus PCI, batch, statement fees",
+    monthly_fee_display: "$19–$50+ plus PCI and ancillary",
+    calc_rate: 0.028,
+    calc_txn: 0.10,
+    story: "Heartland statements are complex by design. The effective rate is buried. When we run the math — total fees divided by total volume — most Heartland merchants are paying 2.8% to 3.2% effective. We're at 2.2% in-person. That gap compounds fast.",
+    close: "Do you have a statement in front of you? Tell me your total sales and total fees for any month and I'll give you the real number in 30 seconds.",
+    watchouts: [
+      "Statements intentionally list 8 to 12 separate line items designed to obscure the true effective rate — most merchants cannot calculate what they're actually paying without help.",
+      "PCI non-compliance fees charged without clear notification — merchants who don't complete annual PCI questionnaires get hit with monthly fees of $19 to $99 without a clear warning.",
+      "Long-term contracts with early termination fees — standard agreements are 1 to 3 years with cancellation penalties that can exceed $500."
+    ],
+    vertical: {
+      label: "Healthcare, Professional Services & B2B",
+      headline: "Why Kashu Wins for Professional Services and B2B",
+      points: [
+        { title: "High-ticket transaction savings", text: "Professional services and B2B businesses process larger invoices. On a $5,000 payment, the rate difference between Heartland's 2.8% and Kashu's 2.2% is $30 per transaction. That adds up fast." },
+        { title: "ACH for large payments", text: "B2B invoices don't need to run on cards. Kashu's ACH rate at 0.50% + $0.25 means a $10,000 invoice costs $50.25 to process instead of $220+. Massive savings on every large payment." },
+        { title: "Clean statements for compliance", text: "Healthcare and professional service businesses need clear financial records. Heartland buries fees across 12 line items. Kashu gives you one rate, one statement, clean books." },
+        { title: "No PCI surprise fees", text: "Heartland hits merchants with PCI non-compliance charges of $19 to $99/month without clear notice. Kashu doesn't play that game." }
+      ],
+      closer: "Professional service businesses process fewer transactions at higher values. Every basis point matters more. Kashu gives you the lowest rate with the cleanest paperwork."
+    }
+  },
+  worldpay: {
+    name: "Worldpay",
+    headline: "1.5–2.5% base but fees push effective rate higher",
+    rates: [
+      { label: "Base rate (varies)", value: "1.5%–2.5%" },
+      { label: "Add-on fees", value: "Numerous" },
+      { label: "Early termination", value: "$500+" },
+    ],
+    monthly_fee: "$40+ plus numerous add-on fees",
+    monthly_fee_display: "$40+ plus add-ons",
+    calc_rate: 0.025,
+    calc_txn: 0.10,
+    story: "Worldpay is built for enterprise. For a business your size you're paying enterprise complexity — and the contract terms to match. We're simpler, faster, and we'll beat whatever you're paying.",
+    close: "What's your contract situation look like? If there's a termination fee, let's figure out how fast we offset it in savings.",
+    watchouts: [
+      "Three-year contracts are common with early termination fees of $500 or more — many SMBs are locked in without realizing it until they try to leave.",
+      "Complex interchange-plus pricing that isn't explained clearly at signup — the base rate sounds competitive but the effective rate after all fees often is not.",
+      "Slow onboarding and poor SMB-level support — Worldpay prioritizes enterprise accounts and small business customers report slow response times and difficulty reaching decision-makers."
+    ],
+    vertical: {
+      label: "Enterprise, High-Volume & Established Business",
+      headline: "Why Kashu Wins for High-Volume and Established Businesses",
+      points: [
+        { title: "Enterprise-grade rate without the enterprise contract", text: "Worldpay locks you into 3-year deals with $500+ ETFs to give you a competitive rate. Kashu gives you a better rate with no contract. You stay because it works, not because legal says you have to." },
+        { title: "Fast onboarding, not 6-week rollouts", text: "Worldpay's onboarding process is built for Fortune 500. Kashu gets you live without the enterprise timeline. Your business doesn't stop while we set up." },
+        { title: "Dedicated support for every account", text: "Worldpay treats SMBs as an afterthought. Kashu gives every merchant a real point of contact regardless of volume tier." },
+        { title: "Simple pricing that scales", text: "Worldpay's interchange-plus model sounds good until you see the 15 add-on fees. Kashu is one flat rate. As your volume grows, the savings grow with it." }
+      ],
+      closer: "You built a serious business. You deserve a processor that treats it that way without a 3-year commitment to prove it."
+    }
+  },
+  paypal: {
+    name: "PayPal Business",
+    headline: "2.29–3.49% depending on channel",
+    rates: [
+      { label: "In-Person (Zettle)", value: "2.29% + $0.09/txn" },
+      { label: "Standard Online", value: "3.49% + $0.09/txn" },
+      { label: "Invoices", value: "2.99% + $0.49/txn" },
+    ],
+    monthly_fee: "$0",
+    monthly_fee_display: "$0",
+    calc_rate: 0.0349,
+    calc_txn: 0.09,
+    story: "PayPal is fine for side income. For a real business processing consistent volume, account freezes and fund holds are a genuine operational risk. We give you a real merchant account, a guaranteed rate, and no surprises.",
+    close: "Have you ever had a hold put on your account? Most PayPal business accounts have at some point. That alone is worth having a real merchant account.",
+    watchouts: [
+      "Not a true merchant account — PayPal is a payment aggregator, meaning your funds sit in PayPal's account, not yours, and they can freeze or reverse access at any time without prior notice.",
+      "180-day fund holds on large or unusual transactions — merchants processing higher-than-normal volume or in flagged categories regularly report funds held for months with no resolution path.",
+      "No chargeback protection and no dedicated support — dispute resolution is handled by PayPal's automated system, which statistically favors buyers over sellers for SMB accounts."
+    ],
+    vertical: {
+      label: "Freelancers, Marketplaces & Online Sellers",
+      headline: "Why Kashu Wins for Online Sellers and Service Providers",
+      points: [
+        { title: "Real merchant account, not an aggregator", text: "PayPal holds your money in their account. One flag and your funds are frozen for 180 days. Kashu gives you a real merchant account where your money is yours from day one." },
+        { title: "Lower invoicing costs", text: "PayPal charges 2.99% + $0.49 per invoice. Kashu's online rate is 2.5% + $0.15. On $20K/month in invoiced payments, you're saving over $100/month just on the rate difference." },
+        { title: "No buyer-favored dispute system", text: "PayPal's chargeback process statistically sides with buyers. Kashu gives you a real dispute process with support, not an algorithm that defaults against you." },
+        { title: "Scale without fear", text: "PayPal flags accounts that grow too fast. Hit a good month and your funds get held. Kashu is underwritten for your actual business, so growth is rewarded, not penalized." }
+      ],
+      closer: "You're past the PayPal phase. Your business needs a real processor that doesn't treat growth like a red flag."
+    }
+  },
+  elavon: {
+    name: "Elavon",
+    headline: "1.5–2.7% base, typically sold through banks",
+    rates: [
+      { label: "Rate (varies by channel)", value: "1.5%–2.7%" },
+      { label: "Bank-sold markup", value: "Often above 2.5%" },
+      { label: "Ancillary fees", value: "Additional" },
+    ],
+    monthly_fee: "$20–$50+ plus numerous ancillary fees",
+    monthly_fee_display: "$20–$50+ plus ancillary",
+    calc_rate: 0.027,
+    calc_txn: 0.10,
+    story: "Elavon is usually tied to a bank relationship which makes merchants think they're stuck. You're not. The processing contract is separate from your banking relationship. We can switch the processing without touching your bank account.",
+    close: "Which bank sold you the Elavon account? And what are you paying effective rate — total fees divided by volume? We'll tell you right now if there's a better number available.",
+    watchouts: [
+      "Bank-sold accounts carry a double markup — the bank adds margin on top of Elavon's base rate, and merchants have no visibility into either layer of pricing.",
+      "Merchants believe they're stuck because of the bank relationship — the processing and banking relationships are contractually separate, but banks rarely explain this at signup.",
+      "Rate creep over time — annual rate reviews and fee additions are common, and because the statement arrives alongside bank statements, merchants rarely scrutinize the processing fees."
+    ],
+    vertical: {
+      label: "Bank-Sold, Loyalty Merchants & Legacy Accounts",
+      headline: "Why Kashu Wins for Merchants Sold Through Banks",
+      points: [
+        { title: "Your bank and your processor are separate", text: "The biggest myth Elavon merchants believe is that switching processors means switching banks. It doesn't. Your bank account stays exactly where it is. Only the processing changes." },
+        { title: "One layer of pricing, not two", text: "Your bank added margin on top of Elavon's rate. You're paying a double markup and neither party tells you what the other is charging. Kashu is one rate, direct, no middlemen." },
+        { title: "No annual rate creep", text: "Elavon quietly raises rates at annual review. Most merchants don't notice because the statement blends into bank paperwork. Kashu's rate is your rate. Period." },
+        { title: "Dedicated processing support", text: "When you call your bank about processing issues, they transfer you to Elavon. When you call Elavon, they point to the bank. Kashu gives you one number, one person, one answer." }
+      ],
+      closer: "The bank made it easy to sign up with Elavon. Kashu makes it easy to stop overpaying because of that decision."
+    }
+  },
+  shopify: {
+    name: "Shopify Payments",
+    headline: "2.6–2.9% + $0.30 online",
+    rates: [
+      { label: "Basic plan (online)", value: "2.9% + $0.30/txn" },
+      { label: "Shopify plan (online)", value: "2.7% + $0.30/txn" },
+      { label: "Advanced plan (online)", value: "2.5% + $0.30/txn" },
+      { label: "In-Person (all plans)", value: "2.6% + $0.10/txn" },
+    ],
+    monthly_fee: "$39–$399/mo (plan required)",
+    monthly_fee_display: "$39–$399/mo platform fee",
+    calc_rate: 0.027,
+    calc_txn: 0.30,
+    story: "Shopify bundles processing inside a platform subscription so merchants never isolate the processing cost. You're paying $39 to $399 a month just for the platform, then 2.5% to 2.9% on top. We separate those costs. Your processing rate drops, and you stop subsidizing a software subscription with your transaction fees.",
+    close: "What Shopify plan are you on, and what did you process last month? I'll show you the real cost when you break the processing out of the bundle. Most Shopify merchants are surprised by the number.",
+    watchouts: [
+      "Third-party payment gateway penalty — if you use any processor other than Shopify Payments, Shopify charges an additional 0.5% to 2.0% per transaction on top of your processor's fees, creating a lock-in effect.",
+      "Platform fee is required regardless — even if processing rates were competitive, merchants still pay $39 to $399/month for the Shopify platform, which is a cost that doesn't exist with Kashu.",
+      "Rate tiers are tied to plan upgrades — getting the 2.5% rate requires the $399/month Advanced plan. Most SMBs are on Basic or Shopify plans paying 2.7% to 2.9%, which is significantly above Kashu's 2.2%.",
+      "Chargebacks and disputes handled by Shopify's system — merchants have limited control over the dispute process and Shopify's resolution tends to favor buyers, similar to PayPal's aggregator model."
+    ],
+    vertical: {
+      label: "E-Commerce, DTC & Shopify Stores",
+      headline: "Why Kashu Wins for E-Commerce and DTC Brands",
+      points: [
+        { title: "Stop paying two bills to process one sale", text: "Shopify charges you $39 to $399/month for the platform, then 2.5% to 2.9% on top. Kashu is 2.5% online with $0/month platform fee. That's a double savings on every order." },
+        { title: "No third-party gateway penalty", text: "Shopify charges 0.5% to 2.0% extra if you use any processor besides Shopify Payments. That's a lock-in tax, not a processing fee. Kashu doesn't penalize you for choosing a better rate." },
+        { title: "Built for high-AOV brands", text: "DTC brands selling $100+ products feel the rate difference more. On a $150 average order, the gap between 2.9% and 2.5% is $0.60 per order. At 1,000 orders a month, that's $600 back." },
+        { title: "ACH for wholesale and B2B orders", text: "If you sell wholesale alongside DTC, Kashu's ACH at 0.50% + $0.25 crushes card rates on large orders. A $5,000 wholesale order costs $25.25 to process instead of $145." }
+      ],
+      closer: "Your Shopify store makes money when customers buy. Kashu makes sure more of that money stays with you instead of subsidizing a platform subscription."
+    }
+  }
+};
+
+let currentCompetitor = null;
+
+function selectCompetitor(id, el) {
+  document.querySelectorAll('.competitor-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  currentCompetitor = id;
+  renderPanel(id);
+  const panel = document.getElementById('comparison-panel');
+  panel.classList.add('visible');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderPanel(id) {
+  const c = COMPETITORS[id];
+
+  document.getElementById('comp-title').textContent = c.name;
+  document.getElementById('comp-monthly-fee').textContent = c.monthly_fee_display;
+
+  const ratesEl = document.getElementById('comp-rates');
+  ratesEl.innerHTML = c.rates.map(r =>
+    `<div class="rate-line"><span class="rate-line-label">${r.label}</span><span class="rate-line-value">${r.value}</span></div>`
+  ).join('');
+
+  document.getElementById('switching-story').textContent = c.story;
+  document.getElementById('close-script').textContent = c.close;
+
+  const watchEl = document.getElementById('watchouts-list');
+  watchEl.innerHTML = c.watchouts.map(w =>
+    `<div class="watchout-item"><div class="watchout-dot"></div><div>${w}</div></div>`
+  ).join('');
+
+  document.getElementById('copy-btn').textContent = 'Copy Close Script';
+  document.getElementById('copy-btn').classList.remove('copied');
+
+  // Render vertical section
+  const v = c.vertical;
+  document.getElementById('vertical-headline').textContent = v.headline;
+  document.getElementById('vertical-points').innerHTML = v.points.map(p =>
+    `<div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:14px 16px;">
+      <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px;">${p.title}</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.6;">${p.text}</div>
+    </div>`
+  ).join('');
+  document.getElementById('vertical-closer').textContent = v.closer;
+
+  recalculate();
+}
+
+function recalculate() {
+  if (!currentCompetitor) return;
+  const c = COMPETITORS[currentCompetitor];
+  const volume = parseFloat(document.getElementById('calc-volume').value) || 0;
+  const ticket = parseFloat(document.getElementById('calc-ticket').value) || 50;
+  const txnCount = ticket > 0 ? Math.round(volume / ticket) : 0;
+
+  const theirCost = (volume * c.calc_rate) + (txnCount * c.calc_txn);
+  const kashuCost = (volume * KASHU_RATE) + (txnCount * KASHU_TXN);
+  const monthlySave = theirCost - kashuCost;
+  const annualSave = monthlySave * 12;
+
+  const fmt = (n) => '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  const fmtDec = (n) => '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  document.getElementById('res-their-cost').textContent = fmt(theirCost);
+  document.getElementById('res-their-label').textContent = `${(c.calc_rate * 100).toFixed(2)}% rate applied`;
+  document.getElementById('res-kashu-cost').textContent = fmt(kashuCost);
+  document.getElementById('res-monthly-save').textContent = monthlySave > 0 ? fmt(monthlySave) : '$0';
+  document.getElementById('res-annual-save').textContent = annualSave > 0 ? fmt(annualSave) : '$0';
+  document.getElementById('annual-banner-note').textContent = `Based on $${volume.toLocaleString()} monthly volume`;
+
+  const mathEl = document.getElementById('calc-math-box');
+  if (volume > 0) {
+    const theirPct = (volume * c.calc_rate).toFixed(2);
+    const theirTxnCost = (txnCount * c.calc_txn).toFixed(2);
+    const kashuPct = (volume * KASHU_RATE).toFixed(2);
+    const kashuTxnCost = (txnCount * KASHU_TXN).toFixed(2);
+    mathEl.innerHTML = `
+      <strong>${c.name}:</strong> ${(c.calc_rate * 100).toFixed(2)}% on $${volume.toLocaleString()} = $${Number(theirPct).toLocaleString()} + ${txnCount.toLocaleString()} txns &times; $${c.calc_txn.toFixed(2)} = $${Number(theirTxnCost).toLocaleString()} &rarr; <strong>Total: ${fmtDec(theirCost)}</strong><br>
+      <strong>Kashu:</strong> 2.20% on $${volume.toLocaleString()} = $${Number(kashuPct).toLocaleString()} + ${txnCount.toLocaleString()} txns &times; $0.15 = $${Number(kashuTxnCost).toLocaleString()} &rarr; <strong>Total: ${fmtDec(kashuCost)}</strong><br>
+      ${monthlySave > 0 ? `<span class="savings-line">Monthly savings: ${fmtDec(monthlySave)} &rarr; ${fmtDec(annualSave)}/year</span>` : '<span style="color:var(--muted)">No savings at this volume with these rates.</span>'}
+    `;
+  } else {
+    mathEl.innerHTML = '<span>Enter a monthly volume above to see the calculation.</span>';
+  }
+}
+
+function copyClose() {
+  if (!currentCompetitor) return;
+  const text = COMPETITORS[currentCompetitor].close;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy Close Script';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy Close Script';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+function openCompareAll() {
+  if (currentCompetitor) {
+    const v = document.getElementById('calc-volume').value;
+    const t = document.getElementById('calc-ticket').value;
+    if (v) document.getElementById('modal-volume').value = v;
+    if (t) document.getElementById('modal-ticket').value = t;
+  }
+  renderCompareTable();
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeCompareAll() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeCompareAll();
+}
+
+function renderCompareTable() {
+  const volume = parseFloat(document.getElementById('modal-volume').value) || 60000;
+  const ticket = parseFloat(document.getElementById('modal-ticket').value) || 50;
+  const txnCount = ticket > 0 ? Math.round(volume / ticket) : 0;
+  const kashuCost = (volume * KASHU_RATE) + (txnCount * KASHU_TXN);
+  const fmt = (n) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  const fmtD = (n) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const order = ['square','stripe','toast','clover','heartland','worldpay','paypal','elavon','shopify'];
+  const rows = order.map(id => {
+    const c = COMPETITORS[id];
+    const theirCost = (volume * c.calc_rate) + (txnCount * c.calc_txn);
+    const monthlySave = theirCost - kashuCost;
+    const annualSave = monthlySave * 12;
+    const savingsColor = monthlySave > 0 ? 'var(--green)' : 'var(--muted)';
+    return `<tr>
+      <td class="processor-name">${c.name}</td>
+      <td class="their-rate">${(c.calc_rate * 100).toFixed(2)}% + $${c.calc_txn.toFixed(2)}/txn</td>
+      <td>${c.monthly_fee_display}</td>
+      <td class="their-cost">${fmtD(theirCost)}/mo</td>
+      <td class="kashu-cost">${fmtD(kashuCost)}/mo</td>
+      <td class="monthly-save" style="color:${savingsColor}">${monthlySave > 0 ? fmtD(monthlySave) : '$0'}</td>
+      <td class="annual-save" style="color:${annualSave > 0 ? 'var(--dark-teal)' : 'var(--muted)'}">${annualSave > 0 ? fmt(annualSave) : '$0'}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('compare-tbody').innerHTML = rows;
+}
+
+// ESC to close modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeCompareAll();
+});
+
+// URL parameter auto-select: ?competitor=toast&volume=80000&ticket=35
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const comp = params.get('competitor');
+  const vol = params.get('volume');
+  const tick = params.get('ticket');
+  if (vol) document.getElementById('calc-volume').value = vol;
+  if (tick) document.getElementById('calc-ticket').value = tick;
+  if (comp && COMPETITORS[comp.toLowerCase()]) {
+    const id = comp.toLowerCase();
+    const card = document.querySelector(`.competitor-card[data-id="${id}"]`);
+    if (card) {
+      setTimeout(() => selectCompetitor(id, card), 200);
+    }
+  }
+})();
+
+function exportPDF() {
+  if (!currentCompetitor) {
+    alert('Select a competitor first to generate a PDF comparison.');
+    return;
+  }
+  const c = COMPETITORS[currentCompetitor];
+  const volume = parseFloat(document.getElementById('calc-volume').value) || 0;
+  const ticket = parseFloat(document.getElementById('calc-ticket').value) || 50;
+  const txnCount = ticket > 0 ? Math.round(volume / ticket) : 0;
+  const theirCost = (volume * c.calc_rate) + (txnCount * c.calc_txn);
+  const kashuCost = (volume * KASHU_RATE) + (txnCount * KASHU_TXN);
+  const monthlySave = theirCost - kashuCost;
+  const annualSave = monthlySave * 12;
+  const fmt = (n) => '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const ratesHtml = c.rates.map(r => `<tr><td style="padding:6px 12px;border-bottom:1px solid #e0e0e0;color:#666;">${r.label}</td><td style="padding:6px 12px;border-bottom:1px solid #e0e0e0;font-weight:600;text-align:right;">${r.value}</td></tr>`).join('');
+  const watchoutsHtml = c.watchouts.map(w => `<div style="display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid #eee;font-size:12px;line-height:1.5;"><div style="width:6px;height:6px;background:#e05252;border-radius:50%;flex-shrink:0;margin-top:5px;"></div><div>${w}</div></div>`).join('');
+
+  const printWin = window.open('', '_blank');
+  printWin.document.write(`<!DOCTYPE html><html><head><title>Kashu vs ${c.name} — Rate Comparison</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+  body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; color: #1a2e2b; padding: 40px; max-width: 800px; margin: 0 auto; }
+  @media print { body { padding: 20px; } @page { margin: 0.5in; } }
+</style></head><body>
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid #0b5147;">
+  <div style="width:44px;height:44px;background:#01de8f;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#0b5147;">K</div>
+  <div>
+    <div style="font-size:20px;font-weight:700;color:#0b5147;">Kashu vs ${c.name}</div>
+    <div style="font-size:12px;color:#5e7a76;">Rate Comparison &amp; Savings Analysis</div>
+  </div>
+  <div style="margin-left:auto;text-align:right;font-size:11px;color:#5e7a76;">${new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })}</div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
+  <div style="border:1.5px solid #c8dbd8;border-radius:12px;padding:18px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e7a76;margin-bottom:8px;">${c.name} Rates</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">${ratesHtml}</table>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid #c8dbd8;font-size:13px;display:flex;justify-content:space-between;">
+      <span style="color:#5e7a76;">Monthly Fee</span><span style="font-weight:600;">${c.monthly_fee_display}</span>
+    </div>
+  </div>
+  <div style="background:#0b5147;border-radius:12px;padding:18px;color:#fff;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#01de8f;margin-bottom:8px;">Kashu Rates</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;color:#fff;">
+      <tr><td style="padding:6px 12px;border-bottom:1px solid rgba(255,255,255,0.2);color:#c8dbd8;">In-Person</td><td style="padding:6px 12px;border-bottom:1px solid rgba(255,255,255,0.2);font-weight:600;text-align:right;color:#01de8f;">2.2% + $0.15</td></tr>
+      <tr><td style="padding:6px 12px;border-bottom:1px solid rgba(255,255,255,0.2);color:#c8dbd8;">Online</td><td style="padding:6px 12px;border-bottom:1px solid rgba(255,255,255,0.2);font-weight:600;text-align:right;color:#01de8f;">2.5% + $0.15</td></tr>
+      <tr><td style="padding:6px 12px;border-bottom:1px solid rgba(255,255,255,0.2);color:#c8dbd8;">ACH</td><td style="padding:6px 12px;border-bottom:1px solid rgba(255,255,255,0.2);font-weight:600;text-align:right;color:#01de8f;">0.50% + $0.25</td></tr>
+      <tr><td style="padding:6px 12px;color:#c8dbd8;">Surcharge</td><td style="padding:6px 12px;font-weight:600;text-align:right;color:#01de8f;">0% to merchant</td></tr>
+    </table>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.2);font-size:13px;display:flex;justify-content:space-between;">
+      <span style="color:#c8dbd8;">Monthly Fee</span><span style="font-weight:600;color:#01de8f;">$0</span>
+    </div>
+  </div>
+</div>
+
+${volume > 0 ? `
+<div style="background:#f4f9f8;border:1.5px solid #c8dbd8;border-radius:12px;padding:20px;margin-bottom:24px;">
+  <div style="font-size:14px;font-weight:700;margin-bottom:14px;">Savings Estimate</div>
+  <div style="font-size:12px;color:#5e7a76;margin-bottom:12px;">Based on $${volume.toLocaleString()}/month volume, $${ticket.toLocaleString()} avg ticket (${txnCount.toLocaleString()} transactions)</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+    <div style="background:#fff;border:1px solid #c8dbd8;border-radius:8px;padding:14px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5e7a76;margin-bottom:4px;">${c.name} Cost</div>
+      <div style="font-size:20px;font-weight:700;">${fmt(theirCost)}/mo</div>
+    </div>
+    <div style="background:#fff;border:1px solid #c8dbd8;border-radius:8px;padding:14px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5e7a76;margin-bottom:4px;">Kashu Cost</div>
+      <div style="font-size:20px;font-weight:700;color:#0b5147;">${fmt(kashuCost)}/mo</div>
+    </div>
+    <div style="background:#0b5147;border-radius:8px;padding:14px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#01de8f;margin-bottom:4px;">You Save</div>
+      <div style="font-size:20px;font-weight:700;color:#fff;">${monthlySave > 0 ? fmt(monthlySave) + '/mo' : '$0'}</div>
+    </div>
+  </div>
+  ${annualSave > 0 ? `<div style="margin-top:14px;background:linear-gradient(135deg,#0b5147,#397168);border-radius:8px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;">
+    <span style="color:#c8dbd8;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;">Annual Savings</span>
+    <span style="color:#01de8f;font-size:28px;font-weight:700;">${fmt(annualSave)}</span>
+  </div>` : ''}
+</div>` : ''}
+
+<div style="margin-bottom:24px;">
+  <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e7a76;margin-bottom:8px;">What ${c.name} Isn't Telling You</div>
+  ${watchoutsHtml}
+</div>
+
+<div style="background:linear-gradient(135deg,#0b5147,#397168);border-radius:12px;padding:24px;margin-bottom:24px;page-break-inside:avoid;">
+  <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#01de8f;margin-bottom:6px;">Why Kashu Wins</div>
+  <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:14px;">${c.vertical.headline}</div>
+  <div style="display:grid;gap:10px;">
+    ${c.vertical.points.map(p => `<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:12px 14px;">
+      <div style="font-size:12px;font-weight:700;color:#01de8f;margin-bottom:3px;">${p.title}</div>
+      <div style="font-size:12px;color:#e0ecea;line-height:1.5;">${p.text}</div>
+    </div>`).join('')}
+  </div>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.25);font-size:13px;color:#e0ecea;font-style:italic;">${c.vertical.closer}</div>
+</div>
+
+<div style="margin-top:32px;padding-top:16px;border-top:1px solid #c8dbd8;font-size:11px;color:#5e7a76;text-align:center;">
+  Kashu &mdash; kashupay.com &mdash; Competitive rates, no hidden fees, no contracts
+</div>
+</body></html>`);
+  printWin.document.close();
+  setTimeout(() => { printWin.print(); }, 500);
+}
+</script>
+</body>
+</html>

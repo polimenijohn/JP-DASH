@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu MRP Recruiting Blitz</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-dark:   #0b5147;
+    --teal-mid:    #397168;
+    --teal-muted:  #93adaa;
+    --green-bright:#01de8f;
+    --green-mid:   #8de6c6;
+    --green-pale:  #d5eae3;
+    --green-lime:  #e1fea1;
+    --white:       #ffffff;
+    --bg:          #f2f6f5;
+    --text:        #0d1a17;
+    --text-muted:  #4a6560;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+
+  #generator {
+    max-width: 640px; margin: 44px auto;
+    background: var(--white); border-radius: 16px; padding: 44px;
+    box-shadow: 0 4px 28px rgba(11,81,71,0.10);
+  }
+  .form-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+  .form-logo .logo-mark { width: 36px; height: 36px; background: var(--teal-dark); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .form-logo .logo-text { font-size: 20px; font-weight: 800; color: var(--teal-dark); }
+  h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; color: var(--teal-dark); }
+  p.sub { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+  .section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--teal-dark); margin-bottom: 14px; margin-top: 28px;
+    padding-bottom: 8px; border-bottom: 1.5px solid var(--green-pale);
+  }
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  label .hint { font-weight: 400; color: var(--teal-muted); font-size: 12px; }
+  input, select, textarea {
+    width: 100%; padding: 11px 14px; border: 1.5px solid #d4dedc; border-radius: 8px;
+    font-size: 14px; font-family: inherit; margin-bottom: 16px; outline: none;
+    transition: border 0.2s, box-shadow 0.2s; background: var(--white); color: var(--text);
+  }
+  textarea { resize: vertical; min-height: 60px; }
+  input:focus, select:focus, textarea:focus { border-color: var(--teal-dark); box-shadow: 0 0 0 3px rgba(11,81,71,0.08); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .income-preview {
+    background: var(--teal-dark); border-radius: 10px; padding: 20px 22px; margin: 20px 0;
+  }
+  .income-preview .ip-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--green-bright); margin-bottom: 12px; }
+  .income-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .ip-stat { text-align: center; }
+  .ip-stat .val { font-size: 20px; font-weight: 800; color: var(--white); }
+  .ip-stat .lbl { font-size: 10px; color: var(--teal-muted); margin-top: 3px; font-weight: 600; text-transform: uppercase; }
+  .ip-stat .val.green { color: var(--green-bright); }
+
+  .channel-toggle {
+    display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .channel-toggle button {
+    padding: 8px 16px; border: 1.5px solid var(--teal-dark); border-radius: 8px;
+    background: var(--white); color: var(--teal-dark); font-family: inherit;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .channel-toggle button.active {
+    background: var(--teal-dark); color: var(--white);
+  }
+
+  button#generateBtn {
+    width: 100%; padding: 14px; background: var(--teal-dark); color: var(--white);
+    border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: inherit;
+    cursor: pointer; margin-top: 10px; transition: background 0.2s;
+  }
+  button#generateBtn:hover { background: var(--teal-mid); }
+
+  #output { display: none; max-width: 860px; margin: 0 auto 60px; padding: 0 10px; }
+
+  .output-header {
+    background: var(--teal-dark); border-radius: 16px; padding: 32px 40px; margin-bottom: 24px; color: var(--white); position: relative; overflow: hidden;
+  }
+  .output-header::after { content: ''; position: absolute; right: -80px; top: -80px; width: 320px; height: 320px; background: radial-gradient(circle, rgba(1,222,143,0.15) 0%, transparent 70%); pointer-events: none; }
+  .kashu-logo { font-size: 20px; font-weight: 900; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .logo-dot { width: 8px; height: 8px; background: var(--green-bright); border-radius: 50%; }
+  .output-header h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .output-header p { font-size: 14px; color: var(--teal-muted); }
+  .meta { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .meta-tag { background: rgba(1,222,143,0.15); border: 1px solid rgba(1,222,143,0.3); color: var(--green-bright); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .touch-card {
+    background: var(--white); border-radius: 14px; padding: 28px 32px; margin-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(11,81,71,0.06); border: 1px solid var(--green-pale);
+  }
+  .touch-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--green-pale); color: var(--teal-dark); font-size: 11px; font-weight: 700;
+    padding: 4px 12px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px;
+  }
+  .touch-channel {
+    display: inline-flex; align-items: center; gap: 4px; margin-left: 8px;
+    background: var(--teal-dark); color: var(--green-bright); font-size: 10px; font-weight: 700;
+    padding: 3px 10px; border-radius: 6px; text-transform: uppercase;
+  }
+  .touch-card h3 { font-size: 15px; font-weight: 700; color: var(--teal-dark); margin-bottom: 8px; }
+  .touch-card .timing { font-size: 12px; color: var(--teal-muted); font-weight: 600; margin-bottom: 12px; }
+  .touch-card .body { font-size: 14px; line-height: 1.7; color: var(--text); white-space: pre-wrap; }
+  .copy-btn {
+    margin-top: 14px; padding: 8px 18px; background: var(--green-pale); color: var(--teal-dark);
+    border: none; border-radius: 8px; font-size: 12px; font-weight: 700; font-family: inherit;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .copy-btn:hover { background: var(--green-mid); }
+  .copy-btn.copied { background: var(--green-bright); color: var(--white); }
+
+  .earnings-box {
+    background: linear-gradient(135deg, var(--teal-dark), #0d6b5e); border-radius: 14px;
+    padding: 28px 32px; margin-bottom: 16px; color: var(--white);
+  }
+  .earnings-box h3 { font-size: 15px; font-weight: 700; color: var(--green-bright); margin-bottom: 14px; }
+  .earnings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .earn-stat { text-align: center; }
+  .earn-stat .val { font-size: 22px; font-weight: 800; }
+  .earn-stat .lbl { font-size: 10px; color: var(--teal-muted); margin-top: 4px; font-weight: 600; text-transform: uppercase; }
+
+  .objection-section {
+    background: var(--white); border-radius: 14px; padding: 28px 32px; margin-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(11,81,71,0.06); border: 1px solid var(--green-pale);
+  }
+  .objection-section h3 { font-size: 15px; font-weight: 700; color: var(--teal-dark); margin-bottom: 16px; }
+  .objection { margin-bottom: 16px; }
+  .objection .q { font-size: 13px; font-weight: 700; color: var(--teal-dark); margin-bottom: 4px; }
+  .objection .a { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  @media (max-width: 600px) {
+    #generator, .touch-card, .earnings-box, .objection-section { padding: 22px; }
+    .earnings-grid { grid-template-columns: 1fr; }
+    .income-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="generator">
+  <div class="form-logo">
+    <div class="logo-mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#01de8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <span class="logo-text">Kashu</span>
+  </div>
+  <h1>MRP Recruiting Blitz</h1>
+  <p class="sub">Pick a partner type. Get a full multi-channel recruiting sequence with residual math, objection handling, and follow-up cadence.</p>
+
+  <div class="section-label">Partner Type</div>
+  <label>Who are you recruiting?</label>
+  <select id="partnerType">
+    <option value="">Select partner type...</option>
+    <option value="iso">ISO / Independent Sales Agent</option>
+    <option value="cpa">CPA / Accountant</option>
+    <option value="bookkeeper">Bookkeeper</option>
+    <option value="consultant">Business Consultant</option>
+    <option value="pos">POS Reseller / IT Provider</option>
+    <option value="payroll">Payroll Company</option>
+    <option value="insurance">Commercial Insurance Agent</option>
+    <option value="realtor">Commercial Real Estate Broker</option>
+    <option value="coach">Business Coach / Mentor</option>
+    <option value="attorney">Business Attorney</option>
+  </select>
+
+  <div class="section-label">Personalization</div>
+  <div class="row">
+    <div>
+      <label>Their Name <span class="hint">(first name)</span></label>
+      <input type="text" id="partnerName" placeholder="Mike">
+    </div>
+    <div>
+      <label>Your Name</label>
+      <input type="text" id="yourName" placeholder="John" value="John">
+    </div>
+  </div>
+  <label>Their Company <span class="hint">(optional)</span></label>
+  <input type="text" id="partnerCompany" placeholder="Smith & Associates">
+
+  <div class="section-label">Outreach Channels</div>
+  <label>Select all channels for this sequence</label>
+  <div class="channel-toggle">
+    <button class="active" data-ch="linkedin" onclick="toggleCh(this)">LinkedIn</button>
+    <button class="active" data-ch="email" onclick="toggleCh(this)">Email</button>
+    <button data-ch="text" onclick="toggleCh(this)">Text</button>
+    <button data-ch="call" onclick="toggleCh(this)">Call Script</button>
+  </div>
+
+  <div class="section-label">Residual Preview</div>
+  <div class="row">
+    <div>
+      <label>Avg Merchants They Could Refer <span class="hint">/month</span></label>
+      <input type="number" id="refPerMonth" value="3" min="1" max="50">
+    </div>
+    <div>
+      <label>Avg Merchant Volume <span class="hint">$/month</span></label>
+      <input type="number" id="avgVolume" value="60000" min="5000" step="5000">
+    </div>
+  </div>
+
+  <div class="income-preview" id="incomePreview">
+    <div class="ip-label">Their Projected Residual Income</div>
+    <div class="income-grid">
+      <div class="ip-stat"><div class="val" id="prev3mo">--</div><div class="lbl">3 Months</div></div>
+      <div class="ip-stat"><div class="val" id="prev6mo">--</div><div class="lbl">6 Months</div></div>
+      <div class="ip-stat"><div class="val green" id="prev12mo">--</div><div class="lbl">12 Months</div></div>
+    </div>
+  </div>
+
+  <button id="generateBtn" onclick="generate()">Generate Recruiting Sequence</button>
+</div>
+
+<div id="output"></div>
+
+<script>
+function toggleCh(btn) {
+  btn.classList.toggle('active');
+}
+
+function getChannels() {
+  return [...document.querySelectorAll('.channel-toggle button.active')].map(b => b.dataset.ch);
+}
+
+function calcResiduals(merchants, avgVol) {
+  // T2: 25% of net residuals. Net margin ~0.3% of volume
+  const netMarginPct = 0.003;
+  const t2Pct = 0.25;
+  const monthlyPerMerchant = avgVol * netMarginPct * t2Pct;
+  return {
+    perMerchant: monthlyPerMerchant,
+    mo3: merchants * 3 * monthlyPerMerchant,
+    mo6: merchants * 6 * monthlyPerMerchant,
+    mo12: merchants * 12 * monthlyPerMerchant,
+    monthly6: merchants * 6 * monthlyPerMerchant, // monthly at month 6
+    monthly12: merchants * 12 * monthlyPerMerchant
+  };
+}
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+
+// Live preview
+document.getElementById('refPerMonth').addEventListener('input', updatePreview);
+document.getElementById('avgVolume').addEventListener('input', updatePreview);
+function updatePreview() {
+  const m = parseInt(document.getElementById('refPerMonth').value) || 3;
+  const v = parseInt(document.getElementById('avgVolume').value) || 60000;
+  const r = calcResiduals(m, v);
+  document.getElementById('prev3mo').textContent = fmt(r.mo3);
+  document.getElementById('prev6mo').textContent = fmt(r.mo6);
+  document.getElementById('prev12mo').textContent = fmt(r.mo12);
+  document.getElementById('incomePreview').style.display = 'block';
+}
+updatePreview();
+
+const PARTNER_DATA = {
+  iso: {
+    title: 'ISO / Independent Sales Agent',
+    hook: "your merchants deserve better pricing than what they're getting",
+    why: "You already know most processors are overcharging your merchants and making it hard to leave. Kashu gives your merchants guaranteed lower rates in writing, zero-downtime switching, and a surcharge option that turns processing from a cost into a revenue line. You get to offer them something nobody else can, and you earn residuals on every one that moves. No exclusivity. No quotas.",
+    angle: "give your merchants a deal their current processor can't touch",
+    objections: [
+      { q: "I already have a processor I sell for.", a: "Good. This isn't about replacing that. It's about having a second option when your current processor can't compete on rate or can't approve a merchant. More tools in the bag, more deals closed. No exclusivity on our end." },
+      { q: "What's the catch? Why so generous on residuals?", a: "No catch. We're scaling and we'd rather split revenue with producers than spend it on marketing that doesn't convert. You bring merchants, you eat. Simple." },
+      { q: "How fast do I actually get paid?", a: "Residuals hit about 45 days after the merchant starts processing. Once they're live, you're earning every month they process. It compounds." }
+    ],
+    avgRef: 5,
+    idealVolume: 80000
+  },
+  cpa: {
+    title: 'CPA / Accountant',
+    hook: "you already see your clients overpaying on processing every quarter",
+    why: "You're already reviewing their P&L. You see the line item. You know they're paying too much. Now you can actually do something about it. Kashu guarantees lower rates in writing and handles the entire switch. Your client saves $500-2,000/month without changing anything about how they run their business. You earn monthly residuals for making that intro. No selling required.",
+    angle: "fix a line item you already know is too high and get paid for it",
+    objections: [
+      { q: "I don't want to jeopardize my client relationships with a referral.", a: "That's exactly why this works. You're not selling them anything. You're flagging a cost savings opportunity that you already see in their books. If anything it strengthens the relationship because you found them money." },
+      { q: "I'm not a salesperson.", a: "You don't have to be. Literally all you do is say 'hey, you're paying too much in processing fees, I know someone who can cut that.' We take it from there. You never have to pitch, negotiate, or close anything." },
+      { q: "Is this a conflict of interest?", a: "No different than referring a client to a better insurance provider or a payroll company. You're advising them to save money. That's your job. The residual is just a thank you for the intro." }
+    ],
+    avgRef: 3,
+    idealVolume: 60000
+  },
+  bookkeeper: {
+    title: 'Bookkeeper',
+    hook: "you watch your clients overpay on processing every single month",
+    why: "You literally see the money walking out the door. Every statement, every reconciliation, you know that Stripe or Square fee is too high. Kashu cuts that cost and can even flip it into a revenue line with surcharge. Your clients keep more of their money. You earn monthly residuals for pointing them in the right direction.",
+    angle: "stop watching your clients overpay on something you can fix with one intro",
+    objections: [
+      { q: "My clients are small, is it even worth it?", a: "A business doing $20K/month in card processing at 2.9% on Stripe saves over $1,400/year with us. Multiply that by 10-15 clients and you're earning an extra $300-500/month in residuals doing zero extra work. It adds up." },
+      { q: "I don't want to be pushy with my clients.", a: "You're not being pushy. You're literally doing your job. If you saw them overpaying on insurance you'd say something. This is the same thing. Processing fees are a cost you can see and they can reduce." },
+      { q: "What do I actually have to do?", a: "Send an intro email or text. That's it. Something like 'hey I noticed you're paying X in processing fees, I know someone who can cut that, want me to connect you?' We take the call, we close it, we onboard them. You get paid." }
+    ],
+    avgRef: 4,
+    idealVolume: 40000
+  },
+  consultant: {
+    title: 'Business Consultant',
+    hook: "your clients have a cost problem hiding in plain sight",
+    why: "Processing fees are the most overlooked line item in every business you touch. Most of your clients are overpaying by $500-2,000/month and don't know it. One intro to Kashu and they get guaranteed lower rates, a seamless switch, and the option to eliminate processing fees entirely with surcharge. That's a real win you can deliver in one conversation. You earn monthly residuals for making it happen.",
+    angle: "hand your clients a cost savings win they'll remember you for",
+    objections: [
+      { q: "I advise on strategy, not vendor selection.", a: "Cutting $500-2,000/month in processing fees IS strategy. That's money that goes straight to the bottom line. When you bring this up with a client, you're demonstrating that you see details other consultants miss." },
+      { q: "How does this affect my positioning?", a: "It strengthens it. You're the consultant who found them real money. Not theory, not a framework, actual cash back in their pocket starting next month." },
+      { q: "Is the residual meaningful enough to bother?", a: "If you refer 2-3 clients a month doing $60K each in volume, you're looking at $4,000+ a year in passive residuals by month 12. And it grows every month as merchants keep processing. Zero ongoing work." }
+    ],
+    avgRef: 3,
+    idealVolume: 60000
+  },
+  pos: {
+    title: 'POS Reseller / IT Provider',
+    hook: "your merchants are getting overcharged on the processing side of every install",
+    why: "You set them up with great hardware and great software, then their processor eats their margin on the backend. Kashu fixes that. Your merchants get 2.2% + $0.15 in person, guaranteed in writing, with the option to go zero-cost through surcharge. The switch happens without missing a single transaction. You earn monthly residuals for connecting them.",
+    angle: "give your merchants the processing deal that matches the setup you built them",
+    objections: [
+      { q: "My POS vendor has their own processing built in.", a: "Most POS systems are processor-agnostic. Clover, Poynt, Dejavoo, they all work with us. Even if there's an integrated option, it almost always costs the merchant more. You're saving them money and earning on it." },
+      { q: "I don't want to complicate the install.", a: "It doesn't. We handle all the processing setup and onboarding. You install the hardware like you always do. The only difference is you made an intro before or after and now you're getting paid every month." },
+      { q: "What terminals do you support?", a: "We're hardware agnostic. Clover, Dejavoo, PAX, Ingenico, SwipeSimple. Whatever your client needs, we can run processing through it." }
+    ],
+    avgRef: 4,
+    idealVolume: 50000
+  },
+  payroll: {
+    title: 'Payroll Company',
+    hook: "your clients are quietly overpaying on processing while you manage everything else",
+    why: "You handle their payroll, their compliance, their most sensitive financial operations. But their processor is charging them 2.8-3.5% and nobody's said a word. Kashu gets them to 2.2% guaranteed, handles the entire switch, and can eliminate the cost entirely with surcharge. Your clients save real money. You earn monthly residuals for a one-sentence intro.",
+    angle: "protect your clients from a cost they don't know they're overpaying",
+    objections: [
+      { q: "We already offer payment solutions.", a: "Take a look at what you're offering versus what we charge. 2.2% + $0.15 in person. Most bundled payroll processing solutions are at 2.7%+. If your clients are overpaying, that's eventually going to come back on you when they find out." },
+      { q: "I don't want to distract from our core service.", a: "It's one sentence in your next check-in: 'by the way, I noticed you're probably overpaying on card processing, want me to connect you with someone who can cut that?' That's it. We do the rest." },
+      { q: "How do residuals work with our existing comp structure?", a: "Totally separate. Residuals from Kashu are paid directly to you or your company. It's a standalone income stream that sits on top of whatever your payroll revenue is." }
+    ],
+    avgRef: 3,
+    idealVolume: 55000
+  },
+  insurance: {
+    title: 'Commercial Insurance Agent',
+    hook: "your clients trust you to look out for their business, and there's a cost you can cut for them today",
+    why: "Every business owner you insure is overpaying their processor and has no idea. You can change that with one conversation. Kashu guarantees lower rates in writing, switches them over without any downtime, and can eliminate processing fees entirely. It's the kind of thing that makes a client stick with their insurance agent for 20 years. You earn monthly residuals for the intro.",
+    angle: "give your clients a savings win that deepens the relationship you already have",
+    objections: [
+      { q: "I sell insurance, not payments.", a: "You're not selling payments. You're saying 'hey, I know someone who can save you money on processing.' That's it. Same way you might refer a good accountant or attorney. It's relationship capital you already have." },
+      { q: "Will my clients think I'm trying to upsell them?", a: "The opposite. You're bringing them a cost savings they didn't ask for. That's the kind of thing that makes a client stick with their insurance agent for 20 years." },
+      { q: "Is this worth my time?", a: "You probably have 50+ business clients. If 10 of them switch to Kashu at $50K/month average volume, you're looking at $4,500+/year in passive residuals. Growing every month. For sending 10 texts." }
+    ],
+    avgRef: 3,
+    idealVolume: 50000
+  },
+  realtor: {
+    title: 'Commercial Real Estate Broker',
+    hook: "every tenant you place needs processing and most will get a bad deal if nobody helps them",
+    why: "Every commercial lease you close is a business that needs payment processing from day one. Most of them end up on Square or Stripe paying 2.9% because nobody pointed them somewhere better. You can change that. Kashu gets them set up at 2.2% with zero downtime and the option to eliminate processing costs entirely. You're already the first person they talk to about their space. Now you're the person who saved them money too. You earn monthly residuals for as long as they process.",
+    angle: "set your tenants up right from day one and earn for it every month",
+    objections: [
+      { q: "I close the lease and move on, I don't stay involved.", a: "You don't have to. Send one intro before or after closing. 'Hey, for your new space, I have a connection for payment processing that'll save you money.' Done. We handle everything from there and you get paid monthly." },
+      { q: "My clients are tenants, not established businesses.", a: "New businesses are actually the best fit. They haven't locked into an expensive processor yet. We get them set up right from day one at the best rates in the market. You look like a hero for connecting them." },
+      { q: "Is the volume going to be worth it for new businesses?", a: "New retail and restaurant tenants typically ramp to $30-80K/month in processing within 6 months. And you're getting in at the ground floor. Every month they grow, your residuals grow." }
+    ],
+    avgRef: 2,
+    idealVolume: 45000
+  },
+  coach: {
+    title: 'Business Coach / Mentor',
+    hook: "your clients are losing $6,000-24,000 a year on something you can fix in one session",
+    why: "Most coaching advice takes months to show results. This one shows up on the next statement. Your clients are overpaying on processing and don't know it. Kashu guarantees lower rates in writing and can eliminate the cost entirely with surcharge. You point it out, we handle the switch, your client sees real savings within 30 days. That's the kind of tangible win that makes them tell every business owner they know about their coach. You earn monthly residuals for the referral.",
+    angle: "deliver a measurable P&L win your client can see next month",
+    objections: [
+      { q: "I teach frameworks, I don't make vendor recommendations.", a: "This isn't a vendor recommendation. It's a cost optimization play that takes 30 seconds to mention. 'Pull up your processing statement. You're paying X. I know someone who'll cut that in half.' That's coaching." },
+      { q: "Won't this seem off-brand for me?", a: "Saving your client $12,000-24,000 a year is the most on-brand thing you can do. It's a real number they can see immediately. Most coaching advice takes months to show results. This shows up next statement." },
+      { q: "How many of my clients would actually qualify?", a: "Any client processing card payments. Retail, restaurants, services, e-commerce. If they accept credit cards, they qualify. And the switch is seamless, no downtime, no hassle." }
+    ],
+    avgRef: 3,
+    idealVolume: 50000
+  },
+  attorney: {
+    title: 'Business Attorney',
+    hook: "your clients trust your judgment on everything, and there's an easy win sitting in their P&L",
+    why: "Your clients are paying 15-40% more than they should on processing fees and nobody's told them. Kashu guarantees better pricing in writing, handles the entire switch with zero business disruption, and can eliminate the cost entirely with a compliant surcharge program. Coming from you, it carries weight. One mention and your client saves real money. You earn monthly residuals. No liability, no complexity.",
+    angle: "give your clients a cost savings recommendation that strengthens the relationship",
+    objections: [
+      { q: "I don't want to mix legal advice with vendor referrals.", a: "This isn't a vendor endorsement. It's the same as saying 'I know a good accountant' or 'I know a good commercial broker.' You're connecting them with a resource. That's what trusted advisors do." },
+      { q: "Is there any liability exposure?", a: "Zero. You're making an introduction. We handle compliance, underwriting, onboarding, and support. You have no contractual relationship with the processing side. It's purely a referral." },
+      { q: "My clients aren't going to switch processors based on my say-so.", a: "They don't have to take your word for it. We guarantee better rates in writing. All you do is open the door. The numbers close the deal." }
+    ],
+    avgRef: 2,
+    idealVolume: 65000
+  }
+};
+
+function generate() {
+  const type = document.getElementById('partnerType').value;
+  if (!type) { alert('Select a partner type.'); return; }
+
+  const data = PARTNER_DATA[type];
+  const name = document.getElementById('partnerName').value.trim() || 'there';
+  const you = document.getElementById('yourName').value.trim() || 'John';
+  const company = document.getElementById('partnerCompany').value.trim();
+  const channels = getChannels();
+  const refPerMonth = parseInt(document.getElementById('refPerMonth').value) || 3;
+  const avgVol = parseInt(document.getElementById('avgVolume').value) || 60000;
+  const r = calcResiduals(refPerMonth, avgVol);
+
+  if (channels.length === 0) { alert('Select at least one channel.'); return; }
+
+  const companyLine = company ? ` at ${company}` : '';
+
+  // Build sequence
+  const touches = [];
+
+  // TOUCH 1: Cold open
+  if (channels.includes('linkedin')) {
+    touches.push({
+      num: 1, channel: 'LinkedIn', timing: 'Day 1 -- Connection Request',
+      subject: 'Connection Note',
+      body: `${name === 'there' ? 'Hey' : 'Hey ' + name} -- saw you're ${data.title.split('/')[0].trim().toLowerCase() === 'iso' ? 'in the payments space' : 'a ' + data.title.split('/')[0].trim().toLowerCase()}${companyLine}. ${data.hook}. Quick question about a rev share opportunity if you're open to it. No pitch, just want to run something by you.`
+    });
+  }
+  if (channels.includes('email')) {
+    touches.push({
+      num: touches.length + 1, channel: 'Email', timing: 'Day 1 -- Cold Email',
+      subject: `Quick question${company ? ' for ' + company : ''}`,
+      body: `${name === 'there' ? 'Hey' : name} --
+
+${data.why}
+
+No contracts, no minimums, no exclusivity on your end. Kashu pays ${refPerMonth >= 5 ? '25-50%' : '25%'} of net residuals monthly for as long as the merchants you refer keep processing.
+
+Worth a 5 minute call to see if it's a fit?
+
+${you}`
+    });
+  }
+
+  // TOUCH 2: Value drop
+  if (channels.includes('linkedin')) {
+    touches.push({
+      num: touches.length + 1, channel: 'LinkedIn', timing: 'Day 3 -- Follow-up DM (after connection accepted)',
+      subject: 'Value Drop',
+      body: `Thanks for connecting${name !== 'there' ? ' ' + name : ''}. Real quick -- I run revenue at Kashu, a payments company. Here's why I reached out: ${data.angle}.
+
+The way it works: you make the intro, we guarantee the merchant lower rates in writing, handle the entire switch with zero downtime, and can even eliminate their processing fees entirely with surcharge. Your merchants get a better deal. You earn monthly residuals for as long as they process.
+
+No selling, no closing, no onboarding on your end.
+
+Want me to send over the one-pager?`
+    });
+  }
+  if (channels.includes('email') && !channels.includes('linkedin')) {
+    touches.push({
+      num: touches.length + 1, channel: 'Email', timing: 'Day 3 -- Follow-up',
+      subject: 'The math on this',
+      body: `${name === 'there' ? 'Hey' : name} --
+
+Wanted to put the numbers in front of you. If ${refPerMonth} of your clients switch to Kashu over the next few months:
+
+Month 3: ${fmt(r.mo3)} earned
+Month 6: ${fmt(r.mo6)} earned
+Month 12: ${fmt(r.mo12)} earned
+
+That's passive. No ongoing work. Residuals hit your account every month for as long as those merchants are processing.
+
+Happy to walk through it in 5 if you're curious.
+
+${you}`
+    });
+  }
+
+  // TOUCH 3: Social proof / urgency
+  if (channels.includes('text')) {
+    touches.push({
+      num: touches.length + 1, channel: 'Text', timing: 'Day 5 -- Text',
+      subject: '',
+      body: `Hey ${name !== 'there' ? name : ''} -- ${you} from Kashu. Quick one. We help merchants cut their processing costs, guaranteed in writing. Been working with ${data.title.toLowerCase().split('/')[0].trim()}s who want to pass that along to their clients and earn monthly residuals for the intro. No selling, just a warm connection. Worth 5 min?`
+    });
+  }
+  if (channels.includes('email')) {
+    touches.push({
+      num: touches.length + 1, channel: 'Email', timing: 'Day 5 -- Residual Math Email',
+      subject: `what this looks like for your clients`,
+      body: `${name === 'there' ? 'Hey' : name} --
+
+I'll keep this short. Here's what happens when a ${data.title.toLowerCase()} connects their merchants with Kashu:
+
+Your merchants get guaranteed lower processing rates. We put it in writing before they sign anything. They go live without missing a day of business. With surcharge, their processing cost goes to zero.
+
+On your side, you earn monthly residuals on every merchant you introduce. Here's the math if you refer ${refPerMonth} merchants/month at ${fmt(avgVol)} average volume:
+
+3 months in: ${fmt(r.mo3)} earned
+6 months in: ${fmt(r.mo6)} earned
+12 months in: ${fmt(r.mo12)} earned
+
+Your merchants save money. You earn for as long as they process. No cap, no expiration.
+
+Let me know if you want the full breakdown.
+
+${you}`
+    });
+  }
+
+  // TOUCH 4: Breakup / direct
+  if (channels.includes('linkedin')) {
+    touches.push({
+      num: touches.length + 1, channel: 'LinkedIn', timing: 'Day 8 -- Final DM',
+      subject: 'Breakup Message',
+      body: `${name !== 'there' ? name + ' -- ' : ''}last one from me on this. If the timing's off, no worries at all. But if you ever have a client overpaying on processing and want an easy win to hand them, just shoot me a message. The referral program's always open and the residuals are real. Appreciate your time either way.`
+    });
+  }
+  if (channels.includes('email')) {
+    touches.push({
+      num: touches.length + 1, channel: 'Email', timing: 'Day 8 -- Breakup Email',
+      subject: 'Last one from me',
+      body: `${name === 'there' ? 'Hey' : name} --
+
+Not going to keep hitting you up on this. If the timing's wrong, totally get it.
+
+But if you ever have a client complaining about processing fees or you're looking at a P&L and see they're paying 2.7%+ on card transactions, just know you have a standing offer to earn residuals by sending them our way.
+
+No pressure, no expiration. Just an open door.
+
+${you}`
+    });
+  }
+
+  // TOUCH 5: Call script
+  if (channels.includes('call')) {
+    touches.push({
+      num: touches.length + 1, channel: 'Call', timing: 'Day 4-6 -- Phone Call Script',
+      subject: 'Call Script',
+      body: `[OPENER]
+"Hey ${name !== 'there' ? name : ''}, this is ${you} with Kashu. I know you're busy so I'll be quick. We're a payments company and we've been building out a referral program specifically for ${data.title.toLowerCase()}s. You probably get pitches all the time so I'm not going to give you one. I just want to ask you one question."
+
+[THE QUESTION]
+"Do you ever see your clients' processing statements or hear them complain about fees?"
+
+[IF YES]
+"That's exactly why I'm calling. Most businesses are paying 2.6-2.9% when they should be paying 2.2%. All you'd have to do is make a quick intro. We handle the call, the close, the onboarding, everything. And you earn monthly residuals for as long as they process with us."
+
+[THE MATH]
+"Just to put numbers on it -- if you send us ${refPerMonth} merchants over the next few months doing about ${fmt(avgVol)} each in volume, you'd be earning about ${fmt(refPerMonth * 12 * r.perMerchant)} a month in residuals by end of year. Passive. No ongoing work."
+
+[CLOSE]
+"I can send you a one-pager that breaks down the whole thing. Takes 2 minutes to read. Want me to shoot it over?"
+
+[IF HESITANT]
+"No commitment needed. Just take a look at the numbers and see if it makes sense. If it does, great. If not, no hard feelings."
+
+[OBJECTION: "I don't do referrals"]
+"Totally get it. But this isn't really a referral in the traditional sense. You're not endorsing us or putting your name on anything. You're just saying 'hey, this person can save you money on processing.' We do the rest."
+
+[OBJECTION: "Send me info"]
+"Absolutely. I'll shoot over the one-pager right now. What's the best email? And just so I send the right version, are most of your clients retail, service-based, or restaurants?"`,
+    });
+  }
+
+  // Render
+  let html = `
+    <div class="output-header">
+      <div class="kashu-logo"><div class="logo-dot"></div> Kashu</div>
+      <h2>MRP Recruiting Sequence: ${data.title}</h2>
+      <p>${name !== 'there' ? name : 'Prospect'}${companyLine} -- ${channels.length}-channel, ${touches.length}-touch sequence</p>
+      <div class="meta">
+        ${channels.map(c => `<span class="meta-tag">${c}</span>`).join('')}
+        <span class="meta-tag">${touches.length} touches</span>
+      </div>
+    </div>
+
+    <div class="earnings-box">
+      <h3>Residual Income Projection for This Partner</h3>
+      <div class="earnings-grid">
+        <div class="earn-stat"><div class="val">${fmt(r.mo3)}</div><div class="lbl">3 Month Earnings</div></div>
+        <div class="earn-stat"><div class="val">${fmt(r.mo6)}</div><div class="lbl">6 Month Earnings</div></div>
+        <div class="earn-stat"><div class="val" style="color:var(--green-bright)">${fmt(r.mo12)}</div><div class="lbl">12 Month Earnings</div></div>
+      </div>
+      <p style="text-align:center;color:var(--teal-muted);font-size:12px;margin-top:14px;">Based on ${refPerMonth} referrals/month at ${fmt(avgVol)} avg volume -- T2 (25% net residuals)</p>
+    </div>
+  `;
+
+  touches.forEach((t, i) => {
+    html += `
+      <div class="touch-card">
+        <span class="touch-badge">Touch ${t.num} <span class="touch-channel">${t.channel}</span></span>
+        <h3>${t.subject || t.channel + ' Message'}</h3>
+        <div class="timing">${t.timing}</div>
+        ${t.subject && t.channel === 'Email' ? `<div style="font-size:12px;color:var(--teal-muted);margin-bottom:8px;font-weight:600;">Subject: ${t.subject}</div>` : ''}
+        <div class="body">${t.body}</div>
+        <button class="copy-btn" onclick="copyTouch(this, ${i})">Copy</button>
+      </div>
+    `;
+  });
+
+  // Objections
+  html += `
+    <div class="objection-section">
+      <h3>Objection Handling -- ${data.title}</h3>
+      ${data.objections.map(o => `
+        <div class="objection">
+          <div class="q">"${o.q}"</div>
+          <div class="a">${o.a}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  // Copy all button
+  html += `
+    <div style="text-align:center;margin-top:20px;">
+      <button class="copy-btn" onclick="copyAll()" style="padding:12px 32px;font-size:14px;">Copy Entire Sequence</button>
+    </div>
+  `;
+
+  document.getElementById('output').innerHTML = html;
+  document.getElementById('output').style.display = 'block';
+  document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+
+  window._touches = touches;
+  window._data = data;
+}
+
+function copyTouch(btn, idx) {
+  const t = window._touches[idx];
+  let text = '';
+  if (t.channel === 'Email') text = `Subject: ${t.subject}\n\n${t.body}`;
+  else text = t.body;
+  navigator.clipboard.writeText(text);
+  btn.textContent = 'Copied';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+}
+
+function copyAll() {
+  let full = `MRP RECRUITING SEQUENCE: ${window._data.title}\n${'='.repeat(50)}\n\n`;
+  window._touches.forEach(t => {
+    full += `--- TOUCH ${t.num}: ${t.channel} (${t.timing}) ---\n`;
+    if (t.subject && t.channel === 'Email') full += `Subject: ${t.subject}\n\n`;
+    full += `${t.body}\n\n`;
+  });
+  full += `\n--- OBJECTION HANDLING ---\n\n`;
+  window._data.objections.forEach(o => {
+    full += `Q: "${o.q}"\nA: ${o.a}\n\n`;
+  });
+  navigator.clipboard.writeText(full);
+  event.target.textContent = 'Copied All';
+  event.target.classList.add('copied');
+  setTimeout(() => { event.target.textContent = 'Copy Entire Sequence'; event.target.classList.remove('copied'); }, 2000);
+}
+</script>
+
+</body>
+</html>

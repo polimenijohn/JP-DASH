@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRO Dashboard — Kashu</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --dark-teal: #0b5147;
+    --mid-teal: #397168;
+    --muted: #93adaa;
+    --green: #01de8f;
+    --light-bg: #f4f9f8;
+    --white: #ffffff;
+    --text: #1a2e2b;
+    --border: #c8dbd8;
+    --red: #e05252;
+    --yellow: #f5a623;
+    --radius: 14px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--light-bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--dark-teal);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-mark {
+    width: 38px;
+    height: 38px;
+    background: var(--green);
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--dark-teal);
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+  .header-title {
+    color: var(--white);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+  }
+  .header-sub {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 400;
+  }
+  .header-right {
+    text-align: right;
+  }
+  .header-date {
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .header-updated {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  /* LAYOUT */
+  .main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 28px 24px 48px;
+  }
+
+  /* SECTION LABELS */
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--mid-teal);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  /* CARD BASE */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+  }
+
+  /* TOP METRICS */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .metric-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px 18px;
+    position: relative;
+  }
+  .metric-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--mid-teal);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .metric-number {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .metric-number input {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -1px;
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    padding: 0;
+  }
+  .metric-number input::placeholder { color: #c8dbd8; }
+  .metric-number input:focus { border-bottom: 2px solid var(--green); }
+  .metric-delta-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .delta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+  .delta-badge.up { background: rgba(1,222,143,0.12); color: #00a066; }
+  .delta-badge.down { background: rgba(224,82,82,0.10); color: var(--red); }
+  .delta-badge.neutral { background: var(--light-bg); color: var(--muted); }
+  .delta-arrow-up::before { content: '\2191'; }
+  .delta-arrow-down::before { content: '\2193'; }
+  .delta-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .delta-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+  }
+  .delta-input-group label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .delta-input-group input {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 8px;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--light-bg);
+    width: 100%;
+  }
+  .delta-input-group input:focus { border-color: var(--mid-teal); background: var(--white); }
+  .delta-input-group input::placeholder { color: #c8dbd8; }
+  .progress-wrap {
+    margin-top: 4px;
+  }
+  .progress-label-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  .progress-label-left {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .progress-label-right {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .progress-bar-track {
+    height: 6px;
+    background: var(--light-bg);
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--mid-teal), var(--green));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* TWO COL */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  /* PIPELINE CHART */
+  .pipeline-section {
+    margin-bottom: 24px;
+  }
+  .pipeline-stages {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .pipeline-stage-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 56px;
+    gap: 12px;
+    align-items: center;
+  }
+  .pipeline-stage-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    text-align: right;
+  }
+  .pipeline-bar-track {
+    height: 28px;
+    background: var(--light-bg);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .pipeline-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    min-width: 0;
+  }
+  .pipeline-bar-label { white-space: nowrap; overflow: hidden; }
+  .pipeline-count-input {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 8px;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--light-bg);
+    width: 56px;
+    text-align: center;
+  }
+  .pipeline-count-input:focus { border-color: var(--mid-teal); background: var(--white); }
+  .pipeline-count-input::placeholder { color: #c8dbd8; }
+
+  /* TODAY'S FOCUS */
+  .focus-textarea {
+    width: 100%;
+    min-height: 120px;
+    border: none;
+    outline: none;
+    resize: vertical;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    background: transparent;
+    line-height: 2;
+    background-image: repeating-linear-gradient(
+      transparent,
+      transparent calc(2em - 1px),
+      var(--border) calc(2em - 1px),
+      var(--border) 2em
+    );
+    background-attachment: local;
+    padding-top: 4px;
+  }
+  .focus-textarea::placeholder { color: #c8dbd8; }
+
+  /* MRP ACTIVITY */
+  .mrp-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .mrp-stat {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    text-align: center;
+  }
+  .mrp-stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--mid-teal);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .mrp-stat input {
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--text);
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: -1.5px;
+    padding: 0;
+  }
+  .mrp-stat input::placeholder { color: #c8dbd8; }
+  .mrp-stat input:focus { border-bottom: 2px solid var(--green); }
+
+  /* TOP DEALS */
+  .deals-section {
+    margin-bottom: 24px;
+  }
+  .deals-table-wrap {
+    overflow-x: auto;
+  }
+  .deals-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .deals-table thead tr {
+    background: var(--light-bg);
+  }
+  .deals-table th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--mid-teal);
+    font-weight: 600;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .deals-table td {
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .deals-table td input, .deals-table td select {
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 10px 14px;
+    width: 100%;
+    height: 100%;
+  }
+  .deals-table td input::placeholder { color: #c8dbd8; }
+  .deals-table td input:focus, .deals-table td select:focus {
+    background: rgba(1,222,143,0.05);
+  }
+  .deals-table td select {
+    cursor: pointer;
+  }
+  .deals-table tbody tr:hover { background: rgba(57,113,104,0.04); }
+  .deals-table tbody tr.row-red { background: rgba(224,82,82,0.07); }
+  .deals-table tbody tr.row-yellow { background: rgba(245,166,35,0.07); }
+  .deals-table tbody tr.row-red:hover { background: rgba(224,82,82,0.12); }
+  .deals-table tbody tr.row-yellow:hover { background: rgba(245,166,35,0.12); }
+
+  .deals-table .days-cell input {
+    font-weight: 700;
+  }
+  .row-red .days-cell input { color: var(--red); }
+  .row-yellow .days-cell input { color: var(--yellow); }
+
+  .add-deal-btn {
+    margin-top: 12px;
+    background: var(--light-bg);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--mid-teal);
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .add-deal-btn:hover { background: var(--white); border-color: var(--mid-teal); }
+
+  .remove-row-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 12px;
+    line-height: 1;
+    transition: color 0.15s;
+    width: 100%;
+  }
+  .remove-row-btn:hover { color: var(--red); }
+
+  /* QUICK NOTES */
+  .notes-textarea {
+    width: 100%;
+    min-height: 100px;
+    border: none;
+    outline: none;
+    resize: vertical;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: transparent;
+    line-height: 1.7;
+  }
+  .notes-textarea::placeholder { color: #c8dbd8; }
+  .notes-card {
+    background: #fffef5;
+    border: 1px solid #e8e0b5;
+    border-radius: var(--radius);
+    padding: 20px 22px;
+  }
+
+  /* FOOTER */
+  .footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .footer-text {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .clear-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .clear-btn:hover { border-color: var(--red); color: var(--red); background: rgba(224,82,82,0.05); }
+
+  /* SECTION ROW WRAPPERS */
+  .section-block {
+    margin-bottom: 24px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .metrics-row { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+    .pipeline-stage-row { grid-template-columns: 110px 1fr 48px; }
+    .main { padding: 16px 14px 40px; }
+  }
+  @media (max-width: 600px) {
+    .metrics-row { grid-template-columns: 1fr; }
+    .mrp-row { grid-template-columns: 1fr; }
+    .header { padding: 0 16px; }
+    .metric-number input { font-size: 28px; }
+    .header-title { font-size: 16px; }
+  }
+
+  /* PRINT */
+  @media print {
+    body { background: white; font-size: 12px; }
+    .header { position: static; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .main { padding: 16px; max-width: 100%; }
+    .clear-btn, .add-deal-btn, .remove-row-btn { display: none; }
+    input, textarea, select { border: none !important; background: transparent !important; }
+    .card, .metric-card, .mrp-stat, .notes-card { break-inside: avoid; }
+    .footer-row { display: none; }
+    .progress-bar-track, .progress-bar-fill { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  }
+
+  /* SAVE FLASH */
+  .save-flash {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--dark-teal);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    z-index: 200;
+    letter-spacing: 0.5px;
+  }
+  .save-flash.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo-mark">K</div>
+    <div>
+      <div class="header-title">CRO Dashboard</div>
+      <div class="header-sub">Kashu Payment Processing</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-date" id="headerDate"></div>
+    <div class="header-updated" id="headerUpdated">Last updated: —</div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TOP METRICS ROW -->
+  <div class="section-block">
+    <div class="section-label">Key Metrics</div>
+    <div class="metrics-row">
+
+      <!-- Active Merchants -->
+      <div class="metric-card" id="card-merchants">
+        <div class="metric-label">Active Merchants</div>
+        <div class="metric-number">
+          <input type="number" id="merchants-current" placeholder="0" min="0" data-key="merchants_current" />
+        </div>
+        <div class="delta-input-row">
+          <div class="delta-input-group">
+            <label>This Week</label>
+            <input type="number" id="merchants-this" placeholder="0" min="0" data-key="merchants_this" />
+          </div>
+          <div class="delta-input-group">
+            <label>Last Week</label>
+            <input type="number" id="merchants-last" placeholder="0" min="0" data-key="merchants_last" />
+          </div>
+        </div>
+        <div class="metric-delta-row">
+          <span class="delta-badge neutral" id="merchants-delta">—</span>
+          <span style="font-size:11px;color:var(--muted);">week over week</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label-row">
+            <span class="progress-label-left">Target: 2,000</span>
+            <span class="progress-label-right" id="merchants-pct">0%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="merchants-bar" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total MRPs -->
+      <div class="metric-card">
+        <div class="metric-label">Total Active MRPs</div>
+        <div class="metric-number">
+          <input type="number" id="mrps-current" placeholder="0" min="0" data-key="mrps_current" />
+        </div>
+        <div class="delta-input-row">
+          <div class="delta-input-group">
+            <label>This Week</label>
+            <input type="number" id="mrps-this" placeholder="0" min="0" data-key="mrps_this" />
+          </div>
+          <div class="delta-input-group">
+            <label>Last Week</label>
+            <input type="number" id="mrps-last" placeholder="0" min="0" data-key="mrps_last" />
+          </div>
+        </div>
+        <div class="metric-delta-row">
+          <span class="delta-badge neutral" id="mrps-delta">—</span>
+          <span style="font-size:11px;color:var(--muted);">week over week</span>
+        </div>
+        <div class="progress-wrap" style="visibility:hidden;">
+          <div class="progress-label-row"><span class="progress-label-left">&nbsp;</span></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <!-- Pipeline Value -->
+      <div class="metric-card">
+        <div class="metric-label">Pipeline Value</div>
+        <div class="metric-number">
+          <input type="text" id="pipeline-current" placeholder="$0" data-key="pipeline_current" style="font-size:28px;" />
+        </div>
+        <div class="delta-input-row">
+          <div class="delta-input-group">
+            <label>This Week ($)</label>
+            <input type="text" id="pipeline-this" placeholder="0" data-key="pipeline_this" />
+          </div>
+          <div class="delta-input-group">
+            <label>Last Week ($)</label>
+            <input type="text" id="pipeline-last" placeholder="0" data-key="pipeline_last" />
+          </div>
+        </div>
+        <div class="metric-delta-row">
+          <span class="delta-badge neutral" id="pipeline-delta">—</span>
+          <span style="font-size:11px;color:var(--muted);">week over week</span>
+        </div>
+        <div class="progress-wrap" style="visibility:hidden;">
+          <div class="progress-label-row"><span class="progress-label-left">&nbsp;</span></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <!-- Monthly Volume -->
+      <div class="metric-card">
+        <div class="metric-label">Monthly Volume Processed</div>
+        <div class="metric-number">
+          <input type="text" id="volume-current" placeholder="$0" data-key="volume_current" style="font-size:26px;" />
+        </div>
+        <div class="delta-input-row">
+          <div class="delta-input-group">
+            <label>This Month ($)</label>
+            <input type="text" id="volume-this" placeholder="0" data-key="volume_this" />
+          </div>
+          <div class="delta-input-group">
+            <label>Last Month ($)</label>
+            <input type="text" id="volume-last" placeholder="0" data-key="volume_last" />
+          </div>
+        </div>
+        <div class="metric-delta-row">
+          <span class="delta-badge neutral" id="volume-delta">—</span>
+          <span style="font-size:11px;color:var(--muted);">month over month</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label-row">
+            <span class="progress-label-left">Target: $120M/mo</span>
+            <span class="progress-label-right" id="volume-pct">0%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="volume-bar" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PIPELINE BY STAGE + TODAY'S FOCUS -->
+  <div class="two-col">
+
+    <!-- PIPELINE BY STAGE -->
+    <div class="section-block">
+      <div class="section-label">Pipeline by Stage</div>
+      <div class="card">
+        <div class="pipeline-stages" id="pipeline-stages">
+
+          <div class="pipeline-stage-row">
+            <div class="pipeline-stage-name">New Lead</div>
+            <div class="pipeline-bar-track">
+              <div class="pipeline-bar-fill" id="bar-new-lead" style="background:#0b5147; width:0%;">
+                <span class="pipeline-bar-label" id="barlabel-new-lead"></span>
+              </div>
+            </div>
+            <input type="number" class="pipeline-count-input" id="stage-new-lead" placeholder="0" min="0" data-key="stage_new_lead" />
+          </div>
+
+          <div class="pipeline-stage-row">
+            <div class="pipeline-stage-name">Statement Requested</div>
+            <div class="pipeline-bar-track">
+              <div class="pipeline-bar-fill" id="bar-stmt" style="background:#1a5e56; width:0%;">
+                <span class="pipeline-bar-label" id="barlabel-stmt"></span>
+              </div>
+            </div>
+            <input type="number" class="pipeline-count-input" id="stage-stmt" placeholder="0" min="0" data-key="stage_stmt" />
+          </div>
+
+          <div class="pipeline-stage-row">
+            <div class="pipeline-stage-name">Proposal Sent</div>
+            <div class="pipeline-bar-track">
+              <div class="pipeline-bar-fill" id="bar-proposal" style="background:#236b62; width:0%;">
+                <span class="pipeline-bar-label" id="barlabel-proposal"></span>
+              </div>
+            </div>
+            <input type="number" class="pipeline-count-input" id="stage-proposal" placeholder="0" min="0" data-key="stage_proposal" />
+          </div>
+
+          <div class="pipeline-stage-row">
+            <div class="pipeline-stage-name">Application Out</div>
+            <div class="pipeline-bar-track">
+              <div class="pipeline-bar-fill" id="bar-app" style="background:#2d796f; width:0%;">
+                <span class="pipeline-bar-label" id="barlabel-app"></span>
+              </div>
+            </div>
+            <input type="number" class="pipeline-count-input" id="stage-app" placeholder="0" min="0" data-key="stage_app" />
+          </div>
+
+          <div class="pipeline-stage-row">
+            <div class="pipeline-stage-name">Approved</div>
+            <div class="pipeline-bar-track">
+              <div class="pipeline-bar-fill" id="bar-approved" style="background:#3a9180; width:0%;">
+                <span class="pipeline-bar-label" id="barlabel-approved"></span>
+              </div>
+            </div>
+            <input type="number" class="pipeline-count-input" id="stage-approved" placeholder="0" min="0" data-key="stage_approved" />
+          </div>
+
+          <div class="pipeline-stage-row">
+            <div class="pipeline-stage-name">Live</div>
+            <div class="pipeline-bar-track">
+              <div class="pipeline-bar-fill" id="bar-live" style="background:var(--green); width:0%;">
+                <span class="pipeline-bar-label" id="barlabel-live" style="color:var(--dark-teal);"></span>
+              </div>
+            </div>
+            <input type="number" class="pipeline-count-input" id="stage-live" placeholder="0" min="0" data-key="stage_live" />
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- TODAY'S FOCUS -->
+    <div class="section-block">
+      <div class="section-label">Today's Focus</div>
+      <div class="card" style="height: calc(100% - 27px);">
+        <div style="font-size:13px; color:var(--muted); margin-bottom:12px; font-weight:500;">What are the 3 things that move the needle today?</div>
+        <textarea class="focus-textarea" id="focus-text" placeholder="1. &#10;&#10;2. &#10;&#10;3. " data-key="focus_text"></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MRP ACTIVITY -->
+  <div class="section-block">
+    <div class="section-label">MRP Activity This Week</div>
+    <div class="mrp-row">
+      <div class="mrp-stat">
+        <div class="mrp-stat-label">New MRP Signups</div>
+        <input type="number" id="mrp-signups" placeholder="0" min="0" data-key="mrp_signups" />
+      </div>
+      <div class="mrp-stat">
+        <div class="mrp-stat-label">MRP Activations</div>
+        <input type="number" id="mrp-activations" placeholder="0" min="0" data-key="mrp_activations" />
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">first merchant closed</div>
+      </div>
+      <div class="mrp-stat">
+        <div class="mrp-stat-label">Dormant MRPs Reactivated</div>
+        <input type="number" id="mrp-reactivated" placeholder="0" min="0" data-key="mrp_reactivated" />
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP 5 DEALS -->
+  <div class="deals-section">
+    <div class="section-label">Top Deals to Move</div>
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <div class="deals-table-wrap">
+        <table class="deals-table" id="deals-table">
+          <thead>
+            <tr>
+              <th style="width:200px;">Business Name</th>
+              <th style="width:140px;">Stage</th>
+              <th style="width:100px;">Days in Stage</th>
+              <th style="width:130px;">Volume ($)</th>
+              <th>Next Action</th>
+              <th style="width:36px;"></th>
+            </tr>
+          </thead>
+          <tbody id="deals-tbody">
+          </tbody>
+        </table>
+      </div>
+      <button class="add-deal-btn" onclick="addDealRow()">+ Add Deal</button>
+    </div>
+    <div style="margin-top:8px; font-size:11px; color:var(--muted);">
+      <span style="display:inline-block;width:10px;height:10px;background:rgba(245,166,35,0.2);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>7-14 days in stage
+      <span style="display:inline-block;width:10px;height:10px;background:rgba(224,82,82,0.12);border-radius:2px;margin-left:12px;margin-right:4px;vertical-align:middle;"></span>Over 14 days
+    </div>
+  </div>
+
+  <!-- STRATEGY & RESEARCH -->
+  <div class="section-block">
+    <div class="section-label">Strategy & Research</div>
+    <div class="card" style="padding: 20px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <a href="../strategy/referral_partner_deep_research.md" target="_blank" style="display:block; padding:14px 18px; background:var(--dark-teal); color:var(--white); border-radius:10px; text-decoration:none; font-weight:600; font-size:13px; transition:background 0.2s;">
+          Referral & Partner Deep Research
+          <span style="display:block; font-weight:400; font-size:11px; color:var(--muted); margin-top:4px;">20 world-class affiliate/referral programs studied. Dropbox, Airbnb, Tesla, ClickFunnels, Morning Brew, McWilliams, and more. Transferable mechanics for MRP recruiting.</span>
+        </a>
+        <a href="../strategy/kashu_cro_playbook.md" target="_blank" style="display:block; padding:14px 18px; background:var(--dark-teal); color:var(--white); border-radius:10px; text-decoration:none; font-weight:600; font-size:13px; transition:background 0.2s;">
+          CRO Playbook
+          <span style="display:block; font-weight:400; font-size:11px; color:var(--muted); margin-top:4px;">Challenger framework, mental models, objection reframes, SPIN selling, psychology arsenal, daily operating principles.</span>
+        </a>
+        <a href="../strategy/video_research_mental_models.md" target="_blank" style="display:block; padding:14px 18px; background:var(--dark-teal); color:var(--white); border-radius:10px; text-decoration:none; font-weight:600; font-size:13px; transition:background 0.2s;">
+          Video Research & Mental Models
+          <span style="display:block; font-weight:400; font-size:11px; color:var(--muted); margin-top:4px;">Video-sourced frameworks, mental models for sales, and advanced closing techniques.</span>
+        </a>
+        <a href="../notes/mrp_growth_research.md" target="_blank" style="display:block; padding:14px 18px; background:var(--dark-teal); color:var(--white); border-radius:10px; text-decoration:none; font-weight:600; font-size:13px; transition:background 0.2s;">
+          MRP & Merchant Growth Research
+          <span style="display:block; font-weight:400; font-size:11px; color:var(--muted); margin-top:4px;">Verticals, ISO scaling playbooks, association partnerships, displacement tactics, retention, competitive data.</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK NOTES -->
+  <div class="section-block">
+    <div class="section-label">Quick Notes</div>
+    <div class="notes-card">
+      <textarea class="notes-textarea" id="notes-text" placeholder="Capture anything on your mind — follow-ups, observations, ideas..." data-key="notes_text"></textarea>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer-row">
+    <div class="footer-text">Kashu CRO Dashboard &mdash; all data stored locally in your browser</div>
+    <button class="clear-btn" onclick="clearAllData()">Clear All Data</button>
+  </div>
+
+</main>
+
+<!-- SAVE FLASH -->
+<div class="save-flash" id="saveFlash">Saved</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ---- DATE / HEADER ----
+  function formatDate(d) {
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+  }
+  function formatTime(d) {
+    let h = d.getHours(), m = d.getMinutes(), ap = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return h + ':' + String(m).padStart(2,'0') + ' ' + ap;
+  }
+  document.getElementById('headerDate').textContent = formatDate(new Date());
+
+  function updateTimestamp() {
+    const now = new Date();
+    document.getElementById('headerUpdated').textContent = 'Last updated: ' + formatDate(now) + ' at ' + formatTime(now);
+  }
+
+  // ---- SAVE FLASH ----
+  let flashTimer = null;
+  function showFlash() {
+    const el = document.getElementById('saveFlash');
+    el.classList.add('show');
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(() => el.classList.remove('show'), 1500);
+  }
+
+  // ---- LOCALSTORAGE HELPERS ----
+  const STORAGE_KEY = 'kashu_cro_dashboard_v1';
+
+  function loadData() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { return {}; }
+  }
+  function saveData(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    updateTimestamp();
+    showFlash();
+  }
+
+  // ---- DEBOUNCE ----
+  function debounce(fn, ms) {
+    let t;
+    return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), ms); };
+  }
+
+  // ---- DELTA BADGE ----
+  function calcDelta(current, last, prefix) {
+    const c = parseFloat(String(current).replace(/[^0-9.-]/g,'')) || 0;
+    const l = parseFloat(String(last).replace(/[^0-9.-]/g,'')) || 0;
+    const el = document.getElementById(prefix + '-delta');
+    if (!el) return;
+    if (l === 0 || (!current && !last)) {
+      el.className = 'delta-badge neutral';
+      el.innerHTML = '&mdash;';
+      return;
+    }
+    const pct = ((c - l) / Math.abs(l)) * 100;
+    const sign = pct >= 0 ? '+' : '';
+    if (pct > 0) {
+      el.className = 'delta-badge up';
+      el.innerHTML = '<span class="delta-arrow-up"></span>' + sign + pct.toFixed(1) + '%';
+    } else if (pct < 0) {
+      el.className = 'delta-badge down';
+      el.innerHTML = '<span class="delta-arrow-down"></span>' + pct.toFixed(1) + '%';
+    } else {
+      el.className = 'delta-badge neutral';
+      el.textContent = '0.0%';
+    }
+  }
+
+  // ---- PROGRESS BAR ----
+  function updateProgress(valueRaw, target, barId, pctId) {
+    const v = parseFloat(String(valueRaw).replace(/[^0-9.]/g,'')) || 0;
+    const pct = Math.min(100, (v / target) * 100);
+    const bar = document.getElementById(barId);
+    const pctEl = document.getElementById(pctId);
+    if (bar) bar.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = pct.toFixed(1) + '%';
+  }
+
+  // ---- PIPELINE BARS ----
+  const stageKeys = ['new-lead','stmt','proposal','app','approved','live'];
+
+  function updatePipelineBars() {
+    const vals = stageKeys.map(k => {
+      const el = document.getElementById('stage-' + k);
+      return el ? (parseInt(el.value) || 0) : 0;
+    });
+    const max = Math.max(...vals, 1);
+    vals.forEach((v, i) => {
+      const bar = document.getElementById('bar-' + stageKeys[i]);
+      const label = document.getElementById('barlabel-' + stageKeys[i]);
+      if (!bar) return;
+      const w = Math.max(v > 0 ? 4 : 0, (v / max) * 100);
+      bar.style.width = w + '%';
+      if (label) label.textContent = v > 0 ? v : '';
+    });
+  }
+
+  // ---- DEALS TABLE ----
+  const STAGE_OPTIONS = ['New Lead','Statement Requested','Proposal Sent','Application Out','Approved','Live'];
+  let deals = [];
+
+  function renderDeals() {
+    const tbody = document.getElementById('deals-tbody');
+    tbody.innerHTML = '';
+    deals.forEach((deal, idx) => {
+      const days = parseInt(deal.days) || 0;
+      let rowClass = '';
+      if (days > 14) rowClass = 'row-red';
+      else if (days >= 7) rowClass = 'row-yellow';
+
+      const tr = document.createElement('tr');
+      if (rowClass) tr.className = rowClass;
+
+      // Name
+      const tdName = document.createElement('td');
+      const inName = document.createElement('input');
+      inName.type = 'text'; inName.placeholder = 'Business name'; inName.value = deal.name || '';
+      inName.addEventListener('input', debounce(() => { deals[idx].name = inName.value; saveDeals(); }, 500));
+      tdName.appendChild(inName);
+
+      // Stage
+      const tdStage = document.createElement('td');
+      const sel = document.createElement('select');
+      sel.style.cssText = 'font-size:13px;font-family:DM Sans,sans-serif;color:var(--text);border:none;outline:none;background:transparent;padding:10px 14px;width:100%;cursor:pointer;';
+      STAGE_OPTIONS.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s; opt.textContent = s;
+        if (deal.stage === s) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener('change', () => { deals[idx].stage = sel.value; saveDeals(); });
+      tdStage.appendChild(sel);
+
+      // Days
+      const tdDays = document.createElement('td');
+      tdDays.className = 'days-cell';
+      const inDays = document.createElement('input');
+      inDays.type = 'number'; inDays.placeholder = '0'; inDays.min = '0'; inDays.value = deal.days || '';
+      inDays.addEventListener('input', debounce(() => {
+        deals[idx].days = inDays.value;
+        saveDeals();
+        renderDeals();
+      }, 500));
+      tdDays.appendChild(inDays);
+
+      // Volume
+      const tdVol = document.createElement('td');
+      const inVol = document.createElement('input');
+      inVol.type = 'text'; inVol.placeholder = '$0'; inVol.value = deal.volume || '';
+      inVol.addEventListener('input', debounce(() => { deals[idx].volume = inVol.value; saveDeals(); }, 500));
+      tdVol.appendChild(inVol);
+
+      // Next Action
+      const tdAction = document.createElement('td');
+      const inAction = document.createElement('input');
+      inAction.type = 'text'; inAction.placeholder = 'e.g. Follow up call, send proposal...'; inAction.value = deal.action || '';
+      inAction.addEventListener('input', debounce(() => { deals[idx].action = inAction.value; saveDeals(); }, 500));
+      tdAction.appendChild(inAction);
+
+      // Remove
+      const tdRemove = document.createElement('td');
+      const btnRemove = document.createElement('button');
+      btnRemove.className = 'remove-row-btn';
+      btnRemove.textContent = 'x';
+      btnRemove.title = 'Remove row';
+      btnRemove.addEventListener('click', () => { deals.splice(idx, 1); saveDeals(); renderDeals(); });
+      tdRemove.appendChild(btnRemove);
+
+      tr.append(tdName, tdStage, tdDays, tdVol, tdAction, tdRemove);
+      tbody.appendChild(tr);
+    });
+  }
+
+  function addDealRow() {
+    if (deals.length >= 20) return;
+    deals.push({ name:'', stage:'New Lead', days:'', volume:'', action:'' });
+    renderDeals();
+    const tbody = document.getElementById('deals-tbody');
+    const lastRow = tbody.lastElementChild;
+    if (lastRow) lastRow.querySelector('input').focus();
+  }
+
+  function saveDeals() {
+    const data = loadData();
+    data['deals'] = deals;
+    saveData(data);
+  }
+
+  function loadDeals(data) {
+    deals = data['deals'] || [];
+    if (deals.length === 0) {
+      // Placeholder rows
+      deals = [
+        { name:'', stage:'New Lead', days:'', volume:'', action:'' },
+        { name:'', stage:'New Lead', days:'', volume:'', action:'' },
+        { name:'', stage:'New Lead', days:'', volume:'', action:'' },
+        { name:'', stage:'New Lead', days:'', volume:'', action:'' },
+        { name:'', stage:'New Lead', days:'', volume:'', action:'' },
+      ];
+    }
+    renderDeals();
+  }
+
+  // ---- BIND SIMPLE INPUTS ----
+  function bindInput(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const key = el.dataset.key;
+    if (!key) return;
+    el.addEventListener('input', debounce(() => {
+      const data = loadData();
+      data[key] = el.value;
+      saveData(data);
+      // Trigger delta / progress updates
+      triggerUpdates();
+    }, 500));
+  }
+
+  function triggerUpdates() {
+    const data = loadData();
+    // Merchants delta + progress
+    calcDelta(data.merchants_this, data.merchants_last, 'merchants');
+    updateProgress(data.merchants_current, 2000, 'merchants-bar', 'merchants-pct');
+    // MRPs delta
+    calcDelta(data.mrps_this, data.mrps_last, 'mrps');
+    // Pipeline delta
+    calcDelta(data.pipeline_this, data.pipeline_last, 'pipeline');
+    // Volume delta + progress (target: 120,000,000)
+    calcDelta(data.volume_this, data.volume_last, 'volume');
+    updateProgress(data.volume_current, 120000000, 'volume-bar', 'volume-pct');
+    // Pipeline bars
+    updatePipelineBars();
+  }
+
+  // ---- LOAD FROM LOCALSTORAGE ----
+  function init() {
+    const data = loadData();
+    const simpleKeys = [
+      'merchants_current','merchants_this','merchants_last',
+      'mrps_current','mrps_this','mrps_last',
+      'pipeline_current','pipeline_this','pipeline_last',
+      'volume_current','volume_this','volume_last',
+      'stage_new_lead','stage_stmt','stage_proposal','stage_app','stage_approved','stage_live',
+      'focus_text','notes_text',
+      'mrp_signups','mrp_activations','mrp_reactivated'
+    ];
+
+    simpleKeys.forEach(k => {
+      const el = document.querySelector('[data-key="' + k + '"]');
+      if (el && data[k] !== undefined) el.value = data[k];
+      if (el) bindInput(el.id);
+    });
+
+    // Pipeline bar inputs also bind
+    stageKeys.forEach(k => {
+      const el = document.getElementById('stage-' + k);
+      if (el) {
+        el.addEventListener('input', debounce(() => {
+          const d = loadData();
+          d['stage_' + k.replace(/-/g,'_')] = el.value;
+          saveData(d);
+          updatePipelineBars();
+        }, 300));
+      }
+    });
+
+    loadDeals(data);
+    triggerUpdates();
+
+    // Restore last updated if exists
+    if (data._lastUpdated) {
+      document.getElementById('headerUpdated').textContent = 'Last updated: ' + data._lastUpdated;
+    }
+  }
+
+  // Override saveData to also store timestamp string
+  const _saveData = saveData;
+  window._saveDataOrig = _saveData;
+
+  // Patch: store timestamp in data
+  const origSaveData = saveData;
+  function saveDataPatched(data) {
+    const now = new Date();
+    data._lastUpdated = formatDate(now) + ' at ' + formatTime(now);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    document.getElementById('headerUpdated').textContent = 'Last updated: ' + data._lastUpdated;
+    showFlash();
+  }
+
+  // Re-wire all save calls to use patched version
+  // We need to redefine saveData in the closure properly:
+  // (Already done via the patch below in global scope)
+
+  // ---- CLEAR ALL ----
+  window.clearAllData = function() {
+    if (confirm('Clear all dashboard data? This cannot be undone.')) {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+  };
+
+  window.addDealRow = addDealRow;
+
+  // Redefine saveData to patched version
+  window._saveDataPatched = saveDataPatched;
+
+  // ---- FINAL INIT ----
+  // Reassign saveData references inside closure by patching the key
+  // since JS closures are already formed, we patch globally
+  init();
+
+  // Now override the debounced saves to use patched version
+  // Re-attach all inputs with patched save
+  function patchedSave() {
+    const data = loadData();
+    // collect all simple fields
+    document.querySelectorAll('[data-key]').forEach(el => {
+      if (el.tagName !== 'TABLE') data[el.dataset.key] = el.value;
+    });
+    data['deals'] = deals;
+    saveDataPatched(data);
+    triggerUpdates();
+  }
+
+  // Re-bind all inputs to patched save
+  document.querySelectorAll('[data-key]').forEach(el => {
+    el.removeEventListener('input', null);
+    el.addEventListener('input', debounce(patchedSave, 500));
+  });
+
+  // Re-bind pipeline inputs
+  stageKeys.forEach(k => {
+    const el = document.getElementById('stage-' + k);
+    if (el) {
+      el.addEventListener('input', debounce(() => {
+        patchedSave();
+        updatePipelineBars();
+      }, 300));
+    }
+  });
+
+  // Re-bind deals save
+  window._dealsSaveFn = function() {
+    const data = loadData();
+    data['deals'] = deals;
+    saveDataPatched(data);
+  };
+
+  // Monkey-patch saveDeals to use patched version
+  // The deals table already calls saveDeals() which calls saveData(). We need to redefine:
+  // Since saveDeals is in the closure, we re-render with a new save approach:
+  function saveDealsPatched() {
+    const data = loadData();
+    document.querySelectorAll('[data-key]').forEach(el => {
+      if (el.tagName !== 'TABLE') data[el.dataset.key] = el.value;
+    });
+    data['deals'] = deals;
+    saveDataPatched(data);
+  }
+
+  // Re-render deals with patched save
+  function renderDealsPatched() {
+    const tbody = document.getElementById('deals-tbody');
+    tbody.innerHTML = '';
+    deals.forEach((deal, idx) => {
+      const days = parseInt(deal.days) || 0;
+      let rowClass = '';
+      if (days > 14) rowClass = 'row-red';
+      else if (days >= 7) rowClass = 'row-yellow';
+
+      const tr = document.createElement('tr');
+      if (rowClass) tr.className = rowClass;
+
+      const tdName = document.createElement('td');
+      const inName = document.createElement('input');
+      inName.type = 'text'; inName.placeholder = 'Business name'; inName.value = deal.name || '';
+      inName.addEventListener('input', debounce(() => { deals[idx].name = inName.value; saveDealsPatched(); }, 500));
+      tdName.appendChild(inName);
+
+      const tdStage = document.createElement('td');
+      const sel = document.createElement('select');
+      sel.style.cssText = 'font-size:13px;font-family:DM Sans,sans-serif;color:var(--text);border:none;outline:none;background:transparent;padding:10px 14px;width:100%;cursor:pointer;';
+      STAGE_OPTIONS.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s; opt.textContent = s;
+        if (deal.stage === s) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener('change', () => { deals[idx].stage = sel.value; saveDealsPatched(); });
+      tdStage.appendChild(sel);
+
+      const tdDays = document.createElement('td');
+      tdDays.className = 'days-cell';
+      const inDays = document.createElement('input');
+      inDays.type = 'number'; inDays.placeholder = '0'; inDays.min = '0'; inDays.value = deal.days || '';
+      inDays.addEventListener('input', debounce(() => {
+        deals[idx].days = inDays.value;
+        saveDealsPatched();
+        renderDealsPatched();
+      }, 500));
+      tdDays.appendChild(inDays);
+
+      const tdVol = document.createElement('td');
+      const inVol = document.createElement('input');
+      inVol.type = 'text'; inVol.placeholder = '$0'; inVol.value = deal.volume || '';
+      inVol.addEventListener('input', debounce(() => { deals[idx].volume = inVol.value; saveDealsPatched(); }, 500));
+      tdVol.appendChild(inVol);
+
+      const tdAction = document.createElement('td');
+      const inAction = document.createElement('input');
+      inAction.type = 'text'; inAction.placeholder = 'e.g. Follow up call, send proposal...'; inAction.value = deal.action || '';
+      inAction.addEventListener('input', debounce(() => { deals[idx].action = inAction.value; saveDealsPatched(); }, 500));
+      tdAction.appendChild(inAction);
+
+      const tdRemove = document.createElement('td');
+      const btnRemove = document.createElement('button');
+      btnRemove.className = 'remove-row-btn';
+      btnRemove.textContent = 'x';
+      btnRemove.title = 'Remove row';
+      btnRemove.addEventListener('click', () => { deals.splice(idx, 1); saveDealsPatched(); renderDealsPatched(); });
+      tdRemove.appendChild(btnRemove);
+
+      tr.append(tdName, tdStage, tdDays, tdVol, tdAction, tdRemove);
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Override addDealRow to use patched render
+  window.addDealRow = function() {
+    if (deals.length >= 20) return;
+    deals.push({ name:'', stage:'New Lead', days:'', volume:'', action:'' });
+    renderDealsPatched();
+    const tbody = document.getElementById('deals-tbody');
+    const lastRow = tbody.lastElementChild;
+    if (lastRow) lastRow.querySelector('input').focus();
+  };
+
+  // Initial render with patched version
+  renderDealsPatched();
+
+})();
+</script>
+</body>
+</html>

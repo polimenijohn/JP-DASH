@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu MRP Residual Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-dark:   #0b5147;
+    --teal-mid:    #397168;
+    --teal-muted:  #93adaa;
+    --teal-light:  #c0cccc;
+    --green-bright:#01de8f;
+    --green-mid:   #8de6c6;
+    --green-pale:  #d5eae3;
+    --green-lime:  #e1fea1;
+    --white:       #ffffff;
+    --bg:          #f2f6f5;
+    --text:        #0d1a17;
+    --text-muted:  #4a6560;
+    --amber:       #f59e0b;
+    --amber-pale:  #fef3c7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+
+  .page { max-width: 860px; margin: 0 auto; padding: 44px 20px 80px; }
+
+  /* HEADER */
+  .page-header {
+    background: var(--teal-dark); border-radius: 16px; padding: 36px 44px;
+    margin-bottom: 28px; color: var(--white); position: relative; overflow: hidden;
+  }
+  .page-header::after {
+    content: ''; position: absolute; right: -80px; top: -80px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(1,222,143,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .kashu-logo { font-size: 20px; font-weight: 900; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .logo-dot { width: 8px; height: 8px; background: var(--green-bright); border-radius: 50%; }
+  .page-header h1 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+  .page-header p { font-size: 14px; color: var(--teal-muted); max-width: 520px; }
+
+  /* GRID LAYOUT */
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 680px) { .calc-grid { grid-template-columns: 1fr; } }
+
+  /* CARDS */
+  .card {
+    background: var(--white); border-radius: 14px; padding: 28px;
+    box-shadow: 0 3px 20px rgba(11,81,71,0.08);
+  }
+  .card-title {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--teal-dark); margin-bottom: 20px;
+    padding-bottom: 10px; border-bottom: 1.5px solid var(--green-pale);
+  }
+
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  label .hint { font-weight: 400; color: var(--teal-muted); font-size: 12px; }
+  input[type="number"], input[type="text"] {
+    width: 100%; padding: 10px 14px; border: 1.5px solid #d4dedc; border-radius: 8px;
+    font-size: 14px; font-family: inherit; margin-bottom: 16px; outline: none;
+    transition: border 0.2s, box-shadow 0.2s; background: var(--white); color: var(--text);
+  }
+  input:focus { border-color: var(--teal-dark); box-shadow: 0 0 0 3px rgba(11,81,71,0.08); }
+
+  .input-prefix { position: relative; }
+  .input-prefix span {
+    position: absolute; left: 12px; top: 11px;
+    font-size: 14px; font-weight: 600; color: var(--teal-muted); pointer-events: none;
+  }
+  .input-prefix input { padding-left: 24px; }
+
+  .input-suffix { position: relative; }
+  .input-suffix span {
+    position: absolute; right: 12px; top: 11px;
+    font-size: 14px; font-weight: 600; color: var(--teal-muted); pointer-events: none;
+  }
+  .input-suffix input { padding-right: 28px; }
+
+  /* TIER BADGE */
+  .tier-badge {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--bg); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px;
+  }
+  .tier-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .tier-dot.t2 { background: var(--teal-muted); }
+  .tier-dot.t1 { background: var(--green-bright); }
+  .tier-info { flex: 1; }
+  .tier-info .tier-name { font-size: 14px; font-weight: 800; color: var(--teal-dark); }
+  .tier-info .tier-desc { font-size: 12px; color: var(--text-muted); }
+  .tier-pct { font-size: 22px; font-weight: 900; color: var(--teal-dark); }
+
+  /* RESULTS */
+  .results-card {
+    background: var(--teal-dark); border-radius: 14px; padding: 28px;
+    box-shadow: 0 6px 28px rgba(11,81,71,0.18); color: var(--white); grid-column: 1 / -1;
+  }
+  .results-card .card-title { color: var(--green-bright); border-bottom-color: rgba(1,222,143,0.2); }
+
+  .results-main { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  @media (max-width: 600px) { .results-main { grid-template-columns: 1fr 1fr; } }
+
+  .result-box {
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px; padding: 16px 14px; text-align: center;
+  }
+  .result-box.highlight { background: rgba(1,222,143,0.15); border-color: rgba(1,222,143,0.3); }
+  .result-box .r-val { font-size: 26px; font-weight: 900; color: var(--white); line-height: 1; }
+  .result-box.highlight .r-val { color: var(--green-bright); }
+  .result-box .r-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--teal-muted); margin-top: 6px; }
+
+  /* OVERRIDE SECTION */
+  .override-section {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px; padding: 18px 20px; margin-bottom: 20px;
+  }
+  .override-section h4 { font-size: 13px; font-weight: 700; color: var(--green-bright); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.6px; }
+  .override-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .ov-stat .ov-val { font-size: 18px; font-weight: 800; color: var(--white); }
+  .ov-stat .ov-label { font-size: 11px; color: var(--teal-muted); margin-top: 2px; font-weight: 600; }
+
+  /* MILESTONE BAR */
+  .milestone-section { margin-top: 0; }
+  .milestone-section h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--teal-muted); margin-bottom: 12px; }
+  .progress-bar-wrap { background: rgba(255,255,255,0.1); border-radius: 20px; height: 10px; overflow: hidden; margin-bottom: 8px; }
+  .progress-bar-fill { height: 100%; background: var(--green-bright); border-radius: 20px; transition: width 0.4s ease; }
+  .progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--teal-muted); font-weight: 600; }
+
+  /* WHAT-IF */
+  .whatif-card { background: var(--white); border-radius: 14px; padding: 28px; box-shadow: 0 3px 20px rgba(11,81,71,0.08); grid-column: 1 / -1; }
+  .whatif-card .card-title { color: var(--teal-dark); border-bottom-color: var(--green-pale); }
+  .whatif-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 600px) { .whatif-grid { grid-template-columns: 1fr 1fr; } }
+  .wi-box {
+    background: var(--bg); border: 1.5px solid #d4dedc; border-radius: 10px;
+    padding: 16px 14px; text-align: center; cursor: pointer; transition: all 0.15s;
+  }
+  .wi-box:hover, .wi-box.active { background: var(--green-pale); border-color: var(--green-bright); }
+  .wi-box .wi-scenario { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 6px; }
+  .wi-box .wi-volume { font-size: 14px; font-weight: 700; color: var(--teal-dark); margin-bottom: 8px; }
+  .wi-box .wi-payout { font-size: 22px; font-weight: 900; color: var(--teal-dark); }
+  .wi-box .wi-tier { font-size: 11px; font-weight: 700; color: var(--teal-muted); margin-top: 4px; }
+  .wi-box.t1-tier .wi-payout { color: var(--teal-dark); }
+  .wi-box.t1-tier { border-color: var(--green-bright); background: #e8fff4; }
+  .wi-box.t1-tier .wi-tier { color: var(--teal-dark); background: var(--green-bright); padding: 2px 8px; border-radius: 10px; display: inline-block; }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    background: var(--amber-pale); border-left: 3px solid var(--amber);
+    border-radius: 8px; padding: 12px 16px; font-size: 12px; color: #92400e;
+    margin-top: 20px; font-weight: 500; line-height: 1.6;
+  }
+
+  .update-btn {
+    width: 100%; padding: 13px; background: var(--teal-dark); color: var(--white);
+    border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
+    font-family: inherit; cursor: pointer; transition: background 0.2s; margin-top: 4px;
+  }
+  .update-btn:hover { background: var(--teal-mid); }
+
+  .opp-icon:empty, .kill-icon:empty, .wo-icon:empty, .cc-icon:empty, .wf-header-icon:empty, .upload-icon:empty, .pn-item .pn-icon:empty, .ty-icon:empty, .pm-icon:empty { display:none; }
+
+  .chevron::after, .touch-chevron::after { content: "\25BC"; font-size: 10px; }
+  .check::after { content: "\2713"; font-weight: 700; }
+  .setup-check.checked::after { content: "\2713"; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-header">
+    <div class="kashu-logo">Kashu <span class="logo-dot"></span></div>
+    <h1>MRP Residual Calculator</h1>
+    <p>See exactly what you earn based on your merchant portfolio volume, your tier, and your downline network.</p>
+  </div>
+
+  <div class="calc-grid">
+
+    <!-- INPUT: PORTFOLIO -->
+    <div class="card">
+      <div class="card-title">Your Portfolio</div>
+
+      <label>Number of Active Merchants</label>
+      <input type="number" id="numMerchants" placeholder="e.g. 12" min="0" oninput="calc()">
+
+      <label>Avg Monthly Volume per Merchant ($)</label>
+      <div class="input-prefix"><span>$</span>
+        <input type="number" id="avgVolume" placeholder="e.g. 45000" min="0" oninput="calc()">
+      </div>
+
+      <div class="tier-badge" id="tierBadge">
+        <div class="tier-dot t2" id="tierDot"></div>
+        <div class="tier-info">
+          <div class="tier-name" id="tierName">T2 - Standard</div>
+          <div class="tier-desc" id="tierDesc">Under $5M monthly portfolio volume</div>
+        </div>
+        <div class="tier-pct" id="tierPct">25%</div>
+      </div>
+
+      <label>Net Residual Rate <span class="hint">% of volume Kashu nets after costs</span></label>
+      <div class="input-suffix"><span>%</span>
+        <input type="number" id="netResidualRate" value="0.35" min="0.01" max="2" step="0.01" oninput="calc()">
+      </div>
+    </div>
+
+    <!-- INPUT: DOWNLINE -->
+    <div class="card">
+      <div class="card-title">Downline Override (Optional)</div>
+
+      <label>Number of Downline MRPs</label>
+      <input type="number" id="numDownline" placeholder="e.g. 3" min="0" oninput="calc()">
+
+      <label>Avg Monthly Portfolio Volume per Downline MRP ($)</label>
+      <div class="input-prefix"><span>$</span>
+        <input type="number" id="downlineAvgVolume" placeholder="e.g. 200000" min="0" oninput="calc()">
+      </div>
+
+      <label>Downline Net Residual Rate <span class="hint">same rate unless different</span></label>
+      <div class="input-suffix"><span>%</span>
+        <input type="number" id="downlineNetRate" value="0.35" min="0.01" max="2" step="0.01" oninput="calc()">
+      </div>
+
+      <div style="background:var(--green-pale);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--teal-dark);font-weight:500;">
+        You earn 10% of Net Residuals on each Downline MRP's portfolio, per the agreement.
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-card" id="resultsCard">
+      <div class="card-title">Your Estimated Monthly Earnings</div>
+
+      <div class="results-main">
+        <div class="result-box">
+          <div class="r-val" id="res-portfolio">$0</div>
+          <div class="r-label">Total Portfolio Volume</div>
+        </div>
+        <div class="result-box">
+          <div class="r-val" id="res-net-residual">$0</div>
+          <div class="r-label">Est. Net Residuals</div>
+        </div>
+        <div class="result-box highlight">
+          <div class="r-val" id="res-direct">$0</div>
+          <div class="r-label">Direct Residual/mo</div>
+        </div>
+        <div class="result-box highlight">
+          <div class="r-val" id="res-total">$0</div>
+          <div class="r-label">Total Payout/mo</div>
+        </div>
+      </div>
+
+      <div class="override-section" id="overrideSection" style="display:none;">
+        <h4>Downline Override Breakdown</h4>
+        <div class="override-grid">
+          <div class="ov-stat">
+            <div class="ov-val" id="ov-volume">$0</div>
+            <div class="ov-label">Downline Portfolio Volume</div>
+          </div>
+          <div class="ov-stat">
+            <div class="ov-val" id="ov-net">$0</div>
+            <div class="ov-label">Downline Net Residuals</div>
+          </div>
+          <div class="ov-stat">
+            <div class="ov-val" id="ov-payout">$0</div>
+            <div class="ov-label">Your 10% Override/mo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="milestone-section">
+        <h4>T1 Progress ($5M Portfolio)</h4>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+        <div class="progress-labels">
+          <span id="progressLeft">$0 of $5M</span>
+          <span id="progressPct">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHAT-IF SCENARIOS -->
+    <div class="whatif-card">
+      <div class="card-title">What-If Scenarios</div>
+      <div class="whatif-grid" id="whatifGrid"></div>
+      <div class="disclaimer">
+        Estimates are based on the net residual rate entered above. Actual payouts depend on Net Residuals received by Kashu after all interchange, network, and processing costs. Paid monthly, approximately 45 days in arrears. Minimum payout threshold: $500/month.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function fmt(n) {
+  if (n >= 1000000) return '$' + (n / 1000000).toFixed(2) + 'M';
+  if (n >= 1000) return '$' + Math.round(n).toLocaleString('en-US');
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+function fmtFull(n) {
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+
+function calc() {
+  const numM = parseFloat(document.getElementById('numMerchants').value) || 0;
+  const avgV = parseFloat(document.getElementById('avgVolume').value) || 0;
+  const netRate = (parseFloat(document.getElementById('netResidualRate').value) || 0.35) / 100;
+  const numD = parseFloat(document.getElementById('numDownline').value) || 0;
+  const dAvgV = parseFloat(document.getElementById('downlineAvgVolume').value) || 0;
+  const dNetRate = (parseFloat(document.getElementById('downlineNetRate').value) || 0.35) / 100;
+
+  const portfolioVolume = numM * avgV;
+  const isT1 = portfolioVolume >= 5000000;
+  const pct = isT1 ? 0.50 : 0.25;
+
+  // Tier UI
+  document.getElementById('tierDot').className = 'tier-dot ' + (isT1 ? 't1' : 't2');
+  document.getElementById('tierName').textContent = isT1 ? 'T1 - Top Tier' : 'T2 - Standard';
+  document.getElementById('tierDesc').textContent = isT1 ? '$5M+ monthly portfolio -- 50% payout' : 'Under $5M monthly portfolio -- 25% payout';
+  document.getElementById('tierPct').textContent = isT1 ? '50%' : '25%';
+
+  // Net residuals & direct payout
+  const netResiduals = portfolioVolume * netRate;
+  const directPayout = netResiduals * pct;
+
+  // Downline override
+  const downlineVolume = numD * dAvgV;
+  const downlineNet = downlineVolume * dNetRate;
+  const overridePayout = downlineNet * 0.10;
+  const totalPayout = directPayout + overridePayout;
+
+  // Results
+  document.getElementById('res-portfolio').textContent = fmt(portfolioVolume);
+  document.getElementById('res-net-residual').textContent = fmtFull(netResiduals);
+  document.getElementById('res-direct').textContent = fmtFull(directPayout);
+  document.getElementById('res-total').textContent = fmtFull(totalPayout);
+
+  // Downline section
+  const ovSection = document.getElementById('overrideSection');
+  if (numD > 0 && dAvgV > 0) {
+    ovSection.style.display = 'block';
+    document.getElementById('ov-volume').textContent = fmt(downlineVolume);
+    document.getElementById('ov-net').textContent = fmtFull(downlineNet);
+    document.getElementById('ov-payout').textContent = fmtFull(overridePayout);
+  } else {
+    ovSection.style.display = 'none';
+  }
+
+  // T1 Progress bar
+  const pctToT1 = Math.min(portfolioVolume / 5000000, 1);
+  document.getElementById('progressFill').style.width = (pctToT1 * 100) + '%';
+  document.getElementById('progressLeft').textContent = fmt(portfolioVolume) + ' of $5M';
+  document.getElementById('progressPct').textContent = Math.round(pctToT1 * 100) + '%';
+
+  // What-if scenarios
+  buildWhatIf(numM, avgV, netRate, dNetRate, numD, dAvgV);
+}
+
+function buildWhatIf(numM, avgV, netRate, dNetRate, numD, dAvgV) {
+  const scenarios = [
+    { label: 'Current', merchants: numM, vol: avgV },
+    { label: '+5 Merchants', merchants: numM + 5, vol: avgV },
+    { label: '+10 Merchants', merchants: numM + 10, vol: avgV },
+    { label: 'Double Volume', merchants: numM, vol: avgV * 2 },
+    { label: 'T1 Threshold', merchants: null, vol: null, fixed: 5000000 },
+    { label: '+5 Downlines', merchants: numM, vol: avgV, extraDownlines: 5 }
+  ];
+
+  const downlineNet = (numD * dAvgV) * dNetRate * 0.10;
+
+  const html = scenarios.map(s => {
+    let pVol;
+    if (s.fixed) {
+      pVol = s.fixed;
+    } else {
+      pVol = (s.merchants || 0) * (s.vol || 0);
+    }
+    const isT1 = pVol >= 5000000;
+    const pct = isT1 ? 0.50 : 0.25;
+    const net = pVol * netRate;
+    const direct = net * pct;
+    const extraOv = s.extraDownlines ? (s.extraDownlines * (dAvgV || 0) * dNetRate * 0.10) : 0;
+    const total = direct + downlineNet + extraOv;
+    const tierClass = isT1 ? 't1-tier' : '';
+    const tierLabel = isT1 ? 'T1 &bull; 50%' : 'T2 &bull; 25%';
+
+    const volDisplay = s.fixed
+      ? '<span style="font-size:11px;color:var(--text-muted)">Threshold volume</span>'
+      : `<div class="wi-volume">${fmt(pVol)}/mo portfolio</div>`;
+
+    return `
+      <div class="wi-box ${tierClass}">
+        <div class="wi-scenario">${s.label}</div>
+        ${volDisplay}
+        <div class="wi-payout">${fmtFull(total)}<span style="font-size:13px;font-weight:600">/mo</span></div>
+        <div class="wi-tier">${tierLabel}</div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('whatifGrid').innerHTML = html;
+}
+
+// Initialize
+calc();
+</script>
+</body>
+</html>

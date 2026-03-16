@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu One-Pager Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-dark:   #0b5147;
+    --teal-mid:    #397168;
+    --teal-muted:  #93adaa;
+    --teal-light:  #c0cccc;
+    --green-bright:#01de8f;
+    --green-mid:   #8de6c6;
+    --green-pale:  #d5eae3;
+    --green-lime:  #e1fea1;
+    --white:       #ffffff;
+    --bg:          #f2f6f5;
+    --text:        #0d1a17;
+    --text-muted:  #4a6560;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── GENERATOR FORM ── */
+  #generator {
+    max-width: 640px;
+    margin: 44px auto;
+    background: var(--white);
+    border-radius: 16px;
+    padding: 44px;
+    box-shadow: 0 4px 28px rgba(11,81,71,0.10);
+  }
+
+  .form-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .form-logo .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--teal-dark);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .form-logo .logo-mark svg { width: 20px; height: 20px; }
+  .form-logo .logo-text { font-size: 20px; font-weight: 800; color: var(--teal-dark); letter-spacing: -0.3px; }
+
+  #generator h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; color: var(--teal-dark); }
+  #generator p.sub { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+
+  .section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--teal-dark); margin-bottom: 14px; margin-top: 28px;
+    padding-bottom: 8px; border-bottom: 1.5px solid var(--green-pale);
+  }
+
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  label .hint { font-weight: 400; color: var(--teal-muted); font-size: 12px; }
+
+  input, select {
+    width: 100%; padding: 11px 14px;
+    border: 1.5px solid #d4dedc;
+    border-radius: 8px; font-size: 14px; font-family: inherit;
+    margin-bottom: 16px; outline: none;
+    transition: border 0.2s, box-shadow 0.2s;
+    background: var(--white); color: var(--text);
+  }
+  input:focus, select:focus {
+    border-color: var(--teal-dark);
+    box-shadow: 0 0 0 3px rgba(11,81,71,0.08);
+  }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* savings preview */
+  #savingsPreview {
+    background: var(--green-pale);
+    border: 1.5px solid var(--green-mid);
+    border-radius: 10px; padding: 18px 20px; margin: 20px 0; display: none;
+  }
+  #savingsPreview .preview-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: var(--teal-dark); margin-bottom: 10px;
+  }
+  .preview-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .preview-stat { text-align: center; }
+  .preview-stat .val { font-size: 20px; font-weight: 800; color: var(--teal-dark); }
+  .preview-stat .lbl { font-size: 10px; color: var(--teal-mid); margin-top: 3px; font-weight: 600; text-transform: uppercase; }
+  .surcharge-note {
+    background: #e1fea1; border: 1.5px solid #bfda6e; border-radius: 8px;
+    padding: 12px 16px; font-size: 13px; color: #3a5a00;
+    margin-top: 12px; display: none; font-weight: 500;
+  }
+
+  button#generateBtn {
+    width: 100%; padding: 14px; background: var(--teal-dark); color: var(--white);
+    border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+    font-family: inherit; cursor: pointer; margin-top: 10px;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.1px;
+  }
+  button#generateBtn:hover:not(:disabled) { background: var(--teal-mid); }
+  button#generateBtn:active:not(:disabled) { transform: scale(0.99); }
+  button#generateBtn:disabled { background: var(--teal-muted); cursor: not-allowed; }
+
+  /* ── OUTPUT ── */
+  #output { display: none; }
+
+  .print-bar {
+    max-width: 800px; margin: 0 auto 16px; display: flex; gap: 12px; padding: 0 10px;
+  }
+  .print-bar button {
+    padding: 10px 22px; border-radius: 8px; border: none;
+    font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-print { background: var(--teal-dark); color: var(--white); }
+  .btn-print:hover { background: var(--teal-mid); }
+  .btn-back { background: var(--white); color: var(--text); border: 1.5px solid #d4dedc !important; }
+  .btn-back:hover { background: var(--bg); }
+
+  /* ── ONE-PAGER ── */
+  .onepager {
+    max-width: 800px; margin: 0 auto;
+    background: var(--white); border-radius: 16px; overflow: hidden;
+    box-shadow: 0 6px 36px rgba(11,81,71,0.14);
+  }
+
+  .op-header {
+    background: var(--teal-dark);
+    color: var(--white);
+    padding: 40px 52px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .op-header::after {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(1,222,143,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .op-header .kashu-logo {
+    font-size: 26px; font-weight: 900; letter-spacing: -0.5px;
+    margin-bottom: 20px; color: var(--white);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .op-header .kashu-logo .logo-dot {
+    width: 10px; height: 10px; background: var(--green-bright); border-radius: 50%; display: inline-block;
+  }
+  .op-header h2 {
+    font-size: 24px; font-weight: 800; line-height: 1.35; margin-bottom: 14px;
+    max-width: 560px;
+  }
+  .op-header .tag-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .niche-tag {
+    display: inline-block; background: rgba(255,255,255,0.15);
+    padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.6px; text-transform: uppercase; color: var(--white);
+  }
+  .niche-tag.green { background: var(--green-bright); color: var(--teal-dark); }
+
+  .op-body { padding: 40px 52px; }
+
+  /* savings block */
+  .savings-block {
+    background: var(--teal-dark);
+    border-radius: 12px; padding: 28px 32px; margin-bottom: 36px; color: var(--white);
+  }
+  .savings-block .s-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--green-bright); margin-bottom: 8px;
+  }
+  .savings-block .big-number {
+    font-size: 56px; font-weight: 900; color: var(--green-bright);
+    line-height: 1; letter-spacing: -1px;
+  }
+  .savings-block .s-sub { font-size: 14px; color: var(--teal-muted); margin-top: 6px; }
+  .savings-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
+  .stat-box {
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px; padding: 14px 10px; text-align: center;
+  }
+  .stat-box .stat-val { font-size: 17px; font-weight: 800; color: var(--white); }
+  .stat-box .stat-label { font-size: 10px; color: var(--teal-muted); margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+
+  /* surcharge banner */
+  .surcharge-banner {
+    background: #e1fea1; border-radius: 10px; padding: 18px 22px;
+    margin-bottom: 36px; font-size: 14px; color: #2a4400; font-weight: 600;
+    border-left: 4px solid #8ec400;
+  }
+
+  .op-section { margin-bottom: 30px; }
+  .op-section h3 { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--teal-dark); text-transform: uppercase; letter-spacing: 0.6px; }
+  .op-section p { font-size: 14px; line-height: 1.75; color: var(--text-muted); }
+
+  .points { list-style: none; padding: 0; }
+  .points li {
+    font-size: 14px; color: var(--text-muted);
+    padding: 8px 0 8px 22px; position: relative; line-height: 1.5;
+    border-bottom: 1px solid var(--green-pale);
+  }
+  .points li:last-child { border-bottom: none; }
+  .points li::before {
+    content: ''; position: absolute; left: 0; top: 15px;
+    width: 8px; height: 8px; background: var(--green-bright);
+    border-radius: 50%;
+  }
+
+  .op-close {
+    background: var(--green-pale); border-radius: 10px; padding: 18px 22px;
+    font-size: 14px; font-weight: 600; color: var(--teal-dark); line-height: 1.6;
+    border-left: 4px solid var(--green-bright);
+  }
+
+  .op-footer {
+    background: var(--teal-dark); color: var(--white);
+    padding: 24px 52px; display: flex;
+    justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .op-footer .cta-text { font-size: 15px; font-weight: 700; }
+  .op-footer .cta-text span { color: var(--green-bright); }
+  .op-footer .contact-block { font-size: 13px; color: var(--teal-muted); text-align: right; }
+  .op-footer .contact-block strong { color: var(--white); display: block; font-size: 14px; font-weight: 700; }
+
+  /* ── PITCH EMAIL CARD ── */
+  .email-card {
+    max-width: 800px; margin: 24px auto 48px;
+    background: var(--white); border-radius: 16px; overflow: hidden;
+    box-shadow: 0 6px 36px rgba(11,81,71,0.10);
+  }
+  .email-card-header {
+    background: var(--teal-dark); color: var(--white);
+    padding: 20px 32px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .email-card-header h3 { font-size: 15px; font-weight: 800; }
+  .email-card-header .tag {
+    background: var(--green-bright); color: var(--teal-dark);
+    font-size: 11px; font-weight: 800; padding: 4px 12px;
+    border-radius: 20px; letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .email-card-body { padding: 32px; }
+
+  .email-field { margin-bottom: 22px; }
+  .email-field-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--teal-mid); margin-bottom: 8px;
+  }
+  .email-field-content {
+    background: var(--bg); border: 1.5px solid #d4dedc; border-radius: 10px;
+    padding: 16px 18px; font-size: 14px; color: var(--text);
+    white-space: pre-wrap; line-height: 1.75; font-family: inherit;
+  }
+  .copy-btn {
+    display: inline-block; margin-top: 8px; padding: 7px 18px;
+    background: var(--white); border: 1.5px solid #d4dedc; border-radius: 6px;
+    font-size: 12px; font-weight: 700; font-family: inherit;
+    cursor: pointer; color: var(--teal-dark); transition: all 0.15s;
+  }
+  .copy-btn:hover { background: var(--green-pale); border-color: var(--teal-muted); }
+  .copy-btn.copied {
+    background: #e1fea1; border-color: #8ec400; color: #2a4400;
+  }
+
+  .email-attach-note {
+    background: #e1fea1; border-radius: 8px; padding: 12px 16px;
+    font-size: 13px; color: #2a4400; font-weight: 500; margin-top: 4px;
+    border-left: 3px solid #8ec400;
+  }
+
+  @media print {
+    #generator, .print-bar, .email-card { display: none !important; }
+    body { background: var(--white); }
+    .onepager { box-shadow: none; margin: 0; border-radius: 0; max-width: 100%; }
+    .op-header::after { display: none; }
+  }
+
+  .opp-icon:empty, .kill-icon:empty, .wo-icon:empty, .cc-icon:empty, .wf-header-icon:empty, .upload-icon:empty, .pn-item .pn-icon:empty, .ty-icon:empty, .pm-icon:empty { display:none; }
+
+  .chevron::after, .touch-chevron::after { content: "\25BC"; font-size: 10px; }
+  .check::after { content: "\2713"; font-weight: 700; }
+  .setup-check.checked::after { content: "\2713"; }
+</style>
+</head>
+<body>
+
+<!-- GENERATOR FORM -->
+<div id="generator">
+  <div class="form-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="10" cy="10" r="7" stroke="#01de8f" stroke-width="2.5"/>
+        <path d="M7 10h6M10 7v6" stroke="#01de8f" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="logo-text">Kashu</span>
+  </div>
+
+  <h1>One-Pager Generator</h1>
+  <p class="sub">Fill in the merchant's details. Savings calculate automatically. Outputs the one-pager and a ready-to-send pitch email.</p>
+
+  <div class="section-label">Business Info</div>
+
+  <label>Business Name <span class="hint">(optional)</span></label>
+  <input type="text" id="bizName" placeholder="e.g. Tony's Auto Shop">
+
+  <label>Contact First Name <span class="hint">(for email personalization)</span></label>
+  <input type="text" id="contactName" placeholder="e.g. Tony">
+
+  <label>Business Niche</label>
+  <select id="niche">
+    <option value="restaurant">Restaurant / Food Service</option>
+    <option value="retail">Retail</option>
+    <option value="auto">Auto / Automotive</option>
+    <option value="salon">Salon / Barbershop / Spa</option>
+    <option value="contractor">Contractor / Home Services</option>
+    <option value="medical">Medical / Healthcare / Dental</option>
+    <option value="gym">Gym / Fitness</option>
+    <option value="hotel">Hospitality / Hotel</option>
+    <option value="ecommerce">eCommerce</option>
+    <option value="other">Other</option>
+  </select>
+
+  <div class="section-label">Processing Profile</div>
+
+  <label>Transaction Type</label>
+  <select id="txnType" onchange="calcSavings()">
+    <option value="inperson">In-Person</option>
+    <option value="online">Online</option>
+    <option value="ach">ACH</option>
+    <option value="surcharge">Surcharge (0% to Merchant)</option>
+  </select>
+
+  <div class="row">
+    <div>
+      <label>Monthly Processing Volume ($)</label>
+      <input type="number" id="volume" placeholder="e.g. 50000" min="0" oninput="calcSavings()">
+    </div>
+    <div>
+      <label>Avg Transaction Size ($)</label>
+      <input type="number" id="avgTicket" placeholder="e.g. 85" min="1" oninput="calcSavings()">
+    </div>
+  </div>
+
+  <div class="section-label">Current Processor Cost</div>
+
+  <label>How are you entering current cost?</label>
+  <select id="currentCostMode" onchange="toggleCostMode()">
+    <option value="fees">Monthly fees paid ($)</option>
+    <option value="rate">Effective rate (%)</option>
+  </select>
+
+  <div id="feesField">
+    <label>Current Monthly Processing Fees ($)</label>
+    <input type="number" id="currentFees" placeholder="e.g. 1800" min="0" oninput="calcSavings()">
+  </div>
+  <div id="rateField" style="display:none;">
+    <label>Current Effective Rate (%) <span class="hint">e.g. 3.2</span></label>
+    <input type="number" id="currentRate" placeholder="e.g. 3.2" min="0" step="0.01" oninput="calcSavings()">
+  </div>
+
+  <div id="savingsPreview">
+    <div class="preview-label">Live Savings Estimate</div>
+    <div class="preview-grid">
+      <div class="preview-stat"><div class="val" id="prev-kashu-cost">--</div><div class="lbl">Kashu Cost/mo</div></div>
+      <div class="preview-stat"><div class="val" id="prev-savings">--</div><div class="lbl">Monthly Savings</div></div>
+      <div class="preview-stat"><div class="val" id="prev-annual">--</div><div class="lbl">Annual Savings</div></div>
+    </div>
+    <div class="surcharge-note" id="surchargeNote">
+      With Kashu Surcharge, this merchant pays $0 in processing fees. Their entire current cost becomes savings.
+    </div>
+  </div>
+
+  <div class="section-label">Rep Info</div>
+
+  <div class="row">
+    <div>
+      <label>Your Name</label>
+      <input type="text" id="repName" placeholder="e.g. Sarah Johnson">
+    </div>
+    <div>
+      <label>Your Phone or Email</label>
+      <input type="text" id="repContact" placeholder="e.g. 602-555-0100">
+    </div>
+  </div>
+
+  <button id="generateBtn" onclick="generate()" disabled>Enter volume and ticket size to generate</button>
+</div>
+
+<!-- OUTPUT -->
+<div id="output">
+  <div class="print-bar">
+    <button class="btn-back" onclick="goBack()">Back</button>
+    <button class="btn-print" onclick="window.print()">Print One-Pager / Save as PDF</button>
+  </div>
+  <div class="onepager" id="onepager"></div>
+  <div class="email-card" id="emailCard"></div>
+</div>
+
+<script>
+const KASHU_RATES = {
+  inperson: { combined: 0.022, pertxn: 0.15 },
+  online:   { combined: 0.025, pertxn: 0.15 },
+  ach:      { combined: 0.005, pertxn: 0.25 },
+  surcharge:{ combined: 0.00,  pertxn: 0.00 }
+};
+
+const niches = {
+  restaurant: {
+    label: "Restaurant & Food Service",
+    headline: "Your restaurant is processing {volume}/month. Here's what you're leaving behind.",
+    pain: "Most restaurants are overpaying their processor and don't know it. Margin is already tight in food service. Every unnecessary fee hits your bottom line directly.",
+    points: [
+      "Transparent flat-rate processing with no hidden fees",
+      "Same-day or next-day funding so cash flow never slows you down",
+      "Works with your existing POS or we'll help you find one that fits",
+      "No long-term contracts and no termination fees",
+      "Dedicated support -- a real person, not a ticketing system"
+    ],
+    close: "Restaurants on Kashu stop paying for what their processor calls 'standard.' There's nothing standard about fees you can't explain.",
+    emailSubject: (biz) => `your processor charges full rate on every tip at ${biz}`,
+    emailBody: (contact, biz, savingsmo, savingsyr, repName, repContact, isSurcharge) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      if (isSurcharge) return `${g}\n\nMost processors charge the same rate on tips as on the base check. On a busy week at ${biz}, that's real margin leaving the floor on every transaction.\n\nWith Kashu's surcharge program, that stops entirely. ${biz} pays $0 in processing fees -- card fees pass to the customer, standard practice, fully compliant. Your processing bill disappears and becomes a revenue line instead.\n\nThe switch is frictionless. We guarantee better pricing, get you live without missing a single day of service, and handle everything on our end.\n\nThat's not a processor switch. That's a no-brainer.\n\nBreakdown attached. 10 minutes this week?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+      return `${g}\n\nMost processors charge the same rate on tips as on the base check. On a busy week at ${biz}, that's real margin leaving the floor on every transaction.\n\nHere's what makes Kashu different from every pitch you've already heard: we guarantee your rates beat what you're paying now, we get you live without missing a single day of service, and with our surcharge program you can eliminate processing fees entirely and add a revenue line.\n\nThat's not a processor switch. That's a no-brainer.\n\n${savingsmo}/month, ${savingsyr}/year. Breakdown attached.\n\n10 minutes this week?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+    }
+  },
+  retail: {
+    label: "Retail",
+    headline: "You're processing {volume}/month. Your processor is taking more than they told you.",
+    pain: "Retail margins don't have room for inflated processing fees. Whether it's one location or several, what you pay to accept cards directly affects what you keep.",
+    points: [
+      "Flat, predictable rates across all card types",
+      "Fast settlement -- your money moves when you need it to",
+      "Scales with volume without rate surprises",
+      "No setup fees and no hidden monthly minimums",
+      "Integrates with most retail POS systems out of the box"
+    ],
+    close: "Retail is a volume game. So is payment processing. Kashu keeps more of that volume where it belongs.",
+    emailSubject: (biz) => `what ${biz}'s processor isn't showing you on the statement`,
+    emailBody: (contact, biz, savingsmo, savingsyr, repName, repContact, isSurcharge) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      if (isSurcharge) return `${g}\n\nRetail processors are designed to be confusing -- tiered pricing, assessment fees, monthly minimums. Built so most owners don't know what they're actually paying until someone runs it for them.\n\nWith Kashu's surcharge program, ${biz} pays nothing in processing fees. Fees pass to the customer -- which most shoppers already expect -- and your processing cost disappears off the P&L entirely.\n\nFrictionless switch. We guarantee better pricing, get you live without a single day of downtime, and handle the whole setup.\n\nThat's not a processor switch. That's a no-brainer.\n\nBreakdown attached. Quick call this week?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+      return `${g}\n\nRetail processors are designed to be confusing -- tiered pricing, assessment fees, monthly minimums. Built so most owners don't know what they're actually paying until someone runs it for them.\n\nKashu guarantees better pricing than what ${biz} is on now, gets you live without a single day of downtime, and with our surcharge program you can eliminate the processing cost entirely and add a revenue line.\n\nThat's not a processor switch. That's a no-brainer.\n\n${savingsmo}/month, ${savingsyr}/year. Breakdown attached.\n\nQuick call this week?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+    }
+  },
+  auto: {
+    label: "Auto & Automotive",
+    headline: "Auto shops processing {volume}/month have a processing problem most owners ignore.",
+    pain: "High average tickets mean processing fees add up fast. Most auto shops are on tiered or interchange-plus pricing that's deliberately hard to read. The confusion is the feature.",
+    points: [
+      "Straightforward pricing on high-ticket transactions",
+      "Next-day funding -- parts don't wait and neither should you",
+      "Handles card-not-present transactions cleanly for phone-in jobs",
+      "No long-term contracts or early termination penalties",
+      "A processor that understands high-ticket, high-volume businesses"
+    ],
+    close: "Auto shops run on trust. Your processor should too. Kashu makes it simple and keeps it that way.",
+    emailSubject: (biz) => `high-ticket transactions are where processors take the most from ${biz}`,
+    emailBody: (contact, biz, savingsmo, savingsyr, repName, repContact, isSurcharge) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      if (isSurcharge) return `${g}\n\nHigh-ticket repairs mean high-dollar transactions -- and processors make their most money on exactly those. Most auto shop owners don't track it until someone does the math.\n\nWith Kashu's surcharge program, ${biz} pays $0 in processing fees. Card fees pass to the customer -- standard practice, fully compliant -- and your processing cost becomes a revenue line.\n\nFrictionless switch. We guarantee better pricing, get you live without missing a single day of business, no downtime.\n\nThat's not a processor switch. That's a no-brainer.\n\nBreakdown attached. 10 minutes this week?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+      return `${g}\n\nHigh-ticket repairs mean high-dollar transactions -- and processors make their most money on exactly those. Most auto shop owners don't track it until someone does the math.\n\nKashu guarantees better pricing than what ${biz} is paying now, gets you live without missing a single day of business, and with our surcharge program you eliminate processing fees and add a revenue line instead.\n\nThat's not a processor switch. That's a no-brainer.\n\n${savingsmo}/month, ${savingsyr}/year. Breakdown attached.\n\n10 minutes this week?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+    }
+  },
+  salon: {
+    label: "Salon, Barbershop & Spa",
+    headline: "{volume}/month in processing. Your fees should look nothing like what you're paying now.",
+    pain: "Salons and spas run on appointment volume and tips. Most processors charge on tips the same as the base ticket -- and most owners don't notice until they run the numbers.",
+    points: [
+      "Competitive rates on all transaction types including tips",
+      "Easy integration with booking and POS platforms",
+      "Fast payouts so your team and your cash flow stay healthy",
+      "No contracts -- cancel anytime",
+      "Simple onboarding -- up and running in days, not weeks"
+    ],
+    close: "Every swipe in your chair is revenue. Kashu makes sure more of it stays yours.",
+    emailSubject: (biz) => `tips are costing ${biz} more than the service charge`,
+    emailBody: (contact, biz, savingsmo, savingsyr, repName, repContact, isSurcharge) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      if (isSurcharge) return `${g}\n\nEvery time a client tips at checkout, your processor charges the same rate on that tip as on the service. Most salon owners have never seen that broken out -- until they do.\n\nWith Kashu's surcharge program, ${biz} pays $0 in processing fees. Fees pass to the customer and your processing cost becomes a revenue line instead.\n\nFrictionless switch -- we guarantee better pricing, get you live without missing a single appointment, and handle the whole setup.\n\nThat's not a processor switch. That's a no-brainer.\n\nBreakdown attached. Worth a quick call?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+      return `${g}\n\nEvery time a client tips at checkout, your processor charges the same rate on that tip as on the service. Most salon owners have never seen that broken out -- until they do, and it changes the math entirely.\n\nKashu guarantees better pricing than what ${biz} is paying now, gets you live without missing a single appointment, and with our surcharge program your processing fees go to zero and you add a revenue line.\n\nThat's not a processor switch. That's a no-brainer.\n\n${savingsmo}/month. Breakdown attached.\n\nWorth a quick call?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+    }
+  },
+  contractor: {
+    label: "Contractor & Home Services",
+    headline: "You're doing {volume}/month in jobs. The money you're losing on processing is a hidden overhead line.",
+    pain: "Contractors deal with large invoices, card-not-present payments, and clients who pay on completion. Most processors penalize all three. That's backwards.",
+    points: [
+      "Accepts payments on-site, over the phone, or via invoice link",
+      "Competitive rates on large-ticket transactions",
+      "Fast settlement so you're not floating cash between jobs",
+      "No long-term commitments -- works around how you actually operate",
+      "Mobile-ready for field payments"
+    ],
+    close: "You bid jobs tight. Kashu makes sure processing fees don't eat the margin you worked for.",
+    emailSubject: (biz) => `every large invoice at ${biz} costs more than the bid`,
+    emailBody: (contact, biz, savingsmo, savingsyr, repName, repContact, isSurcharge) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      if (isSurcharge) return `${g}\n\nLarge invoices, card-not-present payments, customers who pay on completion -- most processors charge more on all three. It's quiet overhead that doesn't show up in the bid but comes straight out of the margin.\n\nWith Kashu's surcharge program, ${biz} pays nothing on card transactions. Fees pass to the customer -- standard practice in the trades -- and that overhead line disappears.\n\nFrictionless switch. We guarantee better pricing, get you live without missing a single job, and handle the whole setup.\n\nThat's not a processor switch. That's a no-brainer.\n\nBreakdown attached. Good time for a call this week?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+      return `${g}\n\nLarge invoices, card-not-present payments, customers who pay on completion -- most processors charge more on all three. It's quiet overhead that doesn't show in the bid but comes out of the margin on every job.\n\nKashu guarantees better pricing than what ${biz} is paying, gets you live without missing a single job, and with our surcharge program you eliminate processing fees and add a revenue line.\n\nThat's not a processor switch. That's a no-brainer.\n\n${savingsmo}/month, ${savingsyr}/year. Breakdown attached.\n\nGood time for a call this week?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+    }
+  },
+  medical: {
+    label: "Medical, Healthcare & Dental",
+    headline: "Your practice processes {volume}/month. That's a significant processing expense hiding in plain sight.",
+    pain: "Healthcare practices handle high average tickets, insurance co-pays, and patient billing. Most processors charge the same rate across all of it with no consideration for your actual transaction profile.",
+    points: [
+      "HIPAA-aware processing environment",
+      "Handles co-pays, self-pay, and larger patient invoices",
+      "Integrates with most practice management systems",
+      "Transparent pricing with no surprise fees on statements",
+      "Dedicated onboarding for healthcare payment environments"
+    ],
+    close: "Your practice runs on precision. Your payment processing should too.",
+    emailSubject: (biz) => `your billing mix is costing ${biz} more than a flat rate covers`,
+    emailBody: (contact, biz, savingsmo, savingsyr, repName, repContact, isSurcharge) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      if (isSurcharge) return `${g}\n\nCo-pays, self-pay invoices, large patient balances -- most processors charge a flat rate across all of it, even though the transaction profile is completely different for each type.\n\nWith Kashu's surcharge program, ${biz} pays nothing in processing fees. Fees pass to patients -- standard and fully compliant in healthcare -- and your processing cost disappears.\n\nFrictionless switch. We guarantee better pricing, get you live without interrupting a single day of patient flow.\n\nThat's not a processor switch. That's a no-brainer.\n\nBreakdown attached. Worth 10 minutes?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+      return `${g}\n\nCo-pays, self-pay invoices, large patient balances -- most processors charge one flat rate across all of it, even though the transaction profile is completely different for each. You're subsidizing their risk on every payment type.\n\nKashu guarantees better pricing than what ${biz} is on now, gets you live without interrupting a single day of patient flow, and with our surcharge program you eliminate processing costs entirely.\n\nThat's not a processor switch. That's a no-brainer.\n\n${savingsmo}/month. Breakdown attached.\n\nWorth 10 minutes?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+    }
+  },
+  gym: {
+    label: "Gym & Fitness",
+    headline: "Processing {volume}/month in memberships and sessions. Your processor is recurring billing off you every month.",
+    pain: "Fitness businesses run on recurring revenue. Every membership swipe, every class booking -- your processor takes a cut of all of it, often more than you agreed to.",
+    points: [
+      "Optimized rates for recurring and subscription billing",
+      "Handles one-time and recurring charges on the same platform",
+      "Fast payouts aligned with your billing cycles",
+      "No contracts -- you're already managing enough member agreements",
+      "Easy integration with gym management software"
+    ],
+    close: "Your members pay every month. Kashu makes sure what you keep grows right alongside them.",
+    emailSubject: (biz) => `${biz} pays to process every membership. it doesn't have to.`,
+    emailBody: (contact, biz, savingsmo, savingsyr, repName, repContact, isSurcharge) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      if (isSurcharge) return `${g}\n\nEvery membership renewal, every class booking, every billing cycle -- your processor takes a cut of all of it. Recurring revenue businesses lose more to processing than almost any other model.\n\nWith Kashu's surcharge program, ${biz} pays $0 in processing fees. Fees pass to members, your revenue stays clean, and that cost becomes a revenue line.\n\nFrictionless switch. We guarantee better pricing, get you live without missing a billing cycle.\n\nThat's not a processor switch. That's a no-brainer.\n\nBreakdown attached. Quick call this week?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+      return `${g}\n\nEvery membership renewal, every class booking, every billing cycle -- your processor takes a cut. Recurring revenue businesses lose more to processing than almost any other model, and most owners don't see it until someone runs the numbers.\n\nKashu guarantees better pricing than what ${biz} is on now, gets you live without missing a billing cycle, and with our surcharge program processing fees go to zero and you keep more of every member payment.\n\nThat's not a processor switch. That's a no-brainer.\n\n${savingsmo}/month. Breakdown attached.\n\nQuick call this week?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+    }
+  },
+  hotel: {
+    label: "Hospitality & Hotel",
+    headline: "Hospitality is a volume game. {volume}/month in processing should come with much better rates.",
+    pain: "Hotels deal with card authorizations, holds, tips, and high-volume settlement. Most processors don't have a rate structure built for that complexity.",
+    points: [
+      "Built for high-volume, multi-transaction environments",
+      "Handles card holds, authorizations, and final settlement cleanly",
+      "Next-day funding across all property revenue streams",
+      "No tiered pricing surprises on your monthly statement",
+      "Scales with your property without renegotiating every year"
+    ],
+    close: "Occupancy fills the rooms. Kashu makes sure processing fees don't drain what they generate.",
+    emailSubject: (biz) => `high-volume properties get the worst processing deals -- ${biz} included`,
+    emailBody: (contact, biz, savingsmo, savingsyr, repName, repContact, isSurcharge) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      if (isSurcharge) return `${g}\n\nHotels run some of the most complex transaction profiles in any industry -- authorizations, holds, multi-stream settlement, high volume. Most processors don't build rates to reflect that. They just charge for it.\n\nWith Kashu's surcharge program, ${biz} pays nothing in processing fees. Fees pass to guests -- standard across hospitality -- and your processing cost disappears entirely.\n\nFrictionless switch. We guarantee better pricing, get you live without missing a checkout or a settlement cycle.\n\nThat's not a processor switch. That's a no-brainer.\n\nBreakdown attached. 15 minutes this week?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+      return `${g}\n\nHotels run some of the most complex transaction profiles in any industry -- authorizations, holds, multi-stream settlement, high volume. Most processors don't build rates that reflect that complexity. They just charge for it.\n\nKashu guarantees better pricing than what ${biz} is on now, gets you live without missing a checkout or settlement cycle, and with our surcharge program processing fees disappear entirely.\n\nThat's not a processor switch. That's a no-brainer.\n\n${savingsmo}/month. Breakdown attached.\n\n15 minutes this week?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+    }
+  },
+  ecommerce: {
+    label: "eCommerce",
+    headline: "Online volume of {volume}/month deserves a processor that moves at your speed.",
+    pain: "eCommerce businesses deal with card-not-present rates, chargebacks, and processors designed for brick-and-mortar. The fee structures don't fit.",
+    points: [
+      "Competitive card-not-present rates for online transactions",
+      "Fast integration with major eCommerce platforms",
+      "Chargeback support and dispute management",
+      "Real-time transaction visibility and reporting",
+      "Scales with volume spikes without rate adjustments"
+    ],
+    close: "Your store doesn't close. Your processor shouldn't slow you down.",
+    emailSubject: (biz) => `online rates were designed for stores with walls -- not ${biz}`,
+    emailBody: (contact, biz, savingsmo, savingsyr, repName, repContact, isSurcharge) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      if (isSurcharge) return `${g}\n\nCard-not-present rates exist because processors assume more risk on online transactions -- and they price that risk in hard, even when your chargeback rate is clean. Most eCommerce businesses pay brick-and-mortar penalties for running a digital-first operation.\n\nWith Kashu's surcharge program, ${biz} pays $0 in processing fees. Fully supported for online transactions, fees pass to the customer, cost goes to zero.\n\nFrictionless switch. We guarantee better pricing, integrate without disrupting a single transaction.\n\nThat's not a processor switch. That's a no-brainer.\n\nBreakdown attached. Good time for a call this week?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+      return `${g}\n\nCard-not-present rates exist because processors assume more risk on online transactions -- and they price that risk in hard, even when your chargeback rate is clean. Most eCommerce businesses pay brick-and-mortar penalties for running a digital-first operation.\n\nKashu guarantees better pricing than what ${biz} is on now, integrates without disrupting a single transaction, and with our surcharge program you eliminate processing costs and add a revenue line.\n\nThat's not a processor switch. That's a no-brainer.\n\n${savingsmo}/month, ${savingsyr}/year. Breakdown attached.\n\nGood time for a call this week?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+    }
+  },
+  other: {
+    label: "Business",
+    headline: "You're processing {volume}/month. That processing cost is negotiable -- most owners just don't know it.",
+    pain: "Most businesses are overpaying for payment processing and don't realize it until someone runs the numbers. The fees are built to be confusing by design.",
+    points: [
+      "Transparent, straightforward pricing with no hidden fees",
+      "Fast settlement -- your money moves when you need it to",
+      "No long-term contracts or termination penalties",
+      "Dedicated support from people who know your account",
+      "Simple onboarding with minimal disruption to your operations"
+    ],
+    close: "Processing fees are a cost of doing business. Kashu makes sure they're the right cost.",
+    emailSubject: (biz) => `most owners don't know what ${biz} is actually paying to process`,
+    emailBody: (contact, biz, savingsmo, savingsyr, repName, repContact, isSurcharge) => {
+      const g = contact ? `Hey ${contact},` : `Hey,`;
+      if (isSurcharge) return `${g}\n\nProcessing statements are designed to be confusing. Most business owners couldn't tell you their effective rate -- not because they're not paying attention, but because their processor bets on it.\n\nWith Kashu's surcharge program, ${biz} pays $0 in processing fees. Fees pass to the customer and the cost disappears off your books entirely.\n\nFrictionless switch. We guarantee better pricing, get you live without missing a single day, and handle everything on our end.\n\nThat's not a processor switch. That's a no-brainer.\n\nBreakdown attached. Worth a quick call?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+      return `${g}\n\nProcessing statements are designed to be confusing. Most business owners couldn't tell you their effective rate -- not because they're not paying attention, but because their processor bets on it.\n\nKashu guarantees better pricing than what ${biz} is paying now, gets you live without missing a single day, and with our surcharge program processing fees go to zero and you add a revenue line instead.\n\nThat's not a processor switch. That's a no-brainer.\n\n${savingsmo}/month. Breakdown attached.\n\nWorth a quick call?\n\n${repName || 'Your Kashu Partner'}\n${repContact || ''}`.trim();
+    }
+  }
+};
+
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+
+function getKashuCost(volume, avgTicket, txnType) {
+  if (!volume || !avgTicket || avgTicket <= 0) return null;
+  const rate = KASHU_RATES[txnType];
+  const numTxns = volume / avgTicket;
+  return (volume * rate.combined) + (numTxns * rate.pertxn);
+}
+
+function getCurrentCost(volume) {
+  const mode = document.getElementById('currentCostMode').value;
+  if (mode === 'fees') {
+    const v = parseFloat(document.getElementById('currentFees').value);
+    return isNaN(v) ? null : v;
+  } else {
+    const r = parseFloat(document.getElementById('currentRate').value);
+    if (isNaN(r) || !volume) return null;
+    return volume * (r / 100);
+  }
+}
+
+function calcSavings() {
+  const volume = parseFloat(document.getElementById('volume').value);
+  const avgTicket = parseFloat(document.getElementById('avgTicket').value);
+  const txnType = document.getElementById('txnType').value;
+  const kashuCost = getKashuCost(volume, avgTicket, txnType);
+  const currentCost = getCurrentCost(volume);
+  const preview = document.getElementById('savingsPreview');
+  const btn = document.getElementById('generateBtn');
+
+  if (kashuCost === null || !volume) {
+    preview.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Enter volume and ticket size to generate';
+    return;
+  }
+
+  preview.style.display = 'block';
+  const surchargeNote = document.getElementById('surchargeNote');
+
+  if (txnType === 'surcharge') {
+    surchargeNote.style.display = 'block';
+    document.getElementById('prev-kashu-cost').textContent = '$0';
+    document.getElementById('prev-savings').textContent = currentCost !== null ? fmt(currentCost) : '--';
+    document.getElementById('prev-annual').textContent = currentCost !== null ? fmt(currentCost * 12) : '--';
+  } else {
+    surchargeNote.style.display = 'none';
+    document.getElementById('prev-kashu-cost').textContent = fmt(kashuCost);
+    if (currentCost !== null) {
+      const s = currentCost - kashuCost;
+      document.getElementById('prev-savings').textContent = s > 0 ? fmt(s) : '$0';
+      document.getElementById('prev-annual').textContent = s > 0 ? fmt(s * 12) : '$0';
+    } else {
+      document.getElementById('prev-savings').textContent = '--';
+      document.getElementById('prev-annual').textContent = '--';
+    }
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Generate One-Pager + Pitch Email';
+}
+
+function toggleCostMode() {
+  const mode = document.getElementById('currentCostMode').value;
+  document.getElementById('feesField').style.display = mode === 'fees' ? 'block' : 'none';
+  document.getElementById('rateField').style.display = mode === 'rate' ? 'block' : 'none';
+  calcSavings();
+}
+
+function copyText(text, btnEl) {
+  navigator.clipboard.writeText(text).then(() => {
+    btnEl.textContent = 'Copied';
+    btnEl.classList.add('copied');
+    setTimeout(() => { btnEl.textContent = 'Copy'; btnEl.classList.remove('copied'); }, 2000);
+  });
+}
+
+function generate() {
+  const bizName = document.getElementById('bizName').value.trim();
+  const contactName = document.getElementById('contactName').value.trim();
+  const nicheKey = document.getElementById('niche').value;
+  const txnType = document.getElementById('txnType').value;
+  const volume = parseFloat(document.getElementById('volume').value) || 0;
+  const avgTicket = parseFloat(document.getElementById('avgTicket').value) || 1;
+  const repName = document.getElementById('repName').value.trim();
+  const repContact = document.getElementById('repContact').value.trim();
+
+  const kashuCost = getKashuCost(volume, avgTicket, txnType) || 0;
+  const currentCost = getCurrentCost(volume);
+  const isSurcharge = txnType === 'surcharge';
+  const monthlySavings = isSurcharge ? (currentCost || 0) : (currentCost !== null ? Math.max(0, currentCost - kashuCost) : 0);
+  const annualSavings = monthlySavings * 12;
+
+  const n = niches[nicheKey];
+  const displayName = bizName || 'Your Business';
+  const headline = n.headline.replace('{volume}', fmt(volume) + '/mo');
+  const pointsHTML = n.points.map(p => `<li>${p}</li>`).join('');
+  const txnLabels = { inperson: 'In-Person', online: 'Online', ach: 'ACH', surcharge: 'Surcharge' };
+
+  const savingsSection = isSurcharge ? `
+    <div class="surcharge-banner">
+      With Kashu Surcharge, ${displayName} pays $0 in processing fees. Card fees pass to the customer at no extra cost to the business. Your current processing expense disappears entirely.
+    </div>` : `
+    <div class="savings-block">
+      <div class="s-label">Estimated Monthly Savings</div>
+      <div class="big-number">${fmt(monthlySavings)}</div>
+      <div class="s-sub">That's ${fmt(annualSavings)} back in your pocket over the next 12 months.</div>
+      <div class="savings-grid">
+        <div class="stat-box"><div class="stat-val">${fmt(volume)}</div><div class="stat-label">Monthly Volume</div></div>
+        <div class="stat-box"><div class="stat-val">${currentCost !== null ? fmt(currentCost) : '--'}</div><div class="stat-label">Current Cost/mo</div></div>
+        <div class="stat-box"><div class="stat-val">${fmt(kashuCost)}</div><div class="stat-label">Kashu Cost/mo</div></div>
+        <div class="stat-box"><div class="stat-val">${fmt(annualSavings)}</div><div class="stat-label">Annual Savings</div></div>
+      </div>
+    </div>`;
+
+  document.getElementById('onepager').innerHTML = `
+    <div class="op-header">
+      <div class="kashu-logo">Kashu <span class="logo-dot"></span></div>
+      <h2>${headline}</h2>
+      <div class="tag-row">
+        <span class="niche-tag">${n.label}</span>
+        <span class="niche-tag green">${txnLabels[txnType]}</span>
+      </div>
+    </div>
+    <div class="op-body">
+      ${savingsSection}
+      <div class="op-section">
+        <h3>The Problem</h3>
+        <p>${n.pain}</p>
+      </div>
+      <div class="op-section">
+        <h3>What Kashu Brings to ${displayName}</h3>
+        <ul class="points">${pointsHTML}</ul>
+      </div>
+      <div class="op-close">${n.close}</div>
+    </div>
+    <div class="op-footer">
+      <div class="cta-text">Ready to keep more of what you earn? <span>Let's talk.</span></div>
+      <div class="contact-block">
+        <strong>${repName || 'Your Kashu Partner'}</strong>
+        ${repContact || 'kashupay.com'}
+      </div>
+    </div>`;
+
+  const subject = n.emailSubject(displayName);
+  const body = n.emailBody(contactName, displayName, fmt(monthlySavings), fmt(annualSavings), repName, repContact, isSurcharge);
+
+  document.getElementById('emailCard').innerHTML = `
+    <div class="email-card-header">
+      <h3>Pitch Email</h3>
+      <span class="tag">Ready to Send</span>
+    </div>
+    <div class="email-card-body">
+      <div class="email-field">
+        <div class="email-field-label">Subject Line</div>
+        <div class="email-field-content" id="emailSubject">${subject}</div>
+        <button class="copy-btn" onclick="copyText(document.getElementById('emailSubject').textContent, this)">Copy</button>
+      </div>
+      <div class="email-field">
+        <div class="email-field-label">Email Body</div>
+        <div class="email-field-content" id="emailBody">${body}</div>
+        <button class="copy-btn" onclick="copyText(document.getElementById('emailBody').textContent, this)">Copy</button>
+      </div>
+      <div class="email-attach-note">
+        Attach the one-pager PDF to this email. Use the Print button above, save as PDF, then attach before sending.
+      </div>
+    </div>`;
+
+  document.getElementById('generator').style.display = 'none';
+  document.getElementById('output').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function goBack() {
+  document.getElementById('output').style.display = 'none';
+  document.getElementById('generator').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

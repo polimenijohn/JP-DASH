@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kashu — Affiliate Growth Toolkit</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --dark:   #0b5147; --mid:  #397168; --muted: #93adaa;
+    --green:  #01de8f; --light1: #8de6c6; --light2: #d5eae3;
+    --light3: #e1fea1; --bg: #f4f9f8; --white: #ffffff;
+    --text:   #1a2e2b; --sub:  #4a6360; --border: #c8dbd8;
+    --red:    #e05252; --orange: #f59e0b; --purple: #7c3aed;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); }
+  header { background: var(--dark); padding: 18px 32px; display: flex; align-items: center; gap: 14px; }
+  .logo-mark { width: 36px; height: 36px; background: var(--green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: var(--dark); }
+  header h1 { color: var(--white); font-size: 20px; font-weight: 600; }
+  header span { color: var(--muted); font-size: 14px; margin-left: auto; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 0; background: var(--dark); padding: 0 32px; border-bottom: 2px solid rgba(255,255,255,0.1); }
+  .tab { padding: 14px 20px; color: var(--muted); font-size: 14px; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+  .tab:hover { color: var(--white); }
+  .tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .main { max-width: 980px; margin: 0 auto; padding: 36px 20px 80px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mid); margin-bottom: 12px; }
+
+  /* ---- CALCULATOR TAB ---- */
+  .calc-grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; }
+  @media(max-width:780px){ .calc-grid { grid-template-columns: 1fr; } }
+
+  .calc-inputs { background: var(--white); border-radius: 14px; border: 1px solid var(--border); padding: 24px; align-self: start; }
+  .calc-inputs h2 { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 20px; }
+  .field-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .field-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--sub); }
+  .field-group input, .field-group select {
+    border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text);
+    background: var(--white); width: 100%; transition: border 0.2s;
+  }
+  .field-group input:focus { outline: none; border-color: var(--mid); }
+  .field-group .helper { font-size: 11px; color: var(--muted); }
+  .divider { height: 1px; background: var(--light2); margin: 16px 0; }
+  .flag-note { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 12px; font-size: 12px; color: #78350f; margin-bottom: 16px; }
+  .flag-note strong { font-weight: 700; }
+
+  .results-col { display: flex; flex-direction: column; gap: 20px; }
+
+  .tier-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .tier-card { background: var(--white); border-radius: 12px; border: 2px solid var(--border); padding: 20px; }
+  .tier-card.t1-active { border-color: var(--green); }
+  .tier-card.t2-active { border-color: var(--mid); }
+  .tc-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--sub); margin-bottom: 6px; }
+  .tc-pct { font-size: 32px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+  .tc-desc { font-size: 12px; color: var(--sub); line-height: 1.5; }
+  .tc-active-badge { display: inline-block; background: var(--light3); color: #5a7a00; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-top: 6px; }
+
+  .earning-banner {
+    background: var(--dark); border-radius: 14px; padding: 24px 28px;
+    display: flex; gap: 0; align-items: stretch; flex-wrap: wrap;
+  }
+  .eb-item { flex: 1; min-width: 130px; padding: 0 24px 0 0; }
+  .eb-item + .eb-item { border-left: 1px solid rgba(255,255,255,0.1); padding-left: 24px; }
+  @media(max-width:560px){ .eb-item { min-width: 100%; border-left: none !important; padding: 10px 0 !important; border-bottom: 1px solid rgba(255,255,255,0.1); } .eb-item:last-child{ border-bottom:none; }}
+  .eb-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .eb-value { font-size: 28px; font-weight: 800; color: var(--green); }
+  .eb-sub { font-size: 12px; color: #8de6c6; margin-top: 2px; }
+
+  .projection-table { background: var(--white); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; }
+  .pt-header { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; background: var(--dark); padding: 12px 20px; }
+  .pt-header span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); }
+  .pt-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; padding: 14px 20px; border-bottom: 1px solid var(--light2); align-items: center; }
+  .pt-row:last-child { border-bottom: none; }
+  .pt-row:nth-child(even) { background: #fafcfc; }
+  .pt-row span { font-size: 14px; color: var(--text); }
+  .pt-row .highlight { font-weight: 700; color: var(--dark); }
+  .pt-row .green { font-weight: 700; color: #0b8a5a; }
+
+  .t1-progress { background: var(--white); border-radius: 12px; border: 1px solid var(--border); padding: 20px 24px; }
+  .t1-progress h4 { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .t1-progress p { font-size: 12px; color: var(--sub); margin-bottom: 12px; }
+  .progress-track { height: 10px; background: var(--light2); border-radius: 5px; overflow: hidden; }
+  .progress-fill { height: 10px; background: var(--green); border-radius: 5px; transition: width 0.4s; }
+  .progress-labels { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: var(--sub); }
+
+  /* ---- CHANNELS TAB ---- */
+  .channels-intro { background: var(--dark); border-radius: 14px; padding: 28px; margin-bottom: 28px; }
+  .channels-intro h2 { font-size: 22px; font-weight: 800; color: var(--white); margin-bottom: 8px; }
+  .channels-intro p { color: var(--muted); font-size: 15px; line-height: 1.6; }
+  .channels-intro .ci-note { margin-top: 14px; background: rgba(1,222,143,0.1); border: 1px solid rgba(1,222,143,0.2); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--light1); }
+
+  .channel-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  .cf-btn { padding: 7px 16px; border-radius: 20px; border: 1.5px solid var(--border); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; background: var(--white); color: var(--sub); transition: all 0.15s; }
+  .cf-btn.active { background: var(--dark); color: var(--white); border-color: var(--dark); }
+  .cf-btn:hover { border-color: var(--mid); }
+
+  .channels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media(max-width:680px){ .channels-grid { grid-template-columns: 1fr; } }
+
+  .channel-card { background: var(--white); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; }
+  .channel-card.weird { border-top: 3px solid var(--green); }
+  .channel-card.standard { border-top: 3px solid var(--mid); }
+  .cc-header { padding: 18px 20px; cursor: pointer; display: flex; align-items: flex-start; gap: 14px; }
+  .cc-header:hover { background: #f9fdfc; }
+  .cc-icon { font-size: 26px; flex-shrink: 0; }
+  .cc-meta { flex: 1; }
+  .cc-meta h3 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .cc-meta .cc-why { font-size: 13px; color: var(--sub); line-height: 1.5; }
+  .cc-badges { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .cc-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+  .cc-badge.weird { background: rgba(1,222,143,0.15); color: #0b8a5a; }
+  .cc-badge.standard { background: var(--light2); color: var(--dark); }
+  .cc-badge.fast { background: #fef3c7; color: #92400e; }
+  .cc-badge.scale { background: #ede9fe; color: var(--purple); }
+  .chevron { font-size: 12px; color: var(--muted); margin-top: 4px; transition: transform 0.2s; }
+  .channel-card.open .chevron { transform: rotate(180deg); }
+  .cc-body { display: none; border-top: 1px solid var(--light2); padding: 0 20px 20px; }
+  .channel-card.open .cc-body { display: block; }
+
+  .cc-find { background: var(--bg); border-radius: 8px; padding: 12px 14px; margin-top: 14px; margin-bottom: 12px; }
+  .cc-find .cf-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--mid); margin-bottom: 6px; }
+  .cc-find p { font-size: 13px; color: var(--sub); line-height: 1.6; }
+  .cc-find ul { padding-left: 16px; font-size: 13px; color: var(--sub); line-height: 1.8; }
+
+  .copy-block { background: var(--dark); border-radius: 8px; padding: 16px; position: relative; margin-top: 12px; }
+  .copy-block .cb-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 8px; }
+  .copy-block pre { color: var(--light1); font-size: 13px; font-family: 'DM Sans', sans-serif; white-space: pre-wrap; word-break: break-word; line-height: 1.7; margin: 0; }
+  .copy-btn-sm { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: var(--white); padding: 4px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.2s; }
+  .copy-btn-sm:hover { background: rgba(255,255,255,0.2); }
+
+  /* ---- SEQUENCE TAB ---- */
+  .seq-form { background: var(--white); border-radius: 14px; border: 1px solid var(--border); padding: 24px; margin-bottom: 24px; }
+  .seq-form h2 { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 20px; }
+  .seq-form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media(max-width:680px){ .seq-form-grid { grid-template-columns: 1fr; } }
+  .gen-btn { padding: 13px 28px; background: var(--dark); color: var(--white); border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 16px; transition: background 0.2s; }
+  .gen-btn:hover { background: var(--mid); }
+
+  #seqOutput { display: none; }
+  .touch-card { background: var(--white); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 14px; }
+  .touch-header { padding: 18px 22px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
+  .touch-header:hover { background: #f9fdfc; }
+  .touch-num { width: 36px; height: 36px; background: var(--dark); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .touch-title-area { flex: 1; }
+  .touch-title-area strong { font-size: 15px; font-weight: 700; color: var(--text); display: block; }
+  .touch-title-area span { font-size: 12px; color: var(--sub); }
+  .touch-day { background: var(--light3); color: #5a7a00; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 10px; }
+  .touch-chevron { font-size: 12px; color: var(--muted); transition: transform 0.2s; }
+  .touch-card.open .touch-chevron { transform: rotate(180deg); }
+  .touch-body { display: none; padding: 0 22px 22px; border-top: 1px solid var(--light2); }
+  .touch-card.open .touch-body { display: block; }
+  .touch-subject { background: var(--bg); border-radius: 8px; padding: 10px 14px; margin-top: 14px; margin-bottom: 10px; display: flex; gap: 10px; align-items: center; }
+  .touch-subject .ts-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--sub); flex-shrink: 0; }
+  .touch-subject .ts-val { font-size: 14px; font-weight: 600; color: var(--text); }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--dark); color: var(--white); padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 9999; }
+  .toast.show { opacity: 1; }
+
+  .opp-icon:empty, .kill-icon:empty, .wo-icon:empty, .cc-icon:empty, .wf-header-icon:empty, .upload-icon:empty, .pn-item .pn-icon:empty, .ty-icon:empty, .pm-icon:empty { display:none; }
+
+  .chevron::after, .touch-chevron::after { content: "\25BC"; font-size: 10px; }
+  .check::after { content: "\2713"; font-weight: 700; }
+  .setup-check.checked::after { content: "\2713"; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">K</div>
+  <h1>Affiliate Growth Toolkit</h1>
+  <span>Kashu Sales Tools — Credit-to-Cash Track</span>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('calculator', this)">Income Calculator</div>
+  <div class="tab" onclick="switchTab('channels', this)">Recruiting Channels</div>
+  <div class="tab" onclick="switchTab('sequence', this)">Recruiting Sequence</div>
+</div>
+
+<!-- ===== CALCULATOR TAB ===== -->
+<div class="tab-panel active" id="tab-calculator">
+<div class="main">
+
+  <div class="calc-grid">
+    <div class="calc-inputs">
+      <h2>Your Numbers</h2>
+      <div class="flag-note"><strong>Note to team:</strong> Kashu's actual fee % for the credit-to-cash product needs to be entered below. Once confirmed, this field can be hardcoded and hidden from affiliate-facing versions.</div>
+
+      <div class="field-group">
+        <label>Kashu Fee % (per transaction)</label>
+        <input type="number" id="kashuFee" value="5" step="0.1" oninput="calcUpdate()"/>
+        <span class="helper">Kashu charges users this % for the credit-to-cash conversion</span>
+      </div>
+      <div class="field-group">
+        <label>Avg User Transaction Amount ($)</label>
+        <input type="number" id="avgTxn" value="25000" oninput="calcUpdate()"/>
+        <span class="helper">Average first transaction per referred user</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field-group">
+        <label>Users Referred Per Month</label>
+        <input type="number" id="monthlyReferrals" value="5" oninput="calcUpdate()"/>
+      </div>
+      <div class="field-group">
+        <label>Months to Project</label>
+        <input type="number" id="monthsProject" value="12" max="36" oninput="calcUpdate()"/>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field-group">
+        <label>Total Attributed Volume (running)</label>
+        <input type="number" id="attrVolume" value="0" oninput="calcUpdate()"/>
+        <span class="helper">Your cumulative attributed volume (for tier detection)</span>
+      </div>
+    </div>
+
+    <div class="results-col" id="resultsCol">
+      <div class="tier-cards">
+        <div class="tier-card" id="t2card">
+          <div class="tc-label">Tier 2</div>
+          <div class="tc-pct">5%</div>
+          <div class="tc-desc">of Kashu's fee<br/>0 – $499K attributed volume</div>
+        </div>
+        <div class="tier-card" id="t1card">
+          <div class="tc-label">Tier 1</div>
+          <div class="tc-pct">10%</div>
+          <div class="tc-desc">of Kashu's fee<br/>$500K+ attributed volume</div>
+        </div>
+      </div>
+
+      <div class="earning-banner" id="earningBanner">
+        <div class="eb-item"><div class="eb-label">Earning Per User</div><div class="eb-value" id="eb_perUser">—</div><div class="eb-sub">one-time on first txn</div></div>
+        <div class="eb-item"><div class="eb-label">Monthly (at current referral rate)</div><div class="eb-value" id="eb_monthly">—</div><div class="eb-sub" id="eb_monthlySub">—</div></div>
+        <div class="eb-item"><div class="eb-label">Projected Annual</div><div class="eb-value" id="eb_annual">—</div><div class="eb-sub" id="eb_annualSub">—</div></div>
+      </div>
+
+      <div class="t1-progress">
+        <h4>T1 Unlock Progress</h4>
+        <p id="t1ProgressText">Reach $500K in attributed volume to unlock 10% commissions.</p>
+        <div class="progress-track"><div class="progress-fill" id="t1ProgressFill" style="width:0%"></div></div>
+        <div class="progress-labels"><span>$0</span><span id="t1ProgressLabel">—</span><span>$500K</span></div>
+      </div>
+
+      <div class="projection-table">
+        <div class="pt-header">
+          <span>Month</span>
+          <span>Users Added</span>
+          <span>Cumul. Users</span>
+          <span>Cumul. Earnings</span>
+        </div>
+        <div id="projectionRows"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ===== CHANNELS TAB ===== -->
+<div class="tab-panel" id="tab-channels">
+<div class="main">
+
+  <div class="channels-intro">
+    <h2>Find affiliates where nobody else is looking.</h2>
+    <p>The standard playbook -- LinkedIn to financial advisors, email to accountants -- works. But the operators who build fast affiliate networks are the ones who find people in the right moment, in the right room, before anyone else showed up with a pitch.</p>
+    <div class="ci-note">Compliance reminder: per the affiliate agreement, outreach must be digital (email, LinkedIn, social). No cold calling. All promoted content must be pre-approved by Kashu.</div>
+  </div>
+
+  <div class="channel-filter">
+    <button class="cf-btn active" onclick="filterChannels('all', this)">All Channels</button>
+    <button class="cf-btn" onclick="filterChannels('weird', this)">Unconventional</button>
+    <button class="cf-btn" onclick="filterChannels('fast', this)">Fast Results</button>
+    <button class="cf-btn" onclick="filterChannels('scale', this)">High Scale</button>
+  </div>
+
+  <div class="channels-grid" id="channelsGrid"></div>
+
+</div>
+</div>
+
+<!-- ===== SEQUENCE TAB ===== -->
+<div class="tab-panel" id="tab-sequence">
+<div class="main">
+
+  <div class="seq-form">
+    <h2>Generate Affiliate Recruiting Sequence</h2>
+    <div class="seq-form-grid">
+      <div class="field-group">
+        <label>Prospect Name</label>
+        <input type="text" id="seq_name" placeholder="e.g. Sarah"/>
+      </div>
+      <div class="field-group">
+        <label>Prospect Type</label>
+        <select id="seq_persona">
+          <option value="bookkeeper">Bookkeeper / CPA</option>
+          <option value="creditconsultant">Business Credit Consultant</option>
+          <option value="mca_broker">MCA / Alt-Finance Broker</option>
+          <option value="lender">SBA Lender / Banker</option>
+          <option value="advisor">Financial Advisor</option>
+          <option value="coach">Business Coach / Consultant</option>
+          <option value="franchise">Franchise Broker / Consultant</option>
+          <option value="realtor">Commercial RE Broker</option>
+          <option value="insurer">Insurance Broker (Business)</option>
+          <option value="payroll">Payroll / HR Consultant</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Avg User Transaction ($)</label>
+        <input type="number" id="seq_txn" value="25000" placeholder="25000"/>
+      </div>
+      <div class="field-group">
+        <label>Kashu Fee %</label>
+        <input type="number" id="seq_fee" value="5" step="0.1"/>
+      </div>
+      <div class="field-group">
+        <label>Your Name</label>
+        <input type="text" id="seq_rep" placeholder="John Polimeni"/>
+      </div>
+      <div class="field-group">
+        <label>Your Contact</label>
+        <input type="text" id="seq_contact" placeholder="phone or email"/>
+      </div>
+    </div>
+    <button class="gen-btn" onclick="generateSequence()">Generate 5-Touch Sequence</button>
+  </div>
+
+  <div id="seqOutput"></div>
+
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== TAB LOGIC =====
+function switchTab(id, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ===== CALCULATOR =====
+function fmt$(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+function fmtK(n) { return n >= 1000 ? '$' + (n/1000).toFixed(0) + 'K' : '$' + n; }
+
+function calcUpdate() {
+  const kashuFee = parseFloat(document.getElementById('kashuFee').value) / 100 || 0.05;
+  const avgTxn = parseFloat(document.getElementById('avgTxn').value) || 25000;
+  const monthlyRefs = parseInt(document.getElementById('monthlyReferrals').value) || 5;
+  const months = Math.min(parseInt(document.getElementById('monthsProject').value) || 12, 36);
+  const attrVolume = parseFloat(document.getElementById('attrVolume').value) || 0;
+
+  const kashuFeePerUser = avgTxn * kashuFee;
+  const t2PerUser = kashuFeePerUser * 0.05;
+  const t1PerUser = kashuFeePerUser * 0.10;
+  const isT1 = attrVolume >= 500000;
+  const perUser = isT1 ? t1PerUser : t2PerUser;
+  const monthly = perUser * monthlyRefs;
+
+  // T1 progress
+  const t1Pct = Math.min(100, (attrVolume / 500000) * 100);
+  document.getElementById('t1ProgressFill').style.width = t1Pct + '%';
+  document.getElementById('t1ProgressLabel').textContent = fmt$(attrVolume) + ' of $500K';
+  const toT1 = Math.max(0, 500000 - attrVolume);
+  document.getElementById('t1ProgressText').textContent = isT1
+    ? 'T1 unlocked. You\'re earning 10% commissions.'
+    : `${fmt$(toT1)} more in attributed volume to unlock T1 (10% commissions).`;
+
+  // Tier cards
+  document.getElementById('t2card').className = 'tier-card' + (isT1 ? '' : ' t2-active');
+  document.getElementById('t1card').className = 'tier-card' + (isT1 ? ' t1-active' : '');
+  const t2inner = document.getElementById('t2card');
+  const t1inner = document.getElementById('t1card');
+  const removeOld = (el) => { const b = el.querySelector('.tc-active-badge'); if(b) b.remove(); };
+  removeOld(t2inner); removeOld(t1inner);
+  if (!isT1) { const b = document.createElement('span'); b.className = 'tc-active-badge'; b.textContent = 'Current tier'; t2inner.appendChild(b); }
+  else { const b = document.createElement('span'); b.className = 'tc-active-badge'; b.textContent = 'Active'; t1inner.appendChild(b); }
+
+  // Banner
+  document.getElementById('eb_perUser').textContent = fmt$(perUser);
+  document.getElementById('eb_monthly').textContent = fmt$(monthly);
+  document.getElementById('eb_monthlySub').textContent = `${monthlyRefs} users @ ${fmt$(perUser)} each`;
+  document.getElementById('eb_annual').textContent = fmt$(monthly * 12);
+  document.getElementById('eb_annualSub').textContent = `${monthlyRefs * 12} users projected`;
+
+  // Projection rows
+  let rows = '';
+  let cumUsers = 0;
+  let cumEarnings = 0;
+  let runningVolume = attrVolume;
+  for (let m = 1; m <= months; m++) {
+    cumUsers += monthlyRefs;
+    runningVolume += monthlyRefs * avgTxn;
+    const tierPct = runningVolume >= 500000 ? 0.10 : 0.05;
+    const monthEarnings = monthlyRefs * avgTxn * kashuFee * tierPct;
+    cumEarnings += monthEarnings;
+    const atT1 = runningVolume >= 500000;
+    rows += `<div class="pt-row">
+      <span class="highlight">Month ${m}</span>
+      <span>+${monthlyRefs}</span>
+      <span class="highlight">${cumUsers}</span>
+      <span class="green">${fmt$(cumEarnings)}${atT1 && runningVolume - monthlyRefs*avgTxn < 500000 ? ' <span style="font-size:10px;background:#e1fea1;color:#5a7a00;padding:1px 5px;border-radius:6px;font-weight:700;">T1</span>' : ''}</span>
+    </div>`;
+  }
+  document.getElementById('projectionRows').innerHTML = rows;
+}
+
+calcUpdate();
+
+// ===== CHANNELS =====
+const CHANNELS = [
+  {
+    id: 'mca_brokers',
+    icon: '',
+    type: 'weird',
+    tags: ['weird','fast'],
+    title: 'MCA Broker Networks',
+    why: 'Merchant cash advance brokers already understand the problem: a business needs cash now. They already have the relationships and the pitch muscle. Kashu is a cleaner product they can offer alongside or instead of MCA.',
+    find: { label: 'Where to find them', items: ['Facebook groups: "MCA Brokers", "Alternative Business Funding Network", "ISO & MCA Community"', 'LinkedIn: search "merchant cash advance broker" or "ISO agent"', 'Broker forums: FunderIntelligence.com community, BoA broker groups'] },
+    copy: `Hey [name],
+
+I work with Kashu -- we built a platform that lets businesses convert available credit into cash and move it wherever they need it. Bank account, vendor, payroll, anywhere.
+
+A lot of MCA brokers are adding this to their product stack. The businesses you work with who have strong credit but are cash-strapped are a perfect fit. No new debt, no MCA rates.
+
+The affiliate structure is simple: you refer, we handle the onboarding and conversion, you earn a commission on the first transaction.
+
+Worth a 10-minute conversation?
+
+-- [your name]`
+  },
+  {
+    id: 'factoring_customers',
+    icon: '',
+    type: 'weird',
+    tags: ['weird','fast'],
+    title: 'Businesses Currently Factoring',
+    why: 'Any business paying 2-4% to a factoring company to access their own revenue is already paying for the solution -- just expensively. Kashu is the cheaper, cleaner replacement. The pain is real and the switch is straightforward.',
+    find: { label: 'Where to find them', items: ['LinkedIn: search "[industry] owner" in trucking, staffing, construction -- heaviest factoring users', 'Connect with freight brokers who refer their carriers to factoring companies', 'Approach factoring companies whose clients are their most price-sensitive segment'] },
+    copy: `[name],
+
+Quick question: if you\'re currently factoring invoices to manage cash flow, what rate are you paying?
+
+Most businesses factoring are at 2-4%. Kashu converts available credit to cash the same day at a fraction of that cost -- no invoice assignment, no recourse risk, no factor taking a cut of your receivables.
+
+I\'d like to show you how the comparison looks on your specific numbers.
+
+-- [your name]`
+  },
+  {
+    id: 'credit_repair',
+    icon: '',
+    type: 'weird',
+    tags: ['weird','scale'],
+    title: 'Business Credit Repair / Build Companies',
+    why: 'Their entire client base is businesses actively trying to access more credit. Clients who successfully build a business credit line and then can\'t make it liquid are a perfect handoff to Kashu. It\'s a natural next step in the credit journey.',
+    find: { label: 'Where to find them', items: ['Google: "business credit building service" + your market', 'Facebook groups focused on business credit (hundreds of thousands of members)', 'LinkedIn: "business credit specialist", "credit coach"', 'Nav.com community, CreditSuite partner network'] },
+    copy: `[name],
+
+Your clients are building business credit -- that\'s the hard part. But I see a gap that happens after: they have a strong credit line and still can\'t access cash quickly when they need it.
+
+Kashu fills that gap. We convert available business credit to cash -- bank account, payroll, vendor payment -- same day.
+
+It\'s a natural next step for clients who\'ve done the work to build credit and now want to actually use it. The referral is simple, the commission structure is clean.
+
+Want to see how other credit specialists are positioning this?
+
+-- [your name]`
+  },
+  {
+    id: 'amazon_communities',
+    icon: '',
+    type: 'weird',
+    tags: ['weird','scale'],
+    title: 'Amazon / E-Commerce Seller Communities',
+    why: 'Amazon FBA sellers have a constant inventory capital problem: payout cycles are 2 weeks, suppliers need payment now. They also tend to have business credit cards they use for ad spend. This is a ready-made ICP with existing credit that needs to be moved.',
+    find: { label: 'Where to find them', items: ['Facebook: "Amazon FBA Sellers", "Fulfillment by Amazon Official", "Amazon Seller Community" (combined millions of members)', 'Reddit: r/FulfillmentByAmazon, r/AmazonSeller', 'Sellerboard, Helium10 communities', 'LinkedIn: search "Amazon FBA" or "private label seller"'] },
+    copy: `[name],
+
+Amazon sellers deal with a structural cash flow problem: payouts are bi-weekly, suppliers want payment now.
+
+Kashu converts available business credit to cash the same day and moves it to your bank or straight to a supplier. It bridges the payout gap without touching your ad budget or taking on MCA debt.
+
+The sellers using this are buying inventory on day 1 of a restock instead of day 15.
+
+Worth a look?
+
+-- [your name]`
+  },
+  {
+    id: 'food_distributors',
+    icon: '',
+    type: 'weird',
+    tags: ['weird','fast'],
+    title: 'Food Distributor Sales Reps',
+    why: 'Food distributors extend terms to restaurants. Their reps know exactly which accounts are late, which operators are stressed about invoices, and which new restaurant opened and is running thin. These reps have the relationship and the real-time pain signal.',
+    find: { label: 'Where to find them', items: ['LinkedIn: search "Sysco sales", "US Foods account manager", "food service distributor"', 'Reach out to local distributors directly', 'Hospitality industry trade shows and food expos'] },
+    copy: `[name],
+
+You probably know which of your restaurant accounts are sweating their invoices. The ones who call and ask for extended terms, or who are chronically a few days late.
+
+Kashu converts available business credit to cash. For operators who have credit built up but struggle with timing, it\'s the solution -- they can fund invoice payments without another loan.
+
+I\'d like to talk about a referral arrangement. For every restaurant you introduce that uses Kashu, you earn a commission on their first transaction.
+
+This one makes sense.
+
+-- [your name]`
+  },
+  {
+    id: 'payroll_platforms',
+    icon: '',
+    type: 'weird',
+    tags: ['weird','scale'],
+    title: 'Payroll / HR Consultants',
+    why: 'Payroll consultants see late payroll before anyone else does. A business owner who calls their payroll rep asking how to delay a run is in the exact pain moment Kashu solves. The consultant becomes the trusted source of a solution they didn\'t have before.',
+    find: { label: 'Where to find them', items: ['LinkedIn: "payroll consultant", "HR advisor small business"', 'Gusto/ADP/Paychex certified partner networks', 'SHRM communities and local HR professional groups'] },
+    copy: `[name],
+
+Your clients call you when payroll is in trouble. I want to give you a solution you can hand them.
+
+Kashu converts available business credit to cash the same day -- bank transfer, straight to payroll platform, wherever it needs to go. For a business that has credit but not liquid cash at payroll time, this solves it in hours.
+
+You refer, we handle the rest. You earn a commission on their first transaction.
+
+Worth a quick call?
+
+-- [your name]`
+  },
+  {
+    id: 'franchise_brokers',
+    icon: '',
+    type: 'weird',
+    tags: ['weird','fast'],
+    title: 'Franchise Brokers',
+    why: 'Franchise brokers sell franchises for a living. Their buyers -- people who just signed a franchise agreement -- are immediately in need of capital for the initial inventory, royalty deposits, buildout costs, and working capital gaps. The timing is perfect.',
+    find: { label: 'Where to find them', items: ['FranConnect, Franchise Broker Association (FBA)', 'LinkedIn: "franchise broker", "franchise consultant", "FBA member"', 'FranchiseGator, Entrepreneur franchise expo community'] },
+    copy: `[name],
+
+The buyers you close have an immediate capital need the moment they sign: buildout deposits, initial inventory, working capital while revenue ramps.
+
+Kashu converts available business credit to cash fast. For a new franchisee with a credit line and cash flow timing pressure, it\'s the cleanest short-term capital solution that doesn\'t involve a new loan.
+
+I think there\'s a clean referral relationship here. Your buyer gets a useful tool, you earn on the introduction.
+
+-- [your name]`
+  },
+  {
+    id: 'score_mentors',
+    icon: '',
+    type: 'weird',
+    tags: ['weird'],
+    title: 'SCORE Mentors',
+    why: 'SCORE volunteers mentor struggling small businesses for free. They hear every cash flow problem firsthand and are actively looking for resources to refer their mentees to. They have trust, they have reach, and most have never heard of Kashu.',
+    find: { label: 'Where to find them', items: ['SCORE.org — every chapter lists its mentors by name', 'Local SCORE chapter events and workshops', 'LinkedIn: "SCORE mentor"'] },
+    copy: `[name],
+
+I know you work with business owners who are navigating cash flow challenges. I\'d like to put a tool in your hands.
+
+Kashu converts available business credit to cash -- same day, to bank, payroll, or vendor. For mentees who have business credit built up but are stuck on timing, it removes the immediate pressure.
+
+There\'s also a commission structure if you want to formalize the relationship. But more importantly, it\'s a real answer to a problem you hear every week.
+
+Can I share more about how it works?
+
+-- [your name]`
+  },
+  {
+    id: 'bookkeepers',
+    icon: '',
+    type: 'standard',
+    tags: ['fast','scale'],
+    title: 'Bookkeepers (Real-Time Intel)',
+    why: 'Bookkeepers see the cash flow problem the moment it\'s happening -- low bank balances, late payables, upcoming obligations that don\'t have matching receivables. They have real-time context that no other referrer has, and their clients trust them completely.',
+    find: { label: 'Where to find them', items: ['LinkedIn: "bookkeeper", "QuickBooks ProAdvisor", "Xero certified advisor"', 'QuickBooks ProAdvisor directory (searchable by location)', 'Xero partner network', 'Facebook: "Bookkeeping for Business Owners", "Accounting & Bookkeeping" groups'] },
+    copy: `[name],
+
+I\'m reaching out because bookkeepers often see a problem before their clients even realize how bad it is: the upcoming payable that won\'t match the bank balance.
+
+Kashu converts available business credit to cash -- same day. For clients who have business credit built up but are heading into a cash flow gap, this solves it before it becomes a crisis.
+
+There\'s a simple affiliate structure: you refer a client, they complete their first transaction, you earn a commission.
+
+Would love to show you how other bookkeepers are using this.
+
+-- [your name]`
+  },
+  {
+    id: 'cpas',
+    icon: '',
+    type: 'standard',
+    tags: ['fast','scale'],
+    title: 'CPAs / Tax Advisors',
+    why: 'Tax season surfaces cash flow stress better than any other event. CPAs who help businesses manage quarterly taxes, payroll tax deposits, and year-end obligations are working directly with businesses that need liquid capital at specific, predictable times.',
+    find: { label: 'Where to find them', items: ['AICPA member directory', 'LinkedIn: "CPA small business", "tax advisor SMB"', 'Local business CPA firms (Google Maps, Yelp)', 'State CPA society directories'] },
+    copy: `[name],
+
+Tax quarter is one of the most reliable cash flow stress points for small business owners.
+
+Kashu converts available business credit to cash the same day -- specifically designed for business use: vendor payments, operating expenses, tax deposits. For clients facing a payroll tax deposit or estimated payment with tight cash flow, this removes the crunch.
+
+It\'s a straightforward referral structure. I\'d like to walk you through it.
+
+-- [your name]`
+  },
+  {
+    id: 'equipment_leasing',
+    icon: '',
+    type: 'weird',
+    tags: ['weird'],
+    title: 'Equipment Leasing Brokers (Decline Stack)',
+    why: 'Equipment leasing brokers deal with declines. A business that gets declined for a lease -- often because cash flow looks weak, not because they have no credit -- is the perfect Kashu prospect. The broker has the relationship and the declined applicant is warm and motivated.',
+    find: { label: 'Where to find them', items: ['ELFA (Equipment Leasing and Finance Association)', 'LinkedIn: "equipment finance broker", "equipment leasing specialist"', 'EquipmentFinancing.com broker community'] },
+    copy: `[name],
+
+I have a home for your declined applications.
+
+Businesses that get declined for equipment leasing often have available business credit -- they just don\'t have the cash flow to qualify. Kashu converts that credit to cash, which can cover a lease deposit or even the purchase outright.
+
+You refer the declined applicant. We solve their capital problem. You earn a commission.
+
+Worth a conversation?
+
+-- [your name]`
+  },
+  {
+    id: 'coworking',
+    icon: '',
+    type: 'weird',
+    tags: ['weird'],
+    title: 'Coworking Space Community Managers',
+    why: 'Community managers at WeWork, Regus, and independent coworking spaces are the trusted connectors for their member base. Members ask them for business resource recommendations constantly. A single community manager can refer dozens of bootstrapped startups.',
+    find: { label: 'Where to find them', items: ['LinkedIn: "community manager WeWork", "Industrious community", "coworking space manager"', 'Direct outreach to local coworking spaces', 'Coworking Alliance community and events'] },
+    copy: `[name],
+
+Your members ask you for resource recommendations more than you probably expect.
+
+I\'d like to be one of those resources. Kashu converts available business credit to cash -- same day. For early-stage founders or bootstrapped businesses in your space who are managing tight cash flow, it\'s a practical tool.
+
+The referral is simple: share a link, earn a commission when a member completes their first transaction.
+
+Can I show you how it works?
+
+-- [your name]`
+  }
+];
+
+let activeFilter = 'all';
+
+function renderChannels() {
+  const grid = document.getElementById('channelsGrid');
+  const filtered = activeFilter === 'all' ? CHANNELS : CHANNELS.filter(c => c.tags.includes(activeFilter));
+  grid.innerHTML = filtered.map((c, i) => `
+    <div class="channel-card ${c.type}" id="cc_${c.id}">
+      <div class="cc-header" onclick="toggleChannel('${c.id}')">
+        <div class="cc-icon">${c.icon}</div>
+        <div class="cc-meta">
+          <h3>${c.title}</h3>
+          <div class="cc-why">${c.why.substring(0, 100)}...</div>
+          <div class="cc-badges">
+            ${c.tags.map(t => `<span class="cc-badge ${t === 'weird' ? 'weird' : t === 'fast' ? 'fast' : t === 'scale' ? 'scale' : 'standard'}">${t === 'weird' ? 'Unconventional' : t === 'fast' ? 'Fast Results' : t === 'scale' ? 'High Scale' : 'Standard'}</span>`).join('')}
+          </div>
+        </div>
+        <div class="chevron"></div>
+      </div>
+      <div class="cc-body">
+        <div class="cc-why" style="padding-top:14px;font-size:13px;color:var(--sub);line-height:1.6;">${c.why}</div>
+        <div class="cc-find">
+          <div class="cf-label">${c.find.label}</div>
+          <ul>${c.find.items.map(i => `<li>${i}</li>`).join('')}</ul>
+        </div>
+        <div class="copy-block">
+          <div class="cb-label">Outreach Copy</div>
+          <button class="copy-btn-sm" onclick="copyCopy('copy_${c.id}')">Copy</button>
+          <pre id="copy_${c.id}">${c.copy}</pre>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleChannel(id) {
+  const card = document.getElementById('cc_' + id);
+  card.classList.toggle('open');
+}
+
+function filterChannels(filter, btn) {
+  activeFilter = filter;
+  document.querySelectorAll('.cf-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderChannels();
+}
+
+function copyCopy(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('Copied.'));
+}
+
+renderChannels();
+
+// ===== SEQUENCE =====
+const PERSONAS = {
+  bookkeeper: {
+    label: 'Bookkeeper / CPA',
+    insight: 'You see the cash flow gap before your client does -- the upcoming payable with no matching receivable, the payroll run that\'s going to be tight. Kashu is the solution you can hand them in that moment.',
+    hook: 'seeing the cash flow problem before your clients do',
+    asset: 'real-time financial visibility',
+    angle: 'from seeing the problem to solving it'
+  },
+  creditconsultant: {
+    label: 'Business Credit Consultant',
+    insight: 'Your clients do the hard work to build business credit. Then they still can\'t access cash quickly when they need it. Kashu is the natural next step in the credit journey you\'re already guiding.',
+    hook: 'turning built credit into accessible cash',
+    asset: 'a credit-literate client base',
+    angle: 'from building credit to using it'
+  },
+  mca_broker: {
+    label: 'MCA / Alt-Finance Broker',
+    insight: 'You already know how to pitch a business owner who needs cash. Kashu gives you a cleaner product -- no confession of financial distress, no high rates, just credit that becomes liquid.',
+    hook: 'a cleaner product for cash-hungry clients',
+    asset: 'existing deal flow and pitch skills',
+    angle: 'from high-rate MCA to frictionless credit access'
+  },
+  lender: {
+    label: 'SBA Lender / Banker',
+    insight: 'Your declined applications represent businesses with real needs and often real credit -- just not qualifying cash flow. Kashu is a useful tool for exactly that client.',
+    hook: 'a home for your declined applicants',
+    asset: 'warm leads who already tried and got turned down',
+    angle: 'from decline to solution'
+  },
+  advisor: {
+    label: 'Financial Advisor',
+    insight: 'Your business owner clients have capital optimization questions you can\'t always answer through traditional investment vehicles. Cash-flow tools like Kashu complete the picture.',
+    hook: 'filling the cash flow gap in your client relationships',
+    asset: 'trusted access to business owner finances',
+    angle: 'from financial planning to operational liquidity'
+  },
+  coach: {
+    label: 'Business Coach / Consultant',
+    insight: 'You hear the cash flow stress constantly -- the client who can\'t take on a new opportunity because capital is tied up, the one delaying a hire because of a slow month. Kashu removes that constraint.',
+    hook: 'removing cash flow as the constraint holding clients back',
+    asset: 'deep operational knowledge of your clients\' businesses',
+    angle: 'from coaching around constraints to eliminating them'
+  },
+  franchise: {
+    label: 'Franchise Broker / Consultant',
+    insight: 'The buyer who just signed has immediate capital needs. Buildout deposits, initial inventory, first royalty payment while revenue ramps. Kashu is the bridge between signing and stability.',
+    hook: 'helping your buyers bridge from signing to revenue',
+    asset: 'a pipeline of motivated buyers with business credit',
+    angle: 'from franchise purchase to working capital'
+  },
+  realtor: {
+    label: 'Commercial RE Broker',
+    insight: 'Your tenants need security deposits, first month, last month, and sometimes a buildout contribution -- all before they\'ve opened a door. Credit is often there. The cash timing isn\'t.',
+    hook: 'helping your tenants fund their deposits fast',
+    asset: 'relationships at the exact moment capital need is highest',
+    angle: 'from lease signing to funded deposits'
+  },
+  insurer: {
+    label: 'Insurance Broker (Business)',
+    insight: 'A policy renewal, a new premium on a growing business, a workers\' comp deposit -- these are cash needs your clients plan for but sometimes can\'t fund in time. Kashu fills it.',
+    hook: 'making sure your clients never miss a payment that protects them',
+    asset: 'annual renewal cycles with predictable capital needs',
+    angle: 'from coverage recommendation to funded premium'
+  },
+  payroll: {
+    label: 'Payroll / HR Consultant',
+    insight: 'When a client calls to ask about delaying a payroll run, that\'s the moment. Kashu converts available business credit to cash in hours. You can be the person who solved it.',
+    hook: 'being the solution when the payroll call comes in',
+    asset: 'direct access to the highest-stress cash flow moment',
+    angle: 'from payroll crisis to solved'
+  }
+};
+
+function fmt_income(txn, fee, refs) {
+  const kashuFee = (parseFloat(fee)/100) * parseFloat(txn);
+  return '$' + Math.round(kashuFee * 0.05 * refs).toLocaleString();
+}
+
+function generateSequence() {
+  const name = document.getElementById('seq_name').value.trim() || 'there';
+  const personaKey = document.getElementById('seq_persona').value;
+  const txn = document.getElementById('seq_txn').value || '25000';
+  const fee = document.getElementById('seq_fee').value || '5';
+  const rep = document.getElementById('seq_rep').value.trim() || 'Kashu';
+  const contact = document.getElementById('seq_contact').value.trim();
+  const p = PERSONAS[personaKey];
+
+  const inc5 = fmt_income(txn, fee, 5);
+  const inc20 = fmt_income(txn, fee, 20);
+  const inc50 = fmt_income(txn, fee, 50);
+  const incPerUser = '$' + Math.round((parseFloat(fee)/100) * parseFloat(txn) * 0.05).toLocaleString();
+
+  const touches = [
+    {
+      n: 1, day: 'Day 1', title: 'The Insight',
+      subject: `${name}, a thought on ${p.hook}`,
+      body: `${name},
+
+${p.insight}
+
+I work with Kashu -- we built a platform that converts available business credit into cash. Same day. Bank account, vendor payment, payroll, wherever it needs to go.
+
+We\'re building our affiliate network around people like you: professionals with existing business relationships who are already in the room when a client has a cash flow need.
+
+The structure: you refer a business, they complete their first transaction on the platform, you earn a commission. Clean, simple, no ongoing management required.
+
+I\'d like to show you how it works and share what other ${p.label}s are doing with it.
+
+Worth 10 minutes?
+
+-- ${rep}${contact ? '\n' + contact : ''}`
+    },
+    {
+      n: 2, day: 'Day 3', title: 'The Math',
+      subject: `what ${inc5} to ${inc20} a month looks like from ${p.hook}`,
+      body: `${name},
+
+Wanted to put a number to it.
+
+Each business you refer earns you a commission on their first transaction. At an average transaction of $${parseInt(txn).toLocaleString()}, that\'s ${incPerUser} per referral.
+
+5 referrals: ${inc5}
+20 referrals: ${inc20}
+50 referrals: ${inc50}
+
+That\'s not residual income -- it\'s one-time per user. But if you have the client relationships, the volume adds up fast. And at $500K in attributed referral volume, your commission rate doubles.
+
+You\'re already doing the work. This is just a revenue line attached to it.
+
+-- ${rep}${contact ? '\n' + contact : ''}`
+    },
+    {
+      n: 3, day: 'Day 7', title: 'The Easy Yes',
+      subject: `the referral is the entire job`,
+      body: `${name},
+
+Wanted to be clear about what\'s actually involved.
+
+You share a link. The business owner clicks it, completes the onboarding, and initiates their transaction. You don\'t collect their information, you don\'t handle any funds, and you don\'t manage the relationship after the intro.
+
+We handle everything: onboarding, compliance, the transaction, the support. Your role is the introduction.
+
+Your ${p.asset} is the hard part. You already have it. Kashu is just what you hand them when the timing is right.
+
+When does the timing tend to be right for your clients?
+
+-- ${rep}${contact ? '\n' + contact : ''}`
+    },
+    {
+      n: 4, day: 'Day 14', title: 'The Compound',
+      subject: `what this looks like at the end of a year`,
+      body: `${name},
+
+One more angle worth considering.
+
+The businesses you refer keep using Kashu. Your commission is earned on the first transaction, but the relationship you create -- as the person who connected them to a tool that actually worked -- compounds.
+
+Client trust goes up. Referral relationships do too. The business owners who use Kashu tend to tell other business owners.
+
+And as your attributed volume crosses $500K, your commission rate doubles automatically.
+
+It\'s a different kind of asset. Built from ${p.angle}.
+
+Still interested in a quick walkthrough?
+
+-- ${rep}${contact ? '\n' + contact : ''}`
+    },
+    {
+      n: 5, day: 'Day 21', title: 'The Close',
+      subject: `last note on this`,
+      body: `${name},
+
+The platform is launching its affiliate program in the next few months and I\'m building the network now.
+
+If the timing works for you, I\'d like to get you set up before the formal launch so you\'re already earning when it goes live.
+
+If not, no pressure -- the door stays open.
+
+-- ${rep}${contact ? '\n' + contact : ''}`
+    }
+  ];
+
+  const html = touches.map((t, i) => `
+    <div class="touch-card ${i === 0 ? 'open' : ''}" id="tc${t.n}">
+      <div class="touch-header" onclick="toggleTouch('tc${t.n}')">
+        <div class="touch-num">${t.n}</div>
+        <div class="touch-title-area">
+          <strong>${t.title}</strong>
+          <span>Subject: ${t.subject}</span>
+        </div>
+        <div class="touch-day">${t.day}</div>
+        <div class="touch-chevron"></div>
+      </div>
+      <div class="touch-body">
+        <div class="touch-subject">
+          <span class="ts-label">Subject</span>
+          <span class="ts-val">${t.subject}</span>
+        </div>
+        <div class="copy-block">
+          <button class="copy-btn-sm" onclick="copyTouch('tbody${t.n}')">Copy</button>
+          <pre id="tbody${t.n}">${t.body}</pre>
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('seqOutput').innerHTML = html;
+  document.getElementById('seqOutput').style.display = 'block';
+  document.getElementById('seqOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleTouch(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+function copyTouch(id) {
+  navigator.clipboard.writeText(document.getElementById(id).textContent).then(() => showToast('Copied.'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+</script>
+</body>
+</html>

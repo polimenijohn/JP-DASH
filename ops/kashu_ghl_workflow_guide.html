@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kashu — GHL Workflow Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --dark:   #0b5147;
+    --mid:    #397168;
+    --muted:  #93adaa;
+    --green:  #01de8f;
+    --light1: #8de6c6;
+    --light2: #d5eae3;
+    --light3: #e1fea1;
+    --bg:     #f4f9f8;
+    --white:  #ffffff;
+    --text:   #1a2e2b;
+    --sub:    #4a6360;
+    --border: #c8dbd8;
+    --red:    #e05252;
+    --orange: #f59e0b;
+    --purple: #7c3aed;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: var(--dark); padding: 18px 32px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .logo-mark { width: 36px; height: 36px; background: var(--green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: var(--dark); }
+  header h1 { color: var(--white); font-size: 20px; font-weight: 600; }
+  header span { color: var(--muted); font-size: 14px; margin-left: auto; }
+
+  .main { max-width: 960px; margin: 40px auto; padding: 0 20px 80px; }
+
+  /* Selector */
+  .workflow-selector {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 28px;
+  }
+  .workflow-selector h2 { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .workflow-selector p { font-size: 14px; color: var(--sub); margin-bottom: 20px; }
+
+  .wf-options {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;
+  }
+  .wf-option {
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--white);
+  }
+  .wf-option:hover { border-color: var(--mid); background: #f4f9f8; }
+  .wf-option.active { border-color: var(--green); background: #f0fdf8; }
+  .wf-option .wo-icon { font-size: 24px; margin-bottom: 8px; }
+  .wf-option .wo-title { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .wf-option .wo-sub { font-size: 12px; color: var(--sub); }
+
+  /* Workflow Output */
+  #workflowOutput { display: none; }
+
+  .wf-header {
+    background: var(--dark);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .wf-header-icon { font-size: 32px; }
+  .wf-header h2 { font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .wf-header p { font-size: 14px; color: var(--muted); }
+  .wf-header .wf-badge { display: inline-block; background: rgba(1,222,143,0.15); color: var(--green); font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 10px; border: 1px solid rgba(1,222,143,0.3); margin-top: 8px; }
+
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mid); margin-bottom: 12px; }
+
+  /* Setup Checklist */
+  .setup-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;
+  }
+  .setup-card h3 { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 16px; }
+  .setup-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid var(--light2);
+  }
+  .setup-item:last-child { border-bottom: none; }
+  .setup-check {
+    width: 20px; height: 20px; flex-shrink: 0;
+    border: 2px solid var(--border); border-radius: 4px;
+    cursor: pointer; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--white); background: var(--white);
+    transition: all 0.15s;
+  }
+  .setup-check.checked { background: var(--dark); border-color: var(--dark); }
+  .setup-check.checked::after { content: ''; }
+  .setup-item-text { flex: 1; }
+  .setup-item-text strong { font-size: 14px; font-weight: 600; color: var(--text); display: block; margin-bottom: 2px; }
+  .setup-item-text span { font-size: 12px; color: var(--sub); }
+
+  /* Step Cards */
+  .steps-container { display: flex; flex-direction: column; gap: 0; }
+
+  .step-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    border-bottom: none;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .step-card:first-child { border-radius: 12px 12px 0 0; }
+  .step-card:last-child { border-radius: 0 0 12px 12px; border-bottom: 1px solid var(--border); }
+  .step-card:only-child { border-radius: 12px; border-bottom: 1px solid var(--border); }
+
+  .step-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px 20px;
+    cursor: pointer;
+    user-select: none;
+    background: var(--white);
+    transition: background 0.15s;
+  }
+  .step-header:hover { background: #f9fdfc; }
+
+  .step-number {
+    width: 32px; height: 32px; flex-shrink: 0;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .step-number.trigger { background: var(--light3); color: #5a7a00; }
+  .step-number.wait    { background: #fef3c7; color: #92400e; }
+  .step-number.action  { background: var(--light2); color: var(--dark); }
+  .step-number.branch  { background: #ede9fe; color: var(--purple); }
+  .step-number.end     { background: #fee2e2; color: var(--red); }
+
+  .step-title { flex: 1; }
+  .step-title strong { font-size: 15px; font-weight: 700; color: var(--text); }
+  .step-title span { font-size: 12px; color: var(--sub); display: block; margin-top: 2px; }
+
+  .step-type-badge {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+    padding: 3px 8px; border-radius: 8px; flex-shrink: 0;
+  }
+  .step-type-badge.trigger { background: var(--light3); color: #5a7a00; }
+  .step-type-badge.wait    { background: #fef3c7; color: #92400e; }
+  .step-type-badge.action  { background: var(--light2); color: var(--dark); }
+  .step-type-badge.branch  { background: #ede9fe; color: var(--purple); }
+  .step-type-badge.end     { background: #fee2e2; color: var(--red); }
+
+  .chevron { font-size: 12px; color: var(--muted); margin-left: 8px; transition: transform 0.2s; }
+  .step-card.open .chevron { transform: rotate(180deg); }
+
+  .step-body {
+    display: none;
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--light2);
+  }
+  .step-card.open .step-body { display: block; }
+
+  .ghl-instruction {
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+  .ghl-instruction .gi-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--mid); margin-bottom: 6px; }
+  .ghl-instruction .gi-value { font-size: 14px; color: var(--text); line-height: 1.6; }
+  .ghl-instruction .gi-value code {
+    background: var(--light2);
+    color: var(--dark);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  .copy-block {
+    background: var(--dark);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 10px;
+    position: relative;
+  }
+  .copy-block pre {
+    color: var(--light1);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.6;
+    margin: 0;
+  }
+  .copy-btn {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--white);
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-size: 11px; font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.2); }
+
+  .pro-tip {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #78350f;
+  }
+  .pro-tip strong { font-weight: 700; }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex; gap: 0; background: var(--white);
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; margin-bottom: 20px;
+  }
+  .stat-item { flex: 1; padding: 16px 20px; text-align: center; border-right: 1px solid var(--border); }
+  .stat-item:last-child { border-right: none; }
+  .stat-item .stat-n { font-size: 24px; font-weight: 800; color: var(--dark); }
+  .stat-item .stat-l { font-size: 11px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  .actions-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+  .btn { padding: 12px 24px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+  .btn-primary { background: var(--green); color: var(--dark); }
+  .btn-primary:hover { background: #00c97e; }
+  .btn-secondary { background: var(--light2); color: var(--dark); }
+  .btn-secondary:hover { background: var(--light1); }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--dark); color: var(--white); padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 9999; }
+  .toast.show { opacity: 1; }
+
+  .connector { height: 0; }
+
+  .opp-icon:empty, .kill-icon:empty, .wo-icon:empty, .cc-icon:empty, .wf-header-icon:empty, .upload-icon:empty, .pn-item .pn-icon:empty, .ty-icon:empty, .pm-icon:empty { display:none; }
+
+  .chevron::after, .touch-chevron::after { content: "\25BC"; font-size: 10px; }
+  .check::after { content: "\2713"; font-weight: 700; }
+  .setup-check.checked::after { content: "\2713"; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">K</div>
+  <h1>GHL Workflow Builder</h1>
+  <span>Kashu Sales Tools</span>
+</header>
+
+<div class="main">
+
+  <div class="workflow-selector">
+    <h2>Select a Workflow to Build</h2>
+    <p>Click any workflow below for step-by-step GHL build instructions with exact copy, settings, and logic.</p>
+    <div class="wf-options" id="wfOptions">
+      <div class="wf-option active" onclick="loadWorkflow('merchant_5touch')">
+        <div class="wo-icon"></div>
+        <div class="wo-title">Merchant 5-Touch Sequence</div>
+        <div class="wo-sub">Direct outreach to cold merchants. Runs 21 days.</div>
+      </div>
+      <div class="wf-option" onclick="loadWorkflow('merchant_coldlead')">
+        <div class="wo-icon"></div>
+        <div class="wo-title">Cold Lead Re-Engagement</div>
+        <div class="wo-sub">Reactivate pipeline contacts who went dark.</div>
+      </div>
+      <div class="wf-option" onclick="loadWorkflow('mrp_onboarding')">
+        <div class="wo-icon"></div>
+        <div class="wo-title">MRP Onboarding Sequence</div>
+        <div class="wo-sub">Activate new MRPs, deliver kit, prompt first referral.</div>
+      </div>
+      <div class="wf-option" onclick="loadWorkflow('mrp_reactivation')">
+        <div class="wo-icon"></div>
+        <div class="wo-title">MRP Reactivation Campaign</div>
+        <div class="wo-sub">Wake up dormant MRPs. Highest ROI automation.</div>
+      </div>
+      <div class="wf-option" onclick="loadWorkflow('merchant_onboarding')">
+        <div class="wo-icon"></div>
+        <div class="wo-title">Merchant Post-Activation</div>
+        <div class="wo-sub">30/60/90 day check-in + credit-to-cash cross-sell.</div>
+      </div>
+      <div class="wf-option" onclick="loadWorkflow('pipeline_stall')">
+        <div class="wo-icon">&#9203;</div>
+        <div class="wo-title">Pipeline Stall Handler</div>
+        <div class="wo-sub">Trigger when a deal goes cold for 7+ days.</div>
+      </div>
+      <div class="wf-option" onclick="loadWorkflow('hot_lead_trigger')">
+        <div class="wo-icon"></div>
+        <div class="wo-title">MRP Hot Lead Alerts</div>
+        <div class="wo-sub">Notify MRPs when their referred merchants engage with Kashu tools.</div>
+      </div>
+      <div class="wf-option" onclick="loadWorkflow('reverse_referral')">
+        <div class="wo-icon"></div>
+        <div class="wo-title">Reverse Referral Engine</div>
+        <div class="wo-sub">Day 30: ask live merchants for vendor intros. Feed leads back to MRP.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="workflowOutput"></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const WORKFLOWS = {
+
+  merchant_5touch: {
+    icon: '',
+    title: 'Merchant 5-Touch Email Sequence',
+    desc: 'Cold outreach to merchant prospects. Runs over 21 days with 5 strategically timed touches.',
+    badge: '21-Day Sequence · 5 Steps',
+    stats: [
+      { n: '5', l: 'Email Touches' }, { n: '21', l: 'Days Total' }, { n: '1', l: 'Trigger' }, { n: '4', l: 'Wait Steps' }
+    ],
+    setup: [
+      { t: 'Create Contact Tag', d: 'Tag: <code>merchant-outreach-active</code> — applied when contact enters this workflow' },
+      { t: 'Create Pipeline Stage', d: 'Stage: <strong>Cold Outreach</strong> in your Merchant pipeline' },
+      { t: 'Verify Email Sender', d: 'Make sure your sending email is verified in GHL Settings > Email Services' },
+      { t: 'Load Custom Values', d: 'Add custom values: <code>{{contact.first_name}}</code>, <code>{{contact.company_name}}</code>, <code>{{user.name}}</code> — these auto-populate in copy' },
+    ],
+    steps: [
+      {
+        type: 'trigger', label: 'Trigger', title: 'Workflow Trigger',
+        sub: 'What starts this workflow',
+        ghl: [
+          { label: 'Trigger Type', value: 'Contact Tag Added' },
+          { label: 'Tag', value: '<code>merchant-outreach-active</code>' },
+          { label: 'Filter', value: 'Contact type = Merchant (optional but recommended for list hygiene)' },
+        ]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Touch 1 — The Full Pitch (Day 1)',
+        sub: 'Send immediately on entry',
+        ghl: [
+          { label: 'Action Type', value: 'Send Email' },
+          { label: 'Subject Line', value: 'your processor is charging you more than they\'re telling you' },
+          { label: 'From Name', value: '{{user.name}}' },
+          { label: 'Delay', value: 'Immediately (no wait before this step)' },
+        ],
+        copy: `Hi {{contact.first_name}},
+
+Most processors are built on a model that charges you more as you grow. The statement shows one rate. The effective rate -- what you're actually paying after fees, assessments, and minimums -- is usually 20-40% higher.
+
+Three things Kashu does differently:
+
+We guarantee your rate in writing. Not a verbal promise. Locked in the agreement.
+
+You go live without missing a single day of business. The switch is frictionless. We handle the entire transition.
+
+With our surcharge program, you eliminate processing fees entirely -- that cost shifts to customers who choose to pay by card. That's not just saving money. That's a new revenue line.
+
+That's not a processor switch. That's a no-brainer.
+
+Worth 10 minutes to run your numbers?
+
+-- {{user.name}}`
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 2 Days',
+        sub: 'Before Touch 2',
+        ghl: [
+          { label: 'Action Type', value: 'Wait' },
+          { label: 'Duration', value: '2 Days' },
+          { label: 'Wait Type', value: 'Time Delay (not time of day)' },
+        ]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Touch 2 — The Guarantee (Day 3)',
+        sub: 'Standalone. Reframe around the written guarantee.',
+        ghl: [
+          { label: 'Action Type', value: 'Send Email' },
+          { label: 'Subject Line', value: 'we put it in writing' },
+        ],
+        copy: `{{contact.first_name}},
+
+One short note.
+
+Every processor says they have great rates. We put ours in writing. The rate you're quoted is the rate in your agreement -- not a promotional period, not subject to review.
+
+If you've ever been surprised by a statement after month two, that's the difference.
+
+Happy to walk you through it.
+
+-- {{user.name}}`
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 4 Days',
+        sub: 'Before Touch 3',
+        ghl: [
+          { label: 'Action Type', value: 'Wait' },
+          { label: 'Duration', value: '4 Days' },
+        ]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Touch 3 — Zero Downtime (Day 7)',
+        sub: 'Kill the "switching is a pain" objection.',
+        ghl: [
+          { label: 'Action Type', value: 'Send Email' },
+          { label: 'Subject Line', value: 'the switch takes less than a day. you don\'t miss a transaction.' },
+        ],
+        copy: `{{contact.first_name}},
+
+The biggest reason most businesses don't switch processors isn't the rate. It's the fear that something will break.
+
+We've done this hundreds of times. Here's what the switch actually looks like:
+
+Day 1: We collect your info and submit the application.
+Day 2-3: Approval and terminal setup (remote, no tech required on your end).
+Day 4: You're live.
+
+You don't miss a single day of business. The whole thing is frictionless.
+
+If that's been the hesitation, it's not a real obstacle.
+
+-- {{user.name}}`
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 7 Days',
+        sub: 'Before Touch 4',
+        ghl: [
+          { label: 'Action Type', value: 'Wait' },
+          { label: 'Duration', value: '7 Days' },
+        ]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Touch 4 — The Revenue Flip (Day 14)',
+        sub: 'Reframe: not a cost reduction, a new revenue line.',
+        ghl: [
+          { label: 'Action Type', value: 'Send Email' },
+          { label: 'Subject Line', value: 'this one reframes the whole conversation' },
+        ],
+        copy: `{{contact.first_name}},
+
+Most businesses think of switching processors as a way to reduce an expense.
+
+Here's the better frame: with Kashu's surcharge program, you don't just reduce the expense -- you eliminate it. And when your customers pay by card, the fee they absorb is revenue that stays in your pocket.
+
+That's not a line item reduction. That's adding a revenue line to your P&L.
+
+The businesses that see the biggest impact are the ones processing $50K+ a month. If that's you, the math is significant.
+
+Let me know if you want to run the numbers.
+
+-- {{user.name}}`
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 7 Days',
+        sub: 'Before Touch 5',
+        ghl: [
+          { label: 'Action Type', value: 'Wait' },
+          { label: 'Duration', value: '7 Days' },
+        ]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Touch 5 — The No-Brainer Close (Day 21)',
+        sub: '3 lines. Door open. Move on.',
+        ghl: [
+          { label: 'Action Type', value: 'Send Email' },
+          { label: 'Subject Line', value: 'last one from me on this' },
+        ],
+        copy: `{{contact.first_name}},
+
+Better rate guaranteed in writing. Zero downtime on the switch. Option to eliminate processing fees entirely.
+
+If the timing isn't right, no problem -- just say the word and I'll follow up when it makes sense.
+
+-- {{user.name}}`
+      },
+      {
+        type: 'branch', label: 'Branch', title: 'If/Else — Responded?',
+        sub: 'Route contacts based on engagement',
+        ghl: [
+          { label: 'Action Type', value: 'If/Else Condition' },
+          { label: 'Condition', value: 'Email Opened = Yes OR Email Clicked = Yes' },
+          { label: 'Yes Path', value: 'Add tag <code>merchant-engaged</code> → Move to Warm Leads stage → Notify assigned user' },
+          { label: 'No Path', value: 'Add tag <code>merchant-no-response-21d</code> → Move to Long Drip stage' },
+        ],
+        tip: 'Anyone who opened but didn\'t respond is still worth a manual call. Create a task in GHL to have a rep reach out personally to this segment.'
+      },
+      {
+        type: 'end', label: 'End', title: 'Workflow End',
+        sub: 'Clean up tags on exit',
+        ghl: [
+          { label: 'Action Type', value: 'Remove Tag' },
+          { label: 'Tag to Remove', value: '<code>merchant-outreach-active</code>' },
+          { label: 'Note', value: 'Keeps your active list clean. Contact retains the outcome tag (engaged or no-response).' },
+        ]
+      }
+    ]
+  },
+
+  merchant_coldlead: {
+    icon: '',
+    title: 'Cold Lead Re-Engagement',
+    desc: 'For contacts already in your pipeline who have gone dark. Triggers automatically when a contact sits in a stage for 7+ days with no activity.',
+    badge: '14-Day Sequence · 3 Touches',
+    stats: [
+      { n: '3', l: 'Email Touches' }, { n: '14', l: 'Days Total' }, { n: '1', l: 'SMS Touch' }, { n: '1', l: 'Auto-Task' }
+    ],
+    setup: [
+      { t: 'Set Stage Threshold', d: 'In your pipeline, flag any contact who has been in the same stage for 7+ days with no last-activity update' },
+      { t: 'Create Tag', d: 'Tag: <code>merchant-gone-cold</code> — applied by the pipeline rule or manually' },
+      { t: 'Verify SMS Sender', d: 'Confirm your SMS number is set up in GHL > Phone Numbers' },
+    ],
+    steps: [
+      {
+        type: 'trigger', label: 'Trigger', title: 'Workflow Trigger',
+        sub: 'Tag applied or pipeline stall detected',
+        ghl: [
+          { label: 'Trigger Type', value: 'Contact Tag Added OR Pipeline Stage Changed (with inactivity filter)' },
+          { label: 'Tag', value: '<code>merchant-gone-cold</code>' },
+        ]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Touch 1 — Quick Check-in Email (Day 1)',
+        sub: 'Short. No pitch. Just an open door.',
+        ghl: [
+          { label: 'Action Type', value: 'Send Email' },
+          { label: 'Subject Line', value: 'still on your radar?' },
+        ],
+        copy: `{{contact.first_name}},
+
+Been a minute. Wanted to check in before I stopped following up.
+
+If timing just wasn't right, happy to reconnect. If something changed on your end, totally understand -- just let me know either way.
+
+-- {{user.name}}`
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 3 Days', sub: 'Before SMS',
+        ghl: [{ label: 'Duration', value: '3 Days' }]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Touch 2 — SMS (Day 4)',
+        sub: 'One text. Short. Human.',
+        ghl: [
+          { label: 'Action Type', value: 'Send SMS' },
+          { label: 'Message', value: 'Hey {{contact.first_name}}, {{user.name}} here from Kashu. Still worth 10 minutes on the processing rates? Totally understand if timing changed -- just let me know.' },
+        ]
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 7 Days', sub: 'Before final email',
+        ghl: [{ label: 'Duration', value: '7 Days' }]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Touch 3 — The Breakup (Day 11)',
+        sub: 'Final email. Low pressure. Highest response rate of the sequence.',
+        ghl: [
+          { label: 'Action Type', value: 'Send Email' },
+          { label: 'Subject Line', value: 'closing your file' },
+        ],
+        copy: `{{contact.first_name}},
+
+I'm going to close your file on my end so I'm not cluttering your inbox.
+
+If things shift and you want to revisit better processing rates, the door is open -- just reply to this or reach out whenever.
+
+-- {{user.name}}`
+      },
+      {
+        type: 'action', label: 'Action', title: 'Create Follow-Up Task',
+        sub: 'Assign a manual task for hot leads in this bucket',
+        ghl: [
+          { label: 'Action Type', value: 'Create Task' },
+          { label: 'Task Title', value: 'Manual follow-up — cold re-engagement (no response after 3 touches)' },
+          { label: 'Assign To', value: 'Contact owner' },
+          { label: 'Due In', value: '3 Days' },
+        ],
+        tip: 'The "closing your file" email often generates a response on its own. If they reply before the task due date, mark it complete and move them to a hot stage.'
+      },
+      {
+        type: 'end', label: 'End', title: 'Workflow End',
+        sub: 'Update stage and tags',
+        ghl: [
+          { label: 'Remove Tag', value: '<code>merchant-gone-cold</code>' },
+          { label: 'Add Tag', value: '<code>merchant-long-drip</code>' },
+          { label: 'Pipeline Stage', value: 'Move to Long Drip or Archive stage' },
+        ]
+      }
+    ]
+  },
+
+  mrp_onboarding: {
+    icon: '',
+    title: 'MRP Onboarding Sequence',
+    desc: 'Activates the moment a new MRP signs their agreement. Delivers the enablement kit, sets expectations, and prompts the first referral.',
+    badge: '30-Day Sequence · Auto-Kit Delivery',
+    stats: [
+      { n: '4', l: 'Email Touches' }, { n: '30', l: 'Days Total' }, { n: '1', l: 'SMS Touch' }, { n: '1', l: 'Auto-Kit Delivery' }
+    ],
+    setup: [
+      { t: 'Upload Enablement Kit', d: 'Upload the MRP one-pager PDF, explainer video link, and copy/paste pitch text to GHL Media Library or a public drive link' },
+      { t: 'Create MRP Pipeline', d: 'Pipeline stages: New MRP → First Referral Pending → Active (1+ referrals) → Top Partner' },
+      { t: 'Create Tag', d: 'Tag: <code>mrp-new</code> applied on agreement signed' },
+    ],
+    steps: [
+      {
+        type: 'trigger', label: 'Trigger', title: 'Workflow Trigger',
+        sub: 'Agreement signed / MRP added',
+        ghl: [
+          { label: 'Trigger Type', value: 'Contact Tag Added' },
+          { label: 'Tag', value: '<code>mrp-new</code>' },
+        ]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Welcome Email + Kit (Day 1)',
+        sub: 'Immediate. Deliver everything in one email.',
+        ghl: [
+          { label: 'Action Type', value: 'Send Email' },
+          { label: 'Subject Line', value: 'you\'re in. here\'s everything you need.' },
+        ],
+        copy: `{{contact.first_name}},
+
+Welcome to the Kashu partner network.
+
+Here's your quick-start kit:
+
+One-pager: [LINK] — Brand-ready, single page. Send it or print it.
+How it works: [VIDEO LINK] — 3-minute explainer you can forward to a merchant.
+Your pitch text: Copy and paste this when you refer someone:
+
+"Hey [merchant], I've been working with a payment processor called Kashu -- they guarantee better rates in writing and the switch takes less than a day with zero downtime. Might be worth 10 minutes. Want me to connect you?"
+
+Your residuals are 25% of net processing revenue on every merchant you bring in, paid monthly. There's no cap.
+
+The easiest first step: think of one business owner you know who complains about their processing fees. Send them that text above.
+
+Any questions, I'm here.
+
+-- {{user.name}}`
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 3 Days', sub: 'Before Day 3 check-in',
+        ghl: [{ label: 'Duration', value: '3 Days' }]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Touch 2 — Activation Nudge (Day 3)',
+        sub: 'Keep it short. One ask.',
+        ghl: [
+          { label: 'Action Type', value: 'Send Email' },
+          { label: 'Subject Line', value: 'one name is all it takes to start' },
+        ],
+        copy: `{{contact.first_name}},
+
+You don't need a list. You don't need a pitch. You need one name.
+
+Think of one business owner -- restaurant, contractor, salon, auto shop, doesn't matter -- who you know personally. Send them the pitch text from your welcome email.
+
+That's the whole job. We take it from there.
+
+-- {{user.name}}`
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 4 Days', sub: 'Before SMS on Day 7',
+        ghl: [{ label: 'Duration', value: '4 Days' }]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Touch 3 — SMS Check-in (Day 7)',
+        sub: 'Text from rep. Human tone.',
+        ghl: [
+          { label: 'Action Type', value: 'Send SMS' },
+          { label: 'Message', value: 'Hey {{contact.first_name}}, {{user.name}} from Kashu. Just checking in -- have you had a chance to refer anyone yet? Happy to help with your first intro if you want to talk through it.' },
+        ]
+      },
+      {
+        type: 'branch', label: 'Branch', title: 'Check — First Referral Submitted?',
+        sub: 'Route based on whether they\'ve referred anyone',
+        ghl: [
+          { label: 'Condition', value: 'Check custom field: <code>mrp_referral_count</code> > 0' },
+          { label: 'Yes Path', value: 'Add tag <code>mrp-active</code> → Move to Active stage → Skip remaining onboarding' },
+          { label: 'No Path', value: 'Continue to Day 14 re-engagement' },
+        ]
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 7 Days', sub: 'Before Day 14 email',
+        ghl: [{ label: 'Duration', value: '7 Days' }]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Touch 4 — The Math (Day 14)',
+        sub: 'Show the income potential. Real numbers.',
+        ghl: [
+          { label: 'Action Type', value: 'Send Email' },
+          { label: 'Subject Line', value: 'what 5 merchants a month actually looks like' },
+        ],
+        copy: `{{contact.first_name}},
+
+Quick math on what the residuals look like when this starts compounding:
+
+5 merchants processing $30K/month each = $150K in portfolio volume.
+At your 25% residual split, that's roughly $130/month.
+
+That's from 5 referrals. Most of our active partners refer 10-20 in the first quarter once they get the first one across the finish line.
+
+The residuals pay every month. One referral, ongoing.
+
+Want to schedule 15 minutes to talk through your pipeline strategy?
+
+-- {{user.name}}`
+      },
+      {
+        type: 'end', label: 'End', title: 'Workflow End',
+        sub: 'Tag update at Day 30',
+        ghl: [
+          { label: 'Remove Tag', value: '<code>mrp-new</code>' },
+          { label: 'Add Tag', value: 'If no referral: <code>mrp-dormant</code>. If referral submitted: <code>mrp-active</code>' },
+        ]
+      }
+    ]
+  },
+
+  mrp_reactivation: {
+    icon: '',
+    title: 'MRP Reactivation Campaign',
+    desc: 'The highest ROI automation in the stack. Targets dormant MRPs who were once active or signed up and never referred. Costs nothing to run against people you already paid to acquire.',
+    badge: 'Highest ROI · 21-Day · 3 Touches',
+    stats: [
+      { n: '3', l: 'Touches' }, { n: '21', l: 'Days' }, { n: '1', l: 'SMS' }, { n: '∞', l: 'ROI Potential' }
+    ],
+    setup: [
+      { t: 'Segment Your MRP List', d: 'In GHL, filter contacts tagged <code>mrp</code> with zero referrals in last 90 days. Tag them <code>mrp-dormant</code>.' },
+      { t: 'Do NOT run on ghosts', d: 'Contacts with no opens in 180 days should go to a monthly newsletter drip, not this sequence.' },
+    ],
+    steps: [
+      {
+        type: 'trigger', label: 'Trigger', title: 'Workflow Trigger',
+        sub: 'Applied to dormant MRP segment',
+        ghl: [
+          { label: 'Trigger Type', value: 'Contact Tag Added' },
+          { label: 'Tag', value: '<code>mrp-dormant</code>' },
+        ]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Touch 1 — Re-Engage (Day 1)',
+        sub: 'Acknowledge the gap. Reopen the door.',
+        ghl: [
+          { label: 'Action Type', value: 'Send Email' },
+          { label: 'Subject Line', value: 'your Kashu residuals are still waiting' },
+        ],
+        copy: `{{contact.first_name}},
+
+It's been a while -- wanted to check in.
+
+Your partner account is still active and your residual structure hasn't changed. 25% on every merchant you refer, paid monthly, no cap.
+
+A few things have improved on our end since you signed up: faster onboarding, better materials, and we've added a surcharge option that makes the pitch easier -- merchants can eliminate their processing fees entirely.
+
+If you've been sitting on any merchant relationships, now's a good time to move on them.
+
+Happy to jump on a quick call and talk through your pipeline.
+
+-- {{user.name}}`
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 3 Days', sub: 'Before SMS',
+        ghl: [{ label: 'Duration', value: '3 Days' }]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Touch 2 — SMS (Day 4)',
+        sub: 'Text follow-up. Short.',
+        ghl: [
+          { label: 'Action Type', value: 'Send SMS' },
+          { label: 'Message', value: 'Hey {{contact.first_name}} -- {{user.name}} from Kashu. Just sent you an email about reactivating your partner account. Have a couple of merchant referrals in mind for you. Worth a quick chat?' },
+        ]
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 7 Days', sub: 'Before final email',
+        ghl: [{ label: 'Duration', value: '7 Days' }]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Touch 3 — The Closer (Day 11)',
+        sub: 'The easiest yes they\'ll say all week.',
+        ghl: [
+          { label: 'Action Type', value: 'Send Email' },
+          { label: 'Subject Line', value: 'one name' },
+        ],
+        copy: `{{contact.first_name}},
+
+One name.
+
+That's all I'm asking for. One business owner you know who could be on a better processing deal.
+
+I'll handle the conversation, the pitch, the onboarding -- everything. You refer, we activate, you earn the residual. Every month.
+
+Who's one person that comes to mind?
+
+-- {{user.name}}`
+      },
+      {
+        type: 'branch', label: 'Branch', title: 'Responded or Clicked?',
+        sub: 'Route based on engagement',
+        ghl: [
+          { label: 'Condition', value: 'Replied to email OR SMS OR Clicked any link' },
+          { label: 'Yes Path', value: 'Remove <code>mrp-dormant</code>, add <code>mrp-reengaged</code> → Notify rep immediately' },
+          { label: 'No Path', value: 'Add to monthly MRP newsletter drip, remove from active reactivation' },
+        ],
+        tip: 'Any MRP who responds to this sequence is warm. Get a rep on them manually within 24 hours -- don\'t let the machine handle re-engaged partners.'
+      },
+      {
+        type: 'end', label: 'End', title: 'Workflow End',
+        ghl: [{ label: 'Remove Tag', value: '<code>mrp-dormant</code>' }]
+      }
+    ]
+  },
+
+  merchant_onboarding: {
+    icon: '',
+    title: 'Merchant Post-Activation (30/60/90)',
+    desc: 'Runs after a merchant activates. Keeps them engaged, catches churn risk early, and surfaces the credit-to-cash cross-sell at the right moment.',
+    badge: '90-Day Sequence · Cross-Sell at Day 45',
+    stats: [
+      { n: '4', l: 'Touches' }, { n: '90', l: 'Days' }, { n: '1', l: 'Cross-Sell' }, { n: '1', l: 'Churn Alert' }
+    ],
+    setup: [
+      { t: 'Create Activation Trigger', d: 'Tag: <code>merchant-activated</code> applied when merchant goes live on Kashu processing' },
+      { t: 'Custom Field: First Statement Date', d: 'Add a date field to track when their first statement was processed -- used in 30-day check-in logic' },
+    ],
+    steps: [
+      {
+        type: 'trigger', label: 'Trigger', title: 'Trigger: Merchant Activated',
+        sub: 'Tag applied when merchant goes live',
+        ghl: [
+          { label: 'Trigger Type', value: 'Contact Tag Added' },
+          { label: 'Tag', value: '<code>merchant-activated</code>' },
+        ]
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 7 Days', ghl: [{ label: 'Duration', value: '7 Days' }]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Day 7 — Welcome Check-in',
+        sub: 'Confirm they\'re live. Offer support.',
+        ghl: [{ label: 'Action Type', value: 'Send Email' }, { label: 'Subject Line', value: 'how\'s the first week looking?' }],
+        copy: `{{contact.first_name}},
+
+Just checking in on week one.
+
+Everything processing smoothly? If anything looks off on the terminal or you have questions about your first statement, reach out directly -- we make it right fast.
+
+-- {{user.name}}`
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 23 Days (Day 30)',
+        ghl: [{ label: 'Duration', value: '23 Days' }]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Day 30 — First Statement Review',
+        sub: 'Reference their first full statement cycle.',
+        ghl: [{ label: 'Action Type', value: 'Send Email' }, { label: 'Subject Line', value: 'your first full statement -- what to look for' }],
+        copy: `{{contact.first_name}},
+
+Your first full processing statement should be in or coming shortly.
+
+A few things worth checking: your effective rate should match what's in your agreement exactly. If it doesn't, flag it -- we fix discrepancies immediately.
+
+If everything looks right, great. If you have questions, I'm a reply away.
+
+-- {{user.name}}`
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 15 Days (Day 45)',
+        ghl: [{ label: 'Duration', value: '15 Days' }]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Day 45 — Credit to Cash Cross-Sell',
+        sub: 'Separate offer. Separate pitch. Don\'t conflate with processing.',
+        ghl: [{ label: 'Action Type', value: 'Send Email' }, { label: 'Subject Line', value: 'a second offer worth knowing about' }],
+        copy: `{{contact.first_name}},
+
+One separate thing I wanted to mention -- this isn't about your processing account.
+
+Kashu also offers a credit-to-cash service that lets customers convert credit into cash on-site. It's a different product, different use case, and it serves businesses where customers have credit they want to access quickly.
+
+If that sounds relevant to your customer base, worth a 10-minute conversation. If not, no problem -- just wanted to make sure you knew it existed.
+
+-- {{user.name}}`
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 45 Days (Day 90)',
+        ghl: [{ label: 'Duration', value: '45 Days' }]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Day 90 — Health Check',
+        sub: 'Retention check-in. Catch churn risk.',
+        ghl: [{ label: 'Action Type', value: 'Send Email' }, { label: 'Subject Line', value: '90 days in -- quick check-in' }],
+        copy: `{{contact.first_name}},
+
+90 days in. Wanted to do a quick check-in.
+
+Everything still working the way it should? Any questions on the account, the statements, or anything on our end?
+
+We're always looking to make sure our merchants are taken care of. If something's been bugging you, now's a good time to surface it.
+
+-- {{user.name}}`
+      },
+      {
+        type: 'action', label: 'Action', title: 'Create Churn Risk Task',
+        sub: 'If merchant has low processing volume at Day 90, flag it',
+        ghl: [
+          { label: 'Action Type', value: 'Create Task (conditional on low volume custom field)' },
+          { label: 'Task Title', value: 'At-risk merchant check: {{contact.company_name}} — low 90-day volume' },
+          { label: 'Assign To', value: 'Contact owner' },
+          { label: 'Due In', value: '1 Day' },
+        ],
+        tip: 'Set up a custom field that syncs from your processing platform showing monthly volume. Flag any merchant under 30% of their projected volume at Day 90.'
+      },
+      {
+        type: 'end', label: 'End', title: 'Workflow End',
+        ghl: [
+          { label: 'Add Tag', value: '<code>merchant-90d-complete</code>' },
+          { label: 'Note', value: 'From here, merchant moves to your long-term retention drip (quarterly check-ins, rate review offers, product updates).' }
+        ]
+      }
+    ]
+  },
+
+  pipeline_stall: {
+    icon: '&#9203;',
+    title: 'Pipeline Stall Handler',
+    desc: 'Automatically fires when a deal goes cold in your pipeline. Designed to be the machine that follows up so reps don\'t have to remember.',
+    badge: '7-Day Trigger · 3 Automated Actions',
+    stats: [
+      { n: '7', l: 'Day Stall Trigger' }, { n: '3', l: 'Auto Actions' }, { n: '1', l: 'Rep Task' }, { n: '0', l: 'Manual Effort' }
+    ],
+    setup: [
+      { t: 'Enable Pipeline Automation', d: 'In GHL Pipelines, enable the "Stagnant Lead" trigger under pipeline settings' },
+      { t: 'Set Stagnation Threshold', d: 'Set to 7 days for active stages, 14 days for later stages like Negotiation or Decision' },
+    ],
+    steps: [
+      {
+        type: 'trigger', label: 'Trigger', title: 'Trigger: 7 Days No Activity',
+        sub: 'GHL pipeline stagnant lead trigger',
+        ghl: [
+          { label: 'Trigger Type', value: 'Pipeline Stage Stagnant' },
+          { label: 'Duration', value: '7 Days with no stage movement or last-activity update' },
+          { label: 'Filter', value: 'Exclude: Won, Lost, Long Drip stages' },
+        ]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Add Stall Tag + Internal Alert',
+        sub: 'Tag the contact and notify the rep',
+        ghl: [
+          { label: 'Action 1', value: 'Add tag <code>deal-stalled</code>' },
+          { label: 'Action 2', value: 'Send internal email to assigned rep: "{{contact.company_name}} has been in {{pipeline.stage}} for 7 days. Take action."' },
+        ]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Auto Send Stall Email',
+        sub: 'Fires automatically without rep involvement',
+        ghl: [{ label: 'Action Type', value: 'Send Email' }, { label: 'Subject Line', value: 'checking in on {{contact.company_name}}' }],
+        copy: `{{contact.first_name}},
+
+Wanted to touch base -- we've been in conversation for a bit and I don't want to lose momentum if the timing is still right.
+
+If something changed, totally understand -- just let me know and I'll adjust.
+
+If you're still looking at options, happy to pick up where we left off.
+
+-- {{user.name}}`
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 3 Days', ghl: [{ label: 'Duration', value: '3 Days' }]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Create Manual Follow-Up Task',
+        sub: 'Human touch required after automated follow-up',
+        ghl: [
+          { label: 'Action Type', value: 'Create Task' },
+          { label: 'Task Title', value: 'Manual follow-up required: {{contact.company_name}} — stalled 10 days' },
+          { label: 'Assign To', value: 'Contact owner' },
+          { label: 'Due In', value: 'Today' },
+          { label: 'Priority', value: 'High' },
+        ],
+        tip: 'The auto-email buys time. The task forces the rep to make direct contact -- call or text -- within 24 hours. A stalled deal at 10 days needs a human voice, not another email.'
+      },
+      {
+        type: 'branch', label: 'Branch', title: 'Activity Detected?',
+        sub: 'Check if contact responded or rep updated stage',
+        ghl: [
+          { label: 'Condition', value: 'Email replied OR Stage updated OR Last activity < 1 day' },
+          { label: 'Yes Path', value: 'Remove <code>deal-stalled</code> tag → End workflow' },
+          { label: 'No Path', value: 'Move to Cold Re-Engagement workflow OR Long Drip' },
+        ]
+      },
+      {
+        type: 'end', label: 'End', title: 'Workflow End',
+        ghl: [{ label: 'Note', value: 'Stall handler exits here. Contact is either back in active follow-up or routed to re-engagement.' }]
+      }
+    ]
+  },
+
+  hot_lead_trigger: {
+    icon: '',
+    title: 'MRP Hot Lead Alerts',
+    desc: 'When a merchant referred by an MRP takes a high-intent action (submits intake form, uses savings calculator, opens key emails), the referring MRP gets an instant email notification with the exact follow-up message to send. Turns passive MRPs into active closers at the right moment.',
+    badge: '4 Trigger Events · Instant MRP Notification',
+    stats: [
+      { n: '4', l: 'Trigger Events' }, { n: '0', l: 'Manual Effort' }, { n: '< 1m', l: 'MRP Alert Speed' }, { n: '3-5x', l: 'Expected Follow-Up Rate' }
+    ],
+    setup: [
+      { t: 'Create Custom Field: Referring MRP', d: 'Custom field on Merchant contacts: <code>referring_mrp_email</code> (type: email). Populated when MRP refers a merchant or when merchant intake form includes MRP attribution.' },
+      { t: 'Create Custom Field: Referring MRP Name', d: 'Custom field: <code>referring_mrp_name</code> (type: text). The MRP\'s first name for personalizing their alert email.' },
+      { t: 'Create Contact Tag: mrp-referred', d: 'Tag: <code>mrp-referred</code> — applied to any merchant contact that came through an MRP referral.' },
+      { t: 'Create Contact Tag: hot-lead', d: 'Tag: <code>hot-lead</code> — applied automatically when a merchant takes a high-intent action.' },
+      { t: 'Verify Webhook Endpoint', d: 'If using the Kashu merchant intake form or savings calculator, set up a GHL inbound webhook to capture form submissions. Webhook URL is in GHL > Settings > Integrations > Webhooks.' },
+      { t: 'Create Email Template: MRP Alert', d: 'Build the MRP notification email template in GHL > Marketing > Emails. See copy below for each trigger type.' },
+    ],
+    steps: [
+      {
+        type: 'trigger', label: 'Trigger', title: 'Trigger 1: Merchant Submits Intake Form',
+        sub: 'Highest intent signal. Merchant filled out business details and is ready to talk.',
+        ghl: [
+          { label: 'Trigger Type', value: 'Form Submitted OR Webhook Received (depending on intake form setup)' },
+          { label: 'Form/Webhook', value: '<code>kashu-merchant-intake</code>' },
+          { label: 'Condition', value: 'Contact has tag <code>mrp-referred</code> AND <code>referring_mrp_email</code> is not empty' },
+        ],
+        tip: 'This is the hottest signal. A merchant who fills out the intake form is 70%+ likely to close. The MRP needs to know immediately.'
+      },
+      {
+        type: 'action', label: 'Action', title: 'Add Hot Lead Tag + Send MRP Alert Email',
+        sub: 'Tag the merchant and instantly notify the referring MRP',
+        ghl: [
+          { label: 'Action 1', value: 'Add tag <code>hot-lead</code> to merchant contact' },
+          { label: 'Action 2', value: 'Send email to <code>{{contact.referring_mrp_email}}</code>' },
+          { label: 'Subject Line', value: 'Your referral {{contact.first_name}} just applied' },
+          { label: 'From Name', value: 'Kashu Partnerships' },
+        ],
+        copy: `Hey {{contact.referring_mrp_name}},
+
+Your referral just took a big step.
+
+{{contact.first_name}} {{contact.last_name}} at {{contact.company_name}} submitted their intake form with Kashu. That means they're serious about making the switch.
+
+Here's what to do right now: send them a quick text or message reinforcing the intro. Something like:
+
+"Hey {{contact.first_name}}, glad you're looking at Kashu. John is going to take great care of you. The pricing guarantee is real and the switch is painless. Let me know if you need anything."
+
+That one message from you doubles the close rate because it reinforces the trust they already have in you.
+
+We're on it from here. You'll hear from us when they're live and processing.
+
+-- Kashu Partnerships`
+      },
+      {
+        type: 'trigger', label: 'Trigger', title: 'Trigger 2: Merchant Opens Email 2+ Times',
+        sub: 'Merchant is re-reading your outreach. Curiosity is high.',
+        ghl: [
+          { label: 'Trigger Type', value: 'Email Event: Opened' },
+          { label: 'Condition', value: 'Contact has tag <code>mrp-referred</code> AND open count >= 2 AND does NOT have tag <code>hot-lead</code>' },
+          { label: 'Additional Filter', value: 'Must be within 48 hours of first open (prevents stale triggers)' },
+        ],
+        tip: 'Multiple opens within 48 hours = they\'re thinking about it. The MRP follow-up at this exact moment is the difference between a stalled lead and a booked call.'
+      },
+      {
+        type: 'action', label: 'Action', title: 'Send MRP Warm Lead Alert',
+        sub: 'Notify MRP that their referral is showing interest',
+        ghl: [
+          { label: 'Action', value: 'Send email to <code>{{contact.referring_mrp_email}}</code>' },
+          { label: 'Subject Line', value: '{{contact.first_name}} is looking at Kashu again' },
+        ],
+        copy: `Hey {{contact.referring_mrp_name}},
+
+Quick heads up. {{contact.first_name}} at {{contact.company_name}} has opened our email multiple times in the last 48 hours. They're clearly thinking about it.
+
+Now's a great time to drop them a quick note. Something casual:
+
+"Hey {{contact.first_name}}, did you get a chance to look at the Kashu stuff I mentioned? Happy to jump on a quick call with their team if you want to see the numbers."
+
+That nudge from you while they're already thinking about it is the highest-conversion move in the playbook.
+
+-- Kashu Partnerships`
+      },
+      {
+        type: 'trigger', label: 'Trigger', title: 'Trigger 3: Merchant Clicks Pricing or Calculator Link',
+        sub: 'Merchant clicked through to savings calculator, pricing page, or ROI tool',
+        ghl: [
+          { label: 'Trigger Type', value: 'Email Event: Link Clicked' },
+          { label: 'Link Filter', value: 'URL contains <code>calculator</code>, <code>pricing</code>, <code>savings</code>, or <code>roi</code>' },
+          { label: 'Condition', value: 'Contact has tag <code>mrp-referred</code> AND does NOT have tag <code>hot-lead</code>' },
+        ]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Send MRP Calculator Alert',
+        sub: 'MRP\'s referral is running the numbers',
+        ghl: [
+          { label: 'Action', value: 'Send email to <code>{{contact.referring_mrp_email}}</code>' },
+          { label: 'Subject Line', value: '{{contact.first_name}} is running their numbers' },
+        ],
+        copy: `Hey {{contact.referring_mrp_name}},
+
+{{contact.first_name}} at {{contact.company_name}} just clicked through to our savings calculator. They're running their own numbers right now.
+
+When someone gets to this point, they're comparing what they pay today vs what Kashu charges. The math does the selling.
+
+If you want to speed this up, send them a quick note:
+
+"Hey {{contact.first_name}}, if the numbers make sense on the calculator, John can put the exact pricing in writing for you. Want me to set up a 10-minute call?"
+
+-- Kashu Partnerships`
+      },
+      {
+        type: 'trigger', label: 'Trigger', title: 'Trigger 4: Merchant Replies to Outreach Email',
+        sub: 'Merchant responded directly. Deal is in motion.',
+        ghl: [
+          { label: 'Trigger Type', value: 'Email Event: Replied' },
+          { label: 'Condition', value: 'Contact has tag <code>mrp-referred</code>' },
+        ]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Send MRP Deal-in-Motion Alert',
+        sub: 'Let the MRP know their referral responded',
+        ghl: [
+          { label: 'Action 1', value: 'Add tag <code>hot-lead</code>' },
+          { label: 'Action 2', value: 'Send email to <code>{{contact.referring_mrp_email}}</code>' },
+          { label: 'Subject Line', value: '{{contact.first_name}} responded -- deal is moving' },
+        ],
+        copy: `Hey {{contact.referring_mrp_name}},
+
+Good news. {{contact.first_name}} at {{contact.company_name}} replied to our outreach. The conversation is live.
+
+You don't need to do anything right now. We're handling it from here. Just wanted you to know your referral is in the pipeline and moving.
+
+We'll keep you updated as it progresses.
+
+-- Kashu Partnerships`
+      },
+      {
+        type: 'end', label: 'End', title: 'Workflow Notes',
+        ghl: [
+          { label: 'Important', value: 'These are 4 separate workflows in GHL, each with its own trigger. They can all run simultaneously on the same contact.' },
+          { label: 'Deduplication', value: 'Use the <code>hot-lead</code> tag as a suppression filter on Triggers 2 and 3 so MRPs don\'t get multiple alerts once a merchant is already flagged as hot.' },
+          { label: 'Frequency Cap', value: 'Set a 24-hour minimum between MRP alert emails to avoid overwhelming them. GHL > Workflow Settings > Wait between executions.' },
+          { label: 'MRP Field Population', value: 'The <code>referring_mrp_email</code> and <code>referring_mrp_name</code> fields MUST be populated on the merchant contact for any of this to work. Populate via: (1) intake form ?ref= parameter, (2) manual entry when MRP sends a lead, or (3) GHL form hidden fields.' },
+        ],
+        tip: 'Start with Trigger 1 (intake form submission) only. It\'s the highest-value signal and the simplest to set up. Add the other triggers once the intake form is live and the webhook is connected.'
+      }
+    ]
+  },
+
+  reverse_referral: {
+    icon: '',
+    title: 'Reverse Referral Engine',
+    desc: 'Day 30 after a merchant goes live, automatically ask them to introduce their top vendors. Those vendor leads route back to the referring MRP as warm prospects they didn\'t have to find. Every merchant activation unlocks 2-3 more.',
+    badge: 'Day 30 Trigger · Vendor Lead Capture',
+    stats: [
+      { n: '30', l: 'Day Trigger' }, { n: '2-3', l: 'Leads Per Merchant' }, { n: '0', l: 'MRP Effort' }, { n: '1', l: 'Email + Form' }
+    ],
+    setup: [
+      { t: 'Create Custom Field: Activation Date', d: 'Custom field on Merchant contacts: <code>activation_date</code> (type: date). Set when merchant goes live on Kashu processing.' },
+      { t: 'Create Form: Vendor Referral Form', d: 'Simple GHL form with fields: Vendor Business Name, Contact Name, Phone, Email, What They Do. Include hidden field for <code>referring_merchant_id</code> to link back.' },
+      { t: 'Create Pipeline Stage: Vendor Lead', d: 'Add a stage in the Merchant pipeline called <strong>Vendor Lead (Reverse Referral)</strong> to track these separately.' },
+      { t: 'Confirm MRP Attribution', d: 'Ensure every live merchant has <code>referring_mrp_email</code> and <code>referring_mrp_name</code> populated so vendor leads route to the right MRP.' },
+    ],
+    steps: [
+      {
+        type: 'trigger', label: 'Trigger', title: 'Trigger: 30 Days After Merchant Activation',
+        sub: 'Merchant has been processing for a month. They\'re happy and settled.',
+        ghl: [
+          { label: 'Trigger Type', value: 'Date Field: <code>activation_date</code> + 30 days' },
+          { label: 'Condition', value: 'Contact has tag <code>merchant-active</code> AND does NOT have tag <code>vendor-ask-sent</code>' },
+        ],
+        tip: 'Day 30 is the sweet spot. The merchant has seen at least one statement showing their savings. They\'re in the honeymoon period. Asking earlier risks hitting them before they\'ve felt the value. Asking later risks the novelty wearing off.'
+      },
+      {
+        type: 'action', label: 'Action', title: 'Send Vendor Introduction Request Email',
+        sub: 'Ask the merchant to introduce their top vendors',
+        ghl: [
+          { label: 'Action 1', value: 'Add tag <code>vendor-ask-sent</code>' },
+          { label: 'Action 2', value: 'Send Email' },
+          { label: 'Subject Line', value: 'quick question about your vendors' },
+        ],
+        copy: `Hey {{contact.first_name}},
+
+You've been processing with Kashu for about a month now. Hopefully the savings are showing up exactly where we said they would.
+
+Quick question -- do you have vendors, suppliers, or business partners who also accept card payments? We'd love to offer them the same deal we gave you. Guaranteed lower rates, seamless switch, zero downtime.
+
+If you can think of 2-3 businesses that might benefit, just reply with their name and a way to reach them, or fill out the quick form below.
+
+[LINK TO VENDOR REFERRAL FORM]
+
+No pressure at all. Just figured if it worked for you, the people you do business with might want to know about it too.
+
+Thanks,
+{{user.name}}`
+      },
+      {
+        type: 'wait', label: 'Wait', title: 'Wait 3 Days', ghl: [{ label: 'Duration', value: '3 Days' }]
+      },
+      {
+        type: 'branch', label: 'Branch', title: 'Did Merchant Submit Vendor Names?',
+        sub: 'Check for form submission or email reply',
+        ghl: [
+          { label: 'Condition', value: 'Form <code>vendor-referral</code> submitted OR email replied' },
+          { label: 'Yes Path', value: 'Create new contacts from vendor info > Add tag <code>vendor-lead</code> > Populate <code>referring_mrp_email</code> from original merchant\'s MRP > Route to MRP pipeline' },
+          { label: 'No Path', value: 'Send one follow-up (see next step)' },
+        ]
+      },
+      {
+        type: 'action', label: 'Action', title: 'Follow-Up (If No Response)',
+        sub: 'One gentle nudge. No more after this.',
+        ghl: [
+          { label: 'Action Type', value: 'Send Email' },
+          { label: 'Subject Line', value: 're: your vendors' },
+        ],
+        copy: `{{contact.first_name}} -- no worries if the vendor thing isn't top of mind. If anyone ever comes up who's frustrated with their processing costs, just point them my way. I'll take care of them the same way I took care of you.
+
+{{user.name}}`
+      },
+      {
+        type: 'action', label: 'Action', title: 'Notify MRP of New Vendor Leads',
+        sub: 'When vendor form IS submitted, alert the referring MRP',
+        ghl: [
+          { label: 'Trigger', value: 'Fires when vendor referral form is submitted (separate workflow or continuation)' },
+          { label: 'Action', value: 'Send email to <code>{{contact.referring_mrp_email}}</code> (the original merchant\'s MRP)' },
+          { label: 'Subject Line', value: 'New lead from your merchant {{contact.first_name}}\'s network' },
+        ],
+        copy: `Hey {{contact.referring_mrp_name}},
+
+One of your merchants just came through.
+
+{{contact.first_name}} at {{contact.company_name}} referred a vendor from their network who might be a fit for Kashu. We're reaching out to them now.
+
+If this vendor signs up and starts processing, the residuals go to you -- same as any merchant you refer directly. You didn't have to find this one. Your existing merchant did it for you.
+
+This is how the network compounds. We'll keep you posted.
+
+-- Kashu Partnerships`
+      },
+      {
+        type: 'end', label: 'End', title: 'Workflow Notes',
+        ghl: [
+          { label: 'Key Detail', value: 'Vendor leads inherit the original merchant\'s MRP attribution. The MRP earns residuals on vendors they never prospected. This is the compounding mechanic.' },
+          { label: 'Volume Estimate', value: 'If 30% of live merchants respond with 2 vendor names each, every 100 live merchants generates 60 warm leads automatically.' },
+          { label: 'Scale Note', value: 'This workflow becomes exponential. Vendor leads who activate also get the Day 30 vendor ask, creating a chain reaction.' },
+        ],
+        tip: 'The vendor referral form should be dead simple -- 3 fields max: Business Name, Contact Name, Phone or Email. Don\'t ask for volume, vertical, or anything that adds friction. You just need the intro.'
+      }
+    ]
+  }
+};
+
+function loadWorkflow(key) {
+  document.querySelectorAll('.wf-option').forEach(el => el.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+
+  const wf = WORKFLOWS[key];
+  const out = document.getElementById('workflowOutput');
+
+  let stepsHTML = wf.steps.map((step, i) => {
+    const isFirst = i === 0;
+    let ghlRows = (step.ghl || []).map(g => `<div class="ghl-instruction"><div class="gi-label">${g.label}</div><div class="gi-value">${g.value}</div></div>`).join('');
+    let copyHTML = step.copy ? `<div class="copy-block"><button class="copy-btn" onclick="copyStep(this)">Copy</button><pre>${step.copy}</pre></div>` : '';
+    let tipHTML = step.tip ? `<div class="pro-tip"><strong>Pro tip:</strong> ${step.tip}</div>` : '';
+
+    return `
+    <div class="step-card ${isFirst ? 'open' : ''}" onclick="toggleStep(this)">
+      <div class="step-header">
+        <div class="step-number ${step.type}">${i + 1}</div>
+        <div class="step-title">
+          <strong>${step.title}</strong>
+          ${step.sub ? `<span>${step.sub}</span>` : ''}
+        </div>
+        <span class="step-type-badge ${step.type}">${step.label}</span>
+        <span class="chevron"></span>
+      </div>
+      <div class="step-body">
+        ${ghlRows}
+        ${copyHTML}
+        ${tipHTML}
+      </div>
+    </div>`;
+  }).join('<div class="connector"></div>');
+
+  let statsHTML = wf.stats.map(s => `<div class="stat-item"><div class="stat-n">${s.n}</div><div class="stat-l">${s.l}</div></div>`).join('');
+  let setupHTML = wf.setup.map(s => `
+    <div class="setup-item">
+      <div class="setup-check" onclick="toggleCheck(this)"></div>
+      <div class="setup-item-text">
+        <strong>${s.t}</strong>
+        <span>${s.d}</span>
+      </div>
+    </div>`).join('');
+
+  out.innerHTML = `
+    <div class="wf-header">
+      <div class="wf-header-icon">${wf.icon}</div>
+      <div>
+        <h2>${wf.title}</h2>
+        <p>${wf.desc}</p>
+        <span class="wf-badge">${wf.badge}</span>
+      </div>
+    </div>
+
+    <div class="stats-bar">${statsHTML}</div>
+
+    <div class="section-label">Pre-Build Checklist</div>
+    <div class="setup-card">
+      <h3>Before you build this in GHL, confirm these are done:</h3>
+      ${setupHTML}
+    </div>
+
+    <div class="section-label">Workflow Steps</div>
+    <div class="steps-container">${stepsHTML}</div>
+
+    <div class="actions-row">
+      <button class="btn btn-secondary" onclick="printWorkflow()">Print / Save PDF</button>
+    </div>
+  `;
+
+  out.style.display = 'block';
+  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleStep(card) {
+  if (event.target.classList.contains('copy-btn') || event.target.tagName === 'PRE') return;
+  card.classList.toggle('open');
+}
+
+function toggleCheck(el) {
+  event.stopPropagation();
+  el.classList.toggle('checked');
+}
+
+function copyStep(btn) {
+  event.stopPropagation();
+  const pre = btn.nextElementSibling;
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1800);
+  });
+}
+
+function printWorkflow() {
+  window.print();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// Load default workflow on page open
+window.onload = () => loadWorkflow('merchant_5touch');
+</script>
+</body>
+</html>

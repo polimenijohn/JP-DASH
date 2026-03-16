@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily 100 Engine — Kashu</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --dark: #0b1a17;
+    --dark-teal: #0b5147;
+    --mid-teal: #397168;
+    --muted: #7a9994;
+    --green: #01de8f;
+    --light-bg: #f4f9f8;
+    --white: #ffffff;
+    --text: #1a2e2b;
+    --border: #c8dbd8;
+    --red: #e05252;
+    --orange: #f0a840;
+    --blue: #5b8def;
+    --shadow: 0 2px 16px rgba(11,81,71,0.08);
+    --shadow-lg: 0 8px 32px rgba(11,81,71,0.14);
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #061210, #0b5147);
+    padding: 28px 32px 24px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  }
+  .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .logo-mark { width: 44px; height: 44px; background: var(--green); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: var(--dark-teal); flex-shrink: 0; }
+  .header-text h1 { color: var(--white); font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+  .header-text p { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .header-stats { margin-left: auto; display: flex; gap: 20px; align-items: center; }
+  .header-stat { text-align: center; }
+  .header-stat-value { font-size: 24px; font-weight: 800; color: var(--green); line-height: 1; }
+  .header-stat-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.3); margin-top: 2px; }
+
+  /* PROGRESS BAR */
+  .progress-wrap { max-width: 1100px; margin: 0 auto; padding: 20px 32px 0; }
+  .progress-bar-outer { background: rgba(255,255,255,0.06); border-radius: 100px; height: 10px; overflow: hidden; position: relative; }
+  .progress-bar-inner { background: linear-gradient(90deg, var(--green), #00f5a0); height: 100%; border-radius: 100px; transition: width 0.4s ease; min-width: 0; }
+  .progress-label { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.25); }
+  .progress-label .done-count { color: var(--green); }
+
+  /* CONTROLS */
+  .controls { max-width: 1100px; margin: 0 auto; padding: 24px 32px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .control-btn {
+    padding: 10px 20px; border-radius: 10px; border: 1.5px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.5);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .control-btn:hover { border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); }
+  .control-btn.active { background: var(--green); border-color: var(--green); color: var(--dark-teal); }
+  .control-btn.generate { background: var(--green); border-color: var(--green); color: var(--dark-teal); font-weight: 700; }
+  .control-btn.generate:hover { opacity: 0.9; }
+  .control-btn.export { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); color: var(--white); margin-left: auto; }
+  .control-btn.export:hover { background: rgba(255,255,255,0.1); }
+
+  /* MESSAGE LIST */
+  .message-list { max-width: 1100px; margin: 0 auto; padding: 0 32px 80px; }
+  .message-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 20px 22px; margin-bottom: 10px;
+    transition: all 0.2s; position: relative;
+  }
+  .message-card:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+  .message-card.sent { opacity: 0.4; }
+  .message-card.sent::after {
+    content: 'SENT'; position: absolute; top: 20px; right: 20px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: var(--green);
+    background: rgba(1,222,143,0.1); padding: 3px 10px; border-radius: 4px;
+  }
+  .message-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .message-num { font-size: 11px; font-weight: 800; color: var(--green); background: rgba(1,222,143,0.1); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .message-type { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px; }
+  .message-type.merchant { background: rgba(1,222,143,0.08); color: var(--green); }
+  .message-type.mrp { background: rgba(91,141,239,0.1); color: var(--blue); }
+  .message-vertical { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.3); }
+  .message-channel { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.2); margin-left: auto; background: rgba(255,255,255,0.04); padding: 3px 8px; border-radius: 4px; }
+  .message-subject { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+  .message-body { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.7; white-space: pre-wrap; }
+  .message-actions { display: flex; gap: 8px; margin-top: 14px; }
+  .msg-btn {
+    padding: 7px 14px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.08);
+    background: transparent; color: rgba(255,255,255,0.4);
+    font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .msg-btn:hover { background: rgba(255,255,255,0.06); color: var(--white); }
+  .msg-btn.copy-btn:hover { background: var(--dark-teal); border-color: var(--dark-teal); color: var(--white); }
+  .msg-btn.sent-btn:hover { background: rgba(1,222,143,0.1); border-color: var(--green); color: var(--green); }
+  .msg-btn.copied { background: var(--green); border-color: var(--green); color: var(--dark-teal); }
+
+  .empty-state { text-align: center; padding: 80px 20px; color: rgba(255,255,255,0.15); font-size: 16px; }
+
+  @media (max-width: 768px) {
+    .header { padding: 20px; }
+    .controls, .message-list, .progress-wrap { padding-left: 20px; padding-right: 20px; }
+    .header-stats { margin-left: 0; margin-top: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo-mark">K</div>
+    <div class="header-text">
+      <h1>Daily 100 Engine</h1>
+      <p>Rule of 100 — outbound machine</p>
+    </div>
+    <div class="header-stats">
+      <div class="header-stat">
+        <div class="header-stat-value" id="sent-count">0</div>
+        <div class="header-stat-label">Sent</div>
+      </div>
+      <div class="header-stat">
+        <div class="header-stat-value" id="remaining-count">0</div>
+        <div class="header-stat-label">Remaining</div>
+      </div>
+      <div class="header-stat">
+        <div class="header-stat-value" id="streak-count">0</div>
+        <div class="header-stat-label">Day Streak</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progress-bar" style="width:0%"></div></div>
+  <div class="progress-label">
+    <span class="done-count" id="progress-text">0 / 100</span>
+    <span id="progress-pct">0%</span>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="control-btn active" data-filter="all" onclick="setFilter('all',this)">All</button>
+  <button class="control-btn" data-filter="merchant" onclick="setFilter('merchant',this)">Merchants (70)</button>
+  <button class="control-btn" data-filter="mrp" onclick="setFilter('mrp',this)">MRP (30)</button>
+  <button class="control-btn" data-filter="unsent" onclick="setFilter('unsent',this)">Unsent</button>
+  <button class="control-btn generate" onclick="generateBatch()">Generate Today's 100</button>
+  <button class="control-btn export" onclick="exportCSV()">Export CSV</button>
+  <button class="control-btn export" onclick="copyAllUnsent()">Copy All Unsent</button>
+</div>
+
+<div class="message-list" id="message-list">
+  <div class="empty-state" id="empty-state">Hit "Generate Today's 100" to build your daily outbound batch.</div>
+</div>
+
+<script>
+// =============================================
+// MERCHANT VERTICALS (auto-approval friendly)
+// =============================================
+const MERCHANT_VERTICALS = [
+  {
+    name: "Restaurant / Bar",
+    types: ["restaurant","bar","cafe","coffee shop","bakery","food truck","pizzeria","brewery","juice bar","catering company"],
+    avgVolume: "$40K-80K/mo",
+    currentProcessor: "Toast",
+    painPoint: "processing fees bundled inside platform costs",
+    savingsAngle: "separate your processing from your POS and save on every swipe",
+    surchargeAngle: "pass fees to customers, keep your food margins intact"
+  },
+  {
+    name: "Retail / Boutique",
+    types: ["retail store","boutique","clothing store","gift shop","jewelry store","pet store","hardware store","sporting goods","toy store","bookstore"],
+    avgVolume: "$30K-60K/mo",
+    currentProcessor: "Square",
+    painPoint: "overpaying for simplicity at real volume",
+    savingsAngle: "you outgrew Square's pricing model, time to pay what high-volume businesses pay",
+    surchargeAngle: "surcharge program means 0% processing cost on every in-store sale"
+  },
+  {
+    name: "Salon / Spa / Beauty",
+    types: ["hair salon","barbershop","nail salon","med spa","day spa","tattoo studio","lash studio","waxing studio","tanning salon","beauty bar"],
+    avgVolume: "$20K-50K/mo",
+    currentProcessor: "Square",
+    painPoint: "paying 2.6% when you should be paying 2.2%",
+    savingsAngle: "same card reader experience, lower rate, and no monthly software fees",
+    surchargeAngle: "your clients won't blink at a small service fee, and you keep 100% of your revenue"
+  },
+  {
+    name: "Auto / Repair",
+    types: ["auto repair shop","tire shop","body shop","oil change","car wash","detailing","auto parts store","mechanic","transmission shop","muffler shop"],
+    avgVolume: "$40K-80K/mo",
+    currentProcessor: "Clover",
+    painPoint: "reseller markup buried in your rate",
+    savingsAngle: "cut out the middleman, go direct, and see exactly what you're paying",
+    surchargeAngle: "high-ticket repair bills mean surcharging saves you hundreds per month"
+  },
+  {
+    name: "Medical / Dental / Health",
+    types: ["dental office","chiropractor","optometrist","dermatologist","urgent care","physical therapy","veterinarian","pharmacy","mental health practice","orthodontist"],
+    avgVolume: "$50K-120K/mo",
+    currentProcessor: "Heartland",
+    painPoint: "complex statements hiding the true effective rate",
+    savingsAngle: "one rate, clean statement, no PCI surprise fees",
+    surchargeAngle: "patients are used to co-pays and fees, surcharging is a non-issue in healthcare"
+  },
+  {
+    name: "Professional Services",
+    types: ["law firm","accounting firm","consulting firm","insurance agency","real estate office","financial advisor","marketing agency","architecture firm","engineering firm","staffing agency"],
+    avgVolume: "$30K-80K/mo",
+    currentProcessor: "PayPal",
+    painPoint: "not having a real merchant account, risk of fund holds",
+    savingsAngle: "real merchant account, no 180-day holds, lower rate on every invoice",
+    surchargeAngle: "ACH at 0.50% for large invoices saves more than surcharging"
+  },
+  {
+    name: "Home Services",
+    types: ["plumber","electrician","HVAC company","landscaping","roofing company","pest control","cleaning service","painting company","handyman service","moving company"],
+    avgVolume: "$30K-70K/mo",
+    currentProcessor: "Square",
+    painPoint: "paying premium rates for a card reader you barely use",
+    savingsAngle: "lower rate on every job, and ACH for big projects saves even more",
+    surchargeAngle: "homeowners expect service fees, add it and keep 100% of the job price"
+  }
+];
+
+// =============================================
+// MRP PARTNER TYPES
+// =============================================
+const MRP_TYPES = [
+  {
+    name: "CPA / Accountant",
+    titles: ["CPA","Tax Preparer","Bookkeeper","Controller","CFO Services","Accounting Firm Owner"],
+    hook: "Your clients ask you who to use for processing. Right now that's a missed revenue stream.",
+    pitch: "Every client you send us processes payments. You earn residuals on their volume for as long as they're with us. No selling, no closing, just an intro.",
+    residualStory: "10 clients doing $50K/month each = $500K portfolio. At T2 that's $275/month in passive income just for making introductions you're already making."
+  },
+  {
+    name: "Bookkeeper",
+    titles: ["Bookkeeper","Virtual Bookkeeper","Bookkeeping Firm Owner","Financial Manager"],
+    hook: "You see their processing statements every month. You already know they're overpaying.",
+    pitch: "When you spot a client overpaying on processing, send them our way. We cut their rate, you earn residuals on their volume. Everybody wins.",
+    residualStory: "5 clients at $40K/month = $200K portfolio. That's an extra $110/month on top of your bookkeeping fees for zero extra work."
+  },
+  {
+    name: "Business Consultant",
+    titles: ["Business Consultant","Growth Consultant","Operations Consultant","Strategy Advisor","Fractional COO","Business Coach"],
+    hook: "You optimize every line item for your clients except the one they pay every single day.",
+    pitch: "Processing fees are the most ignored expense in every business you advise. We give you a way to cut that cost and earn on the savings. Residuals for life.",
+    residualStory: "If you have 15 active clients doing an average of $60K/month, that's a $900K portfolio generating $495/month in residuals. That's a new revenue line for your consulting practice."
+  },
+  {
+    name: "Business Attorney",
+    titles: ["Business Attorney","Corporate Lawyer","Commercial Attorney","Small Business Lawyer","Startup Attorney"],
+    hook: "Every business you set up needs to accept payments. You're the first person they ask.",
+    pitch: "When you help a client form their LLC or structure their business, recommend Kashu for processing. You earn residuals on their volume, they get better rates than they'd find on their own.",
+    residualStory: "20 startups a year doing $30K/month average = $600K portfolio. At T2 that's $330/month for referrals you'd make anyway."
+  },
+  {
+    name: "Payroll Company",
+    titles: ["Payroll Provider","HR/Payroll","Payroll Company Owner","PEO"],
+    hook: "You handle their payroll but someone else handles their payments. Both touch the same bank account.",
+    pitch: "Bundle a processing referral with your payroll service. Your clients save on rates, you earn residuals. It's a natural cross-sell that adds zero complexity.",
+    residualStory: "50 payroll clients doing $40K/month in processing = $2M portfolio. At T1 that's $5,500/month. That's a second business inside your first one."
+  },
+  {
+    name: "Insurance Agent",
+    titles: ["Insurance Agent","Insurance Broker","Commercial Insurance","Business Insurance Agent"],
+    hook: "You insure the business. Why not earn on the payments running through it too?",
+    pitch: "Every business you insure processes payments. One intro to us and you earn residuals on their volume. No selling, no contracts, just a warm handoff.",
+    residualStory: "30 commercial clients at $50K/month = $1.5M portfolio. At T1 that's $4,125/month on top of your commissions."
+  }
+];
+
+// =============================================
+// EMAIL TEMPLATES (Merchant)
+// =============================================
+const MERCHANT_SUBJECTS = [
+  "quick question about your processing",
+  "saw your {bizType} and had a thought",
+  "are you locked into your processor?",
+  "what are you paying on processing right now?",
+  "30 seconds to see if you're overpaying",
+  "your {bizType} is probably overpaying on processing",
+  "not trying to sell you anything, just a question",
+  "this is going to save you money",
+  "your processing rate might be too high",
+  "something your processor isn't telling you"
+];
+
+const MERCHANT_EMAILS = [
+  `Hey,
+
+Quick one. I work with a lot of {vertical} businesses and most are paying way more than they need to on processing. {painPoint} is the usual culprit.
+
+We're at 2.2% + $0.15 in-person with no monthly fees. If you're above that, we can probably save you a few hundred a month.
+
+What does your current rate look like?`,
+
+  `Hey,
+
+Not sure who you're processing with right now but if it's {currentProcessor}, you're almost certainly overpaying.
+
+We just moved a {bizType} doing similar volume and cut their monthly fees by 30%. Same setup, lower rate, no disruption.
+
+Worth a 5-minute look?`,
+
+  `Hey,
+
+I'll keep this short. We help {vertical} businesses {savingsAngle}.
+
+No contracts, no monthly fees, 2.2% in-person. If your current rate is higher than that, the switch pays for itself on day one.
+
+What did you process last month?`,
+
+  `Hey,
+
+I know you're busy running a {bizType} so I'll be quick.
+
+Your processing fees are probably one of your biggest monthly expenses that nobody ever looks at. Most {vertical} businesses are paying 2.6% to 3%+ when they should be at 2.2%.
+
+I can show you the difference in 30 seconds if you tell me your monthly volume.`,
+
+  `Hey,
+
+Random question. Do you know your effective processing rate? Not the number they told you when you signed up. The real one.
+
+Most {vertical} businesses I talk to think they're paying 2.5% but when we run the math it's closer to 3% after all the fees.
+
+We're flat 2.2% + $0.15. No hidden fees. Want me to run a quick comparison?`,
+
+  `Hey,
+
+Saw your {bizType} and wanted to reach out. We work with a bunch of {vertical} businesses and the savings are usually pretty eye-opening.
+
+{surchargeAngle}. That alone makes it worth a conversation.
+
+Open to taking a look?`,
+
+  `Hey,
+
+Two numbers for you. Your current processing rate, and 2.2%.
+
+If there's a gap, we should talk. Most {vertical} businesses doing {avgVolume} are leaving $200-500/month on the table.
+
+What are you paying right now?`,
+
+  `Hey,
+
+Honest question. When's the last time you looked at your processing statement?
+
+Most {bizType} owners sign up with {currentProcessor} and never look back. But rates creep, fees stack, and suddenly you're paying way more than you should be.
+
+I can tell you in 30 seconds if you're overpaying. What's your monthly volume?`,
+
+  `Hey,
+
+Running a {bizType} is expensive enough without your processor taking an extra cut.
+
+We just launched a surcharge program where your customers cover the processing fee and you pay 0%. {surchargeAngle}.
+
+Interested?`,
+
+  `Hey,
+
+Not trying to pitch you. Just want to ask one question.
+
+If I could cut your processing costs by 20-30% without changing anything about how you run your {bizType}, would that be worth 10 minutes?
+
+That's what we do. 2.2% + $0.15. No contracts. No monthly fees. Just a better rate.`
+];
+
+// =============================================
+// MRP OUTREACH TEMPLATES
+// =============================================
+const MRP_SUBJECTS = [
+  "passive income from your existing clients",
+  "your clients are overpaying on processing",
+  "quick partnership idea",
+  "residual income from referrals you're already making",
+  "adding a revenue line to your {partnerType} practice",
+  "you're sitting on a payment processing goldmine",
+  "earn on every dollar your clients process",
+  "this takes 30 seconds and pays forever",
+  "your clients need better processing rates",
+  "thought of you for this"
+];
+
+const MRP_EMAILS = [
+  `Hey,
+
+{hook}
+
+{pitch}
+
+No quotas, no pressure. You make an intro, we handle everything else. You earn residuals for as long as they process with us.
+
+{residualStory}
+
+Worth a quick call?`,
+
+  `Hey,
+
+Most {partnerType}s I talk to have never thought about this, but it's easy money.
+
+{hook} {pitch}
+
+We pay 25% of net residuals at baseline, 50% once you build a portfolio over $5M/month. And we pay monthly, every month, for as long as your referrals stay active.
+
+Can I send you the one-pager?`,
+
+  `Hey,
+
+I'll be direct. {hook}
+
+{pitch} It takes you 30 seconds to make an intro. We handle the sales call, the application, the underwriting, and the onboarding. You just collect residuals.
+
+{residualStory}
+
+Interested?`,
+
+  `Hey,
+
+This isn't a sales pitch. It's a math problem.
+
+{residualStory}
+
+{hook} All you do is connect us. We do the rest.
+
+Want me to walk you through how it works?`,
+
+  `Hey,
+
+Quick thought. {hook}
+
+We're building a referral partner network for payment processing. The model is simple: you introduce us to businesses that accept payments, we save them money, and you earn residuals on their volume for life.
+
+{residualStory}
+
+No selling required. Just introductions. Open to learning more?`
+];
+
+// =============================================
+// LINKEDIN DM TEMPLATES (shorter for DMs)
+// =============================================
+const MERCHANT_LINKEDIN = [
+  `Hey, I work with a lot of {vertical} businesses on their payment processing. Most are overpaying by 20-30% without knowing it. If you're doing {avgVolume} I can usually find a few hundred a month in savings. Worth a quick look?`,
+  `Hey, quick question. Do you know what you're paying on processing right now? We're at 2.2% in-person with no monthly fees. If there's a gap we should talk.`,
+  `Hey, saw you run a {bizType}. We just helped a similar business cut their processing fees by 30%. No contracts, no disruption. Want me to run a quick comparison?`,
+  `Hey, not a sales pitch. Just curious what you're paying on processing. We work with {vertical} businesses and the savings are usually surprising. 30 seconds to find out.`,
+  `Hey, one question. If I could save your {bizType} $200-500/month on processing without changing anything about how you operate, would that be worth a conversation?`
+];
+
+const MRP_LINKEDIN = [
+  `Hey, {hook} We pay residuals on every dollar your referrals process, for life. No selling, no closing, just introductions. Worth a quick conversation?`,
+  `Hey, I noticed you work with business owners. Quick idea: every client you serve processes payments. We can cut their rates and pay you residuals for the referral. Takes 30 seconds to make an intro. Interested?`,
+  `Hey, we're building a referral partner network for payment processing. {residualStory} No quotas, no contracts. Just introductions. Open to learning more?`,
+  `Hey, {hook} Most {partnerType}s don't realize they can earn monthly residuals just by referring their clients to better processing rates. Can I send you the details?`,
+  `Hey, quick math for you. {residualStory} All from introductions you're probably already making. Want me to walk you through how it works?`
+];
+
+// =============================================
+// GENERATION ENGINE
+// =============================================
+
+function generateBatch() {
+  const today = new Date().toISOString().split('T')[0];
+  const messages = [];
+
+  // 70 merchant messages
+  for (let i = 0; i < 70; i++) {
+    const vert = MERCHANT_VERTICALS[i % MERCHANT_VERTICALS.length];
+    const bizType = vert.types[Math.floor(Math.random() * vert.types.length)];
+    const isLinkedIn = i % 5 === 4; // every 5th is LinkedIn
+    const isText = i % 5 === 3; // every 5th group has a text
+
+    let channel, subject, body;
+
+    if (isLinkedIn) {
+      channel = "LinkedIn";
+      subject = "";
+      let tmpl = MRP_LINKEDIN[Math.floor(Math.random() * MERCHANT_LINKEDIN.length)];
+      // use merchant linkedin templates
+      tmpl = MERCHANT_LINKEDIN[Math.floor(Math.random() * MERCHANT_LINKEDIN.length)];
+      body = fillTemplate(tmpl, vert, bizType);
+    } else {
+      channel = "Email";
+      subject = fillTemplate(MERCHANT_SUBJECTS[Math.floor(Math.random() * MERCHANT_SUBJECTS.length)], vert, bizType);
+      body = fillTemplate(MERCHANT_EMAILS[Math.floor(Math.random() * MERCHANT_EMAILS.length)], vert, bizType);
+    }
+
+    messages.push({
+      id: i + 1,
+      type: "merchant",
+      vertical: vert.name,
+      bizType: bizType,
+      channel: channel,
+      subject: subject,
+      body: body.trim(),
+      sent: false
+    });
+  }
+
+  // 30 MRP messages
+  for (let i = 0; i < 30; i++) {
+    const partner = MRP_TYPES[i % MRP_TYPES.length];
+    const title = partner.titles[Math.floor(Math.random() * partner.titles.length)];
+    const isLinkedIn = i % 3 === 2; // every 3rd is LinkedIn
+
+    let channel, subject, body;
+
+    if (isLinkedIn) {
+      channel = "LinkedIn";
+      subject = "";
+      const tmpl = MRP_LINKEDIN[Math.floor(Math.random() * MRP_LINKEDIN.length)];
+      body = fillMRPTemplate(tmpl, partner);
+    } else {
+      channel = "Email";
+      subject = fillMRPTemplate(MRP_SUBJECTS[Math.floor(Math.random() * MRP_SUBJECTS.length)], partner);
+      body = fillMRPTemplate(MRP_EMAILS[Math.floor(Math.random() * MRP_EMAILS.length)], partner);
+    }
+
+    messages.push({
+      id: 71 + i,
+      type: "mrp",
+      vertical: partner.name,
+      bizType: title,
+      channel: channel,
+      subject: subject,
+      body: body.trim(),
+      sent: false
+    });
+  }
+
+  // Shuffle to mix merchant and MRP
+  for (let i = messages.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [messages[i], messages[j]] = [messages[j], messages[i]];
+  }
+
+  // Re-number
+  messages.forEach((m, idx) => m.id = idx + 1);
+
+  // Save to localStorage
+  const batch = { date: today, messages: messages };
+  localStorage.setItem('kashu_daily_100', JSON.stringify(batch));
+
+  // Update streak
+  updateStreak(today);
+
+  renderMessages();
+}
+
+function fillTemplate(tmpl, vert, bizType) {
+  return tmpl
+    .replace(/\{vertical\}/g, vert.name)
+    .replace(/\{bizType\}/g, bizType)
+    .replace(/\{currentProcessor\}/g, vert.currentProcessor)
+    .replace(/\{painPoint\}/g, vert.painPoint)
+    .replace(/\{savingsAngle\}/g, vert.savingsAngle)
+    .replace(/\{surchargeAngle\}/g, vert.surchargeAngle)
+    .replace(/\{avgVolume\}/g, vert.avgVolume);
+}
+
+function fillMRPTemplate(tmpl, partner) {
+  return tmpl
+    .replace(/\{hook\}/g, partner.hook)
+    .replace(/\{pitch\}/g, partner.pitch)
+    .replace(/\{residualStory\}/g, partner.residualStory)
+    .replace(/\{partnerType\}/g, partner.name);
+}
+
+// =============================================
+// RENDERING
+// =============================================
+let currentFilter = 'all';
+
+function setFilter(filter, el) {
+  currentFilter = filter;
+  document.querySelectorAll('.control-btn[data-filter]').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderMessages();
+}
+
+function renderMessages() {
+  const data = JSON.parse(localStorage.getItem('kashu_daily_100') || 'null');
+  if (!data || !data.messages) {
+    document.getElementById('message-list').innerHTML = '<div class="empty-state">Hit "Generate Today\'s 100" to build your daily outbound batch.</div>';
+    updateCounts([], 0);
+    return;
+  }
+
+  let msgs = data.messages;
+  if (currentFilter === 'merchant') msgs = msgs.filter(m => m.type === 'merchant');
+  else if (currentFilter === 'mrp') msgs = msgs.filter(m => m.type === 'mrp');
+  else if (currentFilter === 'unsent') msgs = msgs.filter(m => !m.sent);
+
+  const html = msgs.map(m => `
+    <div class="message-card ${m.sent ? 'sent' : ''}" id="card-${m.id}">
+      <div class="message-meta">
+        <div class="message-num">${m.id}</div>
+        <div class="message-type ${m.type}">${m.type === 'merchant' ? 'Merchant' : 'MRP'}</div>
+        <div class="message-vertical">${m.vertical} — ${m.bizType}</div>
+        <div class="message-channel">${m.channel}</div>
+      </div>
+      ${m.subject ? `<div class="message-subject">Subject: ${m.subject}</div>` : ''}
+      <div class="message-body">${escapeHtml(m.body)}</div>
+      <div class="message-actions">
+        <button class="msg-btn copy-btn" onclick="copyMessage(${m.id})">Copy</button>
+        <button class="msg-btn sent-btn" onclick="markSent(${m.id})">${m.sent ? 'Undo' : 'Mark Sent'}</button>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('message-list').innerHTML = html || '<div class="empty-state">All caught up. Every message sent.</div>';
+  updateCounts(data.messages, data.messages.filter(m => m.sent).length);
+}
+
+function updateCounts(messages, sentCount) {
+  const total = messages.length || 100;
+  const remaining = total - sentCount;
+  const pct = total > 0 ? Math.round((sentCount / total) * 100) : 0;
+
+  document.getElementById('sent-count').textContent = sentCount;
+  document.getElementById('remaining-count').textContent = remaining;
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `${sentCount} / ${total}`;
+  document.getElementById('progress-pct').textContent = pct + '%';
+
+  // Streak
+  const streak = parseInt(localStorage.getItem('kashu_daily_streak') || '0');
+  document.getElementById('streak-count').textContent = streak;
+}
+
+function updateStreak(today) {
+  const lastDate = localStorage.getItem('kashu_daily_last_date');
+  let streak = parseInt(localStorage.getItem('kashu_daily_streak') || '0');
+
+  if (lastDate === today) return; // already generated today
+
+  const yesterday = new Date(new Date(today).getTime() - 86400000).toISOString().split('T')[0];
+  if (lastDate === yesterday) {
+    streak++;
+  } else {
+    streak = 1;
+  }
+
+  localStorage.setItem('kashu_daily_streak', streak.toString());
+  localStorage.setItem('kashu_daily_last_date', today);
+}
+
+// =============================================
+// ACTIONS
+// =============================================
+function copyMessage(id) {
+  const data = JSON.parse(localStorage.getItem('kashu_daily_100'));
+  const msg = data.messages.find(m => m.id === id);
+  if (!msg) return;
+
+  const text = msg.subject ? `Subject: ${msg.subject}\n\n${msg.body}` : msg.body;
+  navigator.clipboard.writeText(text).then(() => {
+    const card = document.getElementById('card-' + id);
+    const btn = card.querySelector('.copy-btn');
+    btn.textContent = 'Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+function markSent(id) {
+  const data = JSON.parse(localStorage.getItem('kashu_daily_100'));
+  const msg = data.messages.find(m => m.id === id);
+  if (!msg) return;
+  msg.sent = !msg.sent;
+  localStorage.setItem('kashu_daily_100', JSON.stringify(data));
+  renderMessages();
+}
+
+function copyAllUnsent() {
+  const data = JSON.parse(localStorage.getItem('kashu_daily_100'));
+  if (!data) return;
+  const unsent = data.messages.filter(m => !m.sent);
+  const text = unsent.map((m, i) => {
+    let out = `--- #${m.id} | ${m.type.toUpperCase()} | ${m.vertical} | ${m.channel} ---\n`;
+    if (m.subject) out += `Subject: ${m.subject}\n`;
+    out += `\n${m.body}\n`;
+    return out;
+  }).join('\n');
+  navigator.clipboard.writeText(text);
+}
+
+function exportCSV() {
+  const data = JSON.parse(localStorage.getItem('kashu_daily_100'));
+  if (!data) return;
+  const header = 'Number,Type,Vertical,Business Type,Channel,Subject,Body,Sent\n';
+  const rows = data.messages.map(m =>
+    `${m.id},"${m.type}","${m.vertical}","${m.bizType}","${m.channel}","${csvEscape(m.subject)}","${csvEscape(m.body)}","${m.sent}"`
+  ).join('\n');
+
+  const blob = new Blob([header + rows], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `kashu_daily_100_${data.date}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function csvEscape(str) {
+  return (str || '').replace(/"/g, '""').replace(/\n/g, ' ');
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// =============================================
+// INIT — auto-load today's batch if it exists
+// =============================================
+(function() {
+  const data = JSON.parse(localStorage.getItem('kashu_daily_100') || 'null');
+  const today = new Date().toISOString().split('T')[0];
+  if (data && data.date === today) {
+    renderMessages();
+  } else {
+    updateCounts([], 0);
+    const streak = parseInt(localStorage.getItem('kashu_daily_streak') || '0');
+    document.getElementById('streak-count').textContent = streak;
+  }
+})();
+</script>
+</body>
+</html>

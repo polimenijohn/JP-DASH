@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>See What You're Overpaying | Kashu</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --dark:   #0b5147;
+    --mid:    #397168;
+    --muted:  #93adaa;
+    --green:  #01de8f;
+    --light1: #8de6c6;
+    --light2: #d5eae3;
+    --light3: #e1fea1;
+    --bg:     #f4f9f8;
+    --white:  #ffffff;
+    --text:   #1a2e2b;
+    --sub:    #4a6360;
+    --border: #c8dbd8;
+    --red:    #e05252;
+  }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Hero */
+  .hero {
+    background: var(--dark);
+    padding: 60px 24px 48px;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(1,222,143,0.15);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(1,222,143,0.3);
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.15;
+    max-width: 680px;
+    margin: 0 auto 16px;
+  }
+  .hero h1 span { color: var(--green); }
+  .hero p {
+    color: var(--muted);
+    font-size: 17px;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Main Content */
+  .content {
+    background: var(--bg);
+    border-radius: 28px 28px 0 0;
+    flex: 1;
+    padding: 40px 24px 80px;
+  }
+  .inner { max-width: 680px; margin: 0 auto; }
+
+  /* Calculator Card */
+  .calc-card {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 32px;
+    margin-bottom: 24px;
+  }
+  .calc-card h2 { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .calc-card .sub { font-size: 14px; color: var(--sub); margin-bottom: 24px; }
+
+  .input-stack { display: flex; flex-direction: column; gap: 18px; }
+
+  .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width: 520px) { .input-row { grid-template-columns: 1fr; } }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; }
+  .field input, .field select {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--white);
+    width: 100%;
+    transition: border 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--mid);
+    box-shadow: 0 0 0 3px rgba(57,113,104,0.1);
+  }
+
+  /* Cost mode toggle */
+  .cost-toggle {
+    display: flex;
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+    margin-bottom: 4px;
+  }
+  .cost-toggle button {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: var(--sub);
+    transition: all 0.15s;
+  }
+  .cost-toggle button.active { background: var(--white); color: var(--dark); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+  /* Live Preview Bar */
+  #livePreview {
+    display: none;
+    background: linear-gradient(135deg, var(--dark) 0%, #1a6b5b 100%);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    color: var(--white);
+  }
+  .preview-top { font-size: 13px; color: var(--muted); margin-bottom: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
+  .preview-numbers {
+    display: flex; gap: 0; align-items: stretch;
+    flex-wrap: wrap;
+  }
+  .pn-item { flex: 1; min-width: 140px; padding: 0 20px 0 0; }
+  .pn-item + .pn-item { border-left: 1px solid rgba(255,255,255,0.1); padding-left: 20px; }
+  @media(max-width:480px){ .pn-item { min-width: 100%; border-left: none !important; padding: 10px 0 !important; border-bottom: 1px solid rgba(255,255,255,0.1); } .pn-item:last-child{ border-bottom:none; } }
+  .pn-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .pn-value { font-size: 26px; font-weight: 800; color: var(--green); }
+  .pn-sub { font-size: 12px; color: #8de6c6; margin-top: 2px; }
+  .pn-value.neutral { color: var(--white); }
+  .pn-value.bad { color: #ff9999; }
+
+  /* CTA Button */
+  #ctaBtn {
+    width: 100%;
+    padding: 18px;
+    background: var(--green);
+    color: var(--dark);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 10px;
+  }
+  #ctaBtn:hover { background: #00c97e; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(1,222,143,0.4); }
+
+  .cta-note { text-align: center; font-size: 12px; color: var(--sub); margin-bottom: 24px; }
+
+  /* Results Section */
+  #resultsSection { display: none; }
+
+  .savings-hero {
+    background: var(--dark);
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--white);
+  }
+  .sh-eyebrow { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 10px; }
+  .sh-number { font-size: clamp(42px, 8vw, 64px); font-weight: 800; color: var(--green); line-height: 1; margin-bottom: 8px; }
+  .sh-label { font-size: 18px; color: var(--light1); margin-bottom: 20px; }
+  .sh-annual { display: inline-block; background: rgba(1,222,143,0.15); border: 1px solid rgba(1,222,143,0.3); border-radius: 8px; padding: 8px 20px; font-size: 14px; font-weight: 700; color: var(--green); }
+
+  .compare-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;
+  }
+  @media(max-width:480px){ .compare-row { grid-template-columns: 1fr; } }
+  .compare-box { border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+  .compare-box.them { background: #fff5f5; border-color: #f0cece; }
+  .compare-box.us   { background: #f0fdf8; border-color: #b3f0d8; }
+  .compare-box .cb-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .compare-box.them .cb-label { color: var(--red); }
+  .compare-box.us   .cb-label { color: #0b8a5a; }
+  .compare-box .cb-rate { font-size: 30px; font-weight: 800; margin-bottom: 4px; }
+  .compare-box.them .cb-rate { color: var(--red); }
+  .compare-box.us   .cb-rate { color: var(--dark); }
+  .compare-box .cb-monthly { font-size: 14px; color: var(--sub); }
+
+  .three-kills {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .three-kills h3 { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 16px; }
+  .kill-item {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--light2);
+  }
+  .kill-item:last-child { border-bottom: none; }
+  .kill-icon {
+    width: 36px; height: 36px; flex-shrink: 0;
+    background: var(--light2); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .kill-text h4 { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+  .kill-text p { font-size: 13px; color: var(--sub); line-height: 1.5; }
+
+  /* Lead Capture */
+  #leadSection { display: none; }
+  .lead-card {
+    background: var(--dark);
+    border-radius: 16px;
+    padding: 32px;
+    color: var(--white);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .lead-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .lead-card .lc-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+  .lead-form { display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin: 0 auto; }
+  .lead-form input {
+    padding: 14px 18px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.08);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    width: 100%;
+  }
+  .lead-form input::placeholder { color: rgba(255,255,255,0.4); }
+  .lead-form input:focus { outline: none; border-color: var(--green); }
+  .lead-form button {
+    padding: 15px;
+    background: var(--green);
+    color: var(--dark);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .lead-form button:hover { background: #00c97e; }
+  .lead-privacy { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 8px; }
+
+  /* Thank you */
+  #thankYou { display: none; }
+  .ty-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 40px 32px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .ty-icon { font-size: 48px; margin-bottom: 16px; }
+  .ty-card h3 { font-size: 22px; font-weight: 700; color: var(--dark); margin-bottom: 10px; }
+  .ty-card p { color: var(--sub); font-size: 15px; line-height: 1.6; }
+
+  /* Footer */
+  .page-footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 12px;
+    color: var(--sub);
+  }
+  .page-footer a { color: var(--mid); text-decoration: none; }
+
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--dark); color: var(--white);
+    padding: 12px 20px; border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none; z-index: 9999;
+  }
+  .toast.show { opacity: 1; }
+
+  .opp-icon:empty, .kill-icon:empty, .wo-icon:empty, .cc-icon:empty, .wf-header-icon:empty, .upload-icon:empty, .pn-item .pn-icon:empty, .ty-icon:empty, .pm-icon:empty { display:none; }
+
+  .chevron::after, .touch-chevron::after { content: "\25BC"; font-size: 10px; }
+  .check::after { content: "\2713"; font-weight: 700; }
+  .setup-check.checked::after { content: "\2713"; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">Free Savings Analysis</div>
+  <h1>See exactly how much you're <span>overpaying</span> on processing fees</h1>
+  <p>Enter your numbers below. Takes 30 seconds. No sales call required to get your estimate.</p>
+</div>
+
+<div class="content">
+<div class="inner">
+
+  <!-- Calculator -->
+  <div class="calc-card">
+    <h2>Your Processing Profile</h2>
+    <div class="sub">Fill in what you know. We'll calculate the rest.</div>
+
+    <div class="input-stack">
+      <div class="input-row">
+        <div class="field">
+          <label>Monthly Processing Volume</label>
+          <input type="number" id="volume" placeholder="$0" oninput="liveCalc()"/>
+        </div>
+        <div class="field">
+          <label>Avg Transaction Size</label>
+          <input type="number" id="avgTicket" placeholder="$0" oninput="liveCalc()"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>How do you mostly accept payments?</label>
+        <select id="txnType" onchange="liveCalc()">
+          <option value="inperson">In-Person (card present)</option>
+          <option value="online">Online / E-commerce</option>
+          <option value="ach">ACH / Bank Transfer</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>How do you enter your current cost?</label>
+        <div class="cost-toggle">
+          <button class="active" id="btnFees" onclick="setCostMode('fees')">Monthly Fees ($)</button>
+          <button id="btnRate" onclick="setCostMode('rate')">Effective Rate (%)</button>
+        </div>
+        <div id="feesInput">
+          <input type="number" id="currentFees" placeholder="Total fees paid last month" oninput="liveCalc()"/>
+        </div>
+        <div id="rateInput" style="display:none;">
+          <input type="number" id="currentRate" placeholder="e.g. 3.20" step="0.01" oninput="liveCalc()"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Preview -->
+  <div id="livePreview">
+    <div class="preview-top">Your Savings Estimate</div>
+    <div class="preview-numbers">
+      <div class="pn-item">
+        <div class="pn-label">You're currently paying</div>
+        <div class="pn-value bad" id="prev_current">—</div>
+        <div class="pn-sub" id="prev_currentRate">per month</div>
+      </div>
+      <div class="pn-item">
+        <div class="pn-label">With Kashu</div>
+        <div class="pn-value neutral" id="prev_kashu">—</div>
+        <div class="pn-sub" id="prev_kashuRate">per month</div>
+      </div>
+      <div class="pn-item">
+        <div class="pn-label">Monthly savings</div>
+        <div class="pn-value" id="prev_savings">—</div>
+        <div class="pn-sub" id="prev_annual">per year</div>
+      </div>
+    </div>
+  </div>
+
+  <button id="ctaBtn" onclick="showResults()">Get My Full Savings Report</button>
+  <div class="cta-note">No account needed. No commitment. Just your numbers.</div>
+
+  <!-- Results -->
+  <div id="resultsSection">
+
+    <div class="savings-hero">
+      <div class="sh-eyebrow">Your monthly savings with Kashu</div>
+      <div class="sh-number" id="res_monthly">—</div>
+      <div class="sh-label">back in your business every month</div>
+      <div class="sh-annual" id="res_annual">—</div>
+    </div>
+
+    <div class="compare-row">
+      <div class="compare-box them">
+        <div class="cb-label">Current Processor</div>
+        <div class="cb-rate" id="res_theirRate">—</div>
+        <div class="cb-monthly" id="res_theirMonthly">—</div>
+      </div>
+      <div class="compare-box us">
+        <div class="cb-label">With Kashu</div>
+        <div class="cb-rate" id="res_ourRate">—</div>
+        <div class="cb-monthly" id="res_ourMonthly">—</div>
+      </div>
+    </div>
+
+    <div class="three-kills">
+      <h3>Why merchants switch to Kashu</h3>
+      <div class="kill-item">
+        <div class="kill-icon"></div>
+        <div class="kill-text">
+          <h4>Guaranteed better pricing, in writing</h4>
+          <p>We don't ask you to trust us. The rate is locked in your agreement. No surprises on the statement.</p>
+        </div>
+      </div>
+      <div class="kill-item">
+        <div class="kill-icon"></div>
+        <div class="kill-text">
+          <h4>Frictionless switch. Zero downtime.</h4>
+          <p>You stay live the entire time. We handle the transition. You don't miss a single day of business.</p>
+        </div>
+      </div>
+      <div class="kill-item">
+        <div class="kill-icon"></div>
+        <div class="kill-text">
+          <h4>Surcharge turns fees into revenue</h4>
+          <p>With our surcharge program, processing fees go away completely -- and the cost shifts to customers who choose to pay by card. That's not just saving money. That's a new revenue line.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Lead Capture -->
+  <div id="leadSection">
+    <div class="lead-card">
+      <h3>Want to lock in this rate?</h3>
+      <div class="lc-sub">Drop your info and someone from the Kashu team will reach out to get you set up. Takes less than 10 minutes.</div>
+      <div class="lead-form">
+        <input type="text" id="lead_name" placeholder="Your name"/>
+        <input type="text" id="lead_biz" placeholder="Business name"/>
+        <input type="tel" id="lead_phone" placeholder="Phone number"/>
+        <input type="email" id="lead_email" placeholder="Email address"/>
+        <button onclick="submitLead()">Connect Me with Kashu</button>
+      </div>
+      <div class="lead-privacy">Your info is never shared or sold. Ever.</div>
+    </div>
+  </div>
+
+  <!-- Thank You -->
+  <div id="thankYou">
+    <div class="ty-card">
+      <div class="ty-icon"></div>
+      <h3>You're on the list.</h3>
+      <p>Someone from the Kashu team will reach out shortly. In the meantime, <strong>keep processing as normal</strong> -- the switch is frictionless and you won't miss a day.</p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    Powered by <a href="https://www.kashupay.com" target="_blank">Kashu</a> &mdash; Frictionless merchant processing
+  </div>
+
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KASHU_RATES = {
+  inperson:  { combined: 0.022, pertxn: 0.15, label: '2.2% + $0.15' },
+  online:    { combined: 0.025, pertxn: 0.15, label: '2.5% + $0.15' },
+  ach:       { combined: 0.005, pertxn: 0.25, label: '0.50% + $0.25' },
+};
+
+let costMode = 'fees';
+
+function setCostMode(mode) {
+  costMode = mode;
+  document.getElementById('feesInput').style.display = mode === 'fees' ? 'block' : 'none';
+  document.getElementById('rateInput').style.display = mode === 'rate' ? 'block' : 'none';
+  document.getElementById('btnFees').classList.toggle('active', mode === 'fees');
+  document.getElementById('btnRate').classList.toggle('active', mode === 'rate');
+  liveCalc();
+}
+
+function getKashuCost(volume, avgTicket, txnType) {
+  const rate = KASHU_RATES[txnType] || KASHU_RATES.inperson;
+  const numTxns = (avgTicket && avgTicket > 0) ? volume / avgTicket : volume / 50;
+  return (volume * rate.combined) + (numTxns * rate.pertxn);
+}
+
+function getCurrentCost() {
+  const volume = parseFloat(document.getElementById('volume').value) || 0;
+  if (costMode === 'fees') return parseFloat(document.getElementById('currentFees').value) || 0;
+  const rate = parseFloat(document.getElementById('currentRate').value) || 0;
+  return volume * (rate / 100);
+}
+
+function fmt$(n) { return '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function fmtPct(n) { return n.toFixed(2) + '%'; }
+
+function liveCalc() {
+  const volume = parseFloat(document.getElementById('volume').value) || 0;
+  const avgTicket = parseFloat(document.getElementById('avgTicket').value) || 50;
+  const txnType = document.getElementById('txnType').value;
+  const currentCost = getCurrentCost();
+
+  if (!volume || !currentCost) {
+    document.getElementById('livePreview').style.display = 'none';
+    return;
+  }
+
+  const kashuCost = getKashuCost(volume, avgTicket, txnType);
+  const savings = currentCost - kashuCost;
+  const kashuRate = (kashuCost / volume) * 100;
+  const currentRate = (currentCost / volume) * 100;
+
+  document.getElementById('livePreview').style.display = 'block';
+  document.getElementById('prev_current').textContent = fmt$(currentCost);
+  document.getElementById('prev_currentRate').textContent = fmtPct(currentRate) + ' effective rate';
+  document.getElementById('prev_kashu').textContent = fmt$(kashuCost);
+  document.getElementById('prev_kashuRate').textContent = fmtPct(kashuRate) + ' effective rate';
+  document.getElementById('prev_savings').textContent = savings > 0 ? fmt$(savings) : '$0.00';
+  document.getElementById('prev_annual').textContent = savings > 0 ? fmt$(savings * 12) + ' per year' : 'already optimized';
+}
+
+function showResults() {
+  const volume = parseFloat(document.getElementById('volume').value) || 0;
+  const avgTicket = parseFloat(document.getElementById('avgTicket').value) || 50;
+  const txnType = document.getElementById('txnType').value;
+  const currentCost = getCurrentCost();
+
+  if (!volume || !currentCost) {
+    showToast('Enter your monthly volume and current fees to see results.');
+    return;
+  }
+
+  const kashuCost = getKashuCost(volume, avgTicket, txnType);
+  const savings = Math.max(0, currentCost - kashuCost);
+  const currentRate = (currentCost / volume) * 100;
+  const kashuRate = (kashuCost / volume) * 100;
+
+  document.getElementById('res_monthly').textContent = fmt$(savings);
+  document.getElementById('res_annual').textContent = fmt$(savings * 12) + ' per year';
+  document.getElementById('res_theirRate').textContent = fmtPct(currentRate);
+  document.getElementById('res_theirMonthly').textContent = fmt$(currentCost) + '/mo';
+  document.getElementById('res_ourRate').textContent = fmtPct(kashuRate);
+  document.getElementById('res_ourMonthly').textContent = fmt$(kashuCost) + '/mo';
+
+  document.getElementById('resultsSection').style.display = 'block';
+  document.getElementById('leadSection').style.display = 'block';
+  document.getElementById('ctaBtn').style.display = 'none';
+  document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function submitLead() {
+  const name = document.getElementById('lead_name').value.trim();
+  const biz = document.getElementById('lead_biz').value.trim();
+  const phone = document.getElementById('lead_phone').value.trim();
+  const email = document.getElementById('lead_email').value.trim();
+
+  if (!name || !phone) { showToast('Name and phone number are required.'); return; }
+
+  // --- GHL WEBHOOK INTEGRATION POINT ---
+  // When this goes live, POST lead data to GHL webhook:
+  // fetch('YOUR_GHL_WEBHOOK_URL', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({
+  //     name, business: biz, phone, email,
+  //     volume: document.getElementById('volume').value,
+  //     txnType: document.getElementById('txnType').value,
+  //     source: 'roi_calculator'
+  //   })
+  // });
+  // ---
+
+  document.getElementById('leadSection').style.display = 'none';
+  document.getElementById('thankYou').style.display = 'block';
+  document.getElementById('thankYou').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
