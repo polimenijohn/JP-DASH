@@ -26,12 +26,11 @@
   }
   canvas { display: block; }
 
-  /* HEADER */
   .hdr {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     padding: 20px 32px;
     display: flex; align-items: center; justify-content: space-between;
-    background: linear-gradient(to bottom, rgba(6,15,13,0.97), rgba(6,15,13,0));
+    background: linear-gradient(to bottom, rgba(6,15,13,0.97) 0%, rgba(6,15,13,0) 100%);
     pointer-events: none;
   }
   .hdr > * { pointer-events: auto; }
@@ -45,25 +44,20 @@
   .hdr-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
   .hdr-title span { color: var(--green); }
 
-  /* BOTTOM BAR */
   .bottom-bar {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-    padding: 16px 32px;
+    padding: 14px 32px;
     display: flex; align-items: center; justify-content: space-between;
-    background: linear-gradient(to top, rgba(6,15,13,0.97), rgba(6,15,13,0));
+    background: linear-gradient(to top, rgba(6,15,13,0.97) 0%, rgba(6,15,13,0) 100%);
     pointer-events: none;
   }
   .bottom-bar > * { pointer-events: auto; }
 
-  /* LEGEND */
-  .legend {
-    display: flex; gap: 20px; align-items: center;
-  }
+  .legend { display: flex; gap: 20px; align-items: center; }
   .leg-item { display: flex; align-items: center; gap: 7px; }
   .leg-dot { width: 10px; height: 10px; border-radius: 50%; }
   .leg-label { font-size: 12px; color: rgba(255,255,255,0.4); font-weight: 600; }
 
-  /* COUNTER */
   .counter {
     text-align: center;
     background: rgba(1,222,143,0.06);
@@ -73,7 +67,6 @@
   .counter-val { font-size: 24px; font-weight: 800; color: var(--green); line-height: 1; }
   .counter-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
 
-  /* NAV HINT */
   .nav-hint {
     font-size: 12px; color: rgba(255,255,255,0.25); font-weight: 500;
     display: flex; align-items: center; gap: 8px;
@@ -106,62 +99,63 @@
     display: flex; align-items: center; justify-content: center;
   }
   .panel-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
-  .panel-cat {
-    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; margin-bottom: 4px;
-  }
-  .panel-name {
-    font-size: 20px; font-weight: 800; color: #fff;
-    letter-spacing: -0.3px; margin-bottom: 10px; line-height: 1.2;
-  }
-  .panel-desc {
-    font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.65; margin-bottom: 16px;
-  }
+  .panel-cat { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+  .panel-name { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.3px; margin-bottom: 10px; line-height: 1.2; }
+  .panel-desc { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.65; margin-bottom: 16px; }
   .panel-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .p-stat {
-    background: rgba(255,255,255,0.03); border-radius: 9px; padding: 9px 11px;
-  }
+  .p-stat { background: rgba(255,255,255,0.03); border-radius: 9px; padding: 9px 11px; }
   .p-stat-v { font-size: 17px; font-weight: 800; color: var(--green); }
-  .p-stat-l {
-    font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; color: rgba(255,255,255,0.25);
-  }
-  .panel-conns {
-    margin-top: 12px; padding-top: 12px;
-    border-top: 1px solid rgba(255,255,255,0.05);
-  }
-  .panel-conns-title {
-    font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; color: rgba(255,255,255,0.25); margin-bottom: 6px;
-  }
+  .p-stat-l { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+  .panel-conns { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
+  .panel-conns-title { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.25); margin-bottom: 6px; }
   .panel-conn { font-size: 12px; color: rgba(255,255,255,0.4); padding: 2px 0; }
 
-  /* STEP OVERLAY */
-  .step-overlay {
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  /* STEP CARD -- bottom left, not center */
+  .step-card {
+    position: fixed;
+    bottom: 80px;
+    left: 32px;
     z-index: 200;
-    text-align: center;
-    opacity: 0; transition: opacity 0.6s ease;
+    max-width: 440px;
+    background: rgba(6,15,13,0.92);
+    border: 1px solid rgba(1,222,143,0.15);
+    border-radius: 18px;
+    padding: 28px 32px;
+    backdrop-filter: blur(24px);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s cubic-bezier(0.22,1,0.36,1);
     pointer-events: none;
   }
-  .step-overlay.show { opacity: 1; }
+  .step-card.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
   .step-num {
-    font-size: 13px; font-weight: 700; letter-spacing: 0.12em;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
     text-transform: uppercase; color: var(--green); margin-bottom: 8px;
-    opacity: 0.6;
+    opacity: 0.7;
   }
   .step-text {
-    font-size: clamp(28px, 4vw, 48px); font-weight: 800;
-    color: #fff; letter-spacing: -1px; line-height: 1.15;
-    max-width: 600px;
-    text-shadow: 0 4px 40px rgba(0,0,0,0.6);
+    font-size: 32px; font-weight: 800;
+    color: #fff; letter-spacing: -0.8px; line-height: 1.15;
   }
   .step-text span { color: var(--green); }
   .step-sub {
-    font-size: 15px; color: rgba(255,255,255,0.35); margin-top: 12px;
-    font-weight: 400; max-width: 420px; margin-left: auto; margin-right: auto;
-    line-height: 1.5;
+    font-size: 14px; color: rgba(255,255,255,0.4); margin-top: 10px;
+    font-weight: 400; line-height: 1.55;
   }
+  .step-progress {
+    display: flex; gap: 4px; margin-top: 16px;
+  }
+  .step-dot {
+    width: 24px; height: 3px; border-radius: 2px;
+    background: rgba(255,255,255,0.08);
+    transition: background 0.3s;
+  }
+  .step-dot.active { background: var(--green); }
+  .step-dot.past { background: rgba(1,222,143,0.3); }
 </style>
 </head>
 <body>
@@ -183,13 +177,12 @@
   </div>
   <div class="counter">
     <div class="counter-val">2,700</div>
-    <div class="counter-label">Projected Merchants (35% Buffer Over 2K Target)</div>
+    <div class="counter-label">Projected Merchants (35% Buffer)</div>
   </div>
   <div class="nav-hint">
-    <span class="key-badge">Space</span> Present &nbsp;
-    <span class="key-badge">Click</span> Details &nbsp;
-    <span class="key-badge">Scroll</span> Zoom &nbsp;
-    <span class="key-badge">Drag</span> Pan
+    <span class="key-badge">Space</span> Present
+    <span class="key-badge">Esc</span> Reset
+    <span class="key-badge">Click</span> Details
   </div>
 </div>
 
@@ -205,10 +198,11 @@
   </div>
 </div>
 
-<div class="step-overlay" id="stepOverlay">
+<div class="step-card" id="stepCard">
   <div class="step-num" id="stepNum"></div>
   <div class="step-text" id="stepText"></div>
   <div class="step-sub" id="stepSub"></div>
+  <div class="step-progress" id="stepProgress"></div>
 </div>
 
 <canvas id="c"></canvas>
@@ -221,456 +215,393 @@ const resize = () => { W = C.width = innerWidth; H = C.height = innerHeight; };
 resize();
 addEventListener('resize', resize);
 
-// ── COLORS ──
-const COL = {
-  goal: '#01de8f', channel: '#4a9eff', tool: '#f5a623',
-  infra: '#a855f7', outcome: '#ff6b6b'
-};
-function hex(c, a) {
-  const r = parseInt(c.slice(1,3),16), g = parseInt(c.slice(3,5),16), b = parseInt(c.slice(5,7),16);
-  return `rgba(${r},${g},${b},${a})`;
+const COL = { goal:'#01de8f', channel:'#4a9eff', tool:'#f5a623', infra:'#a855f7', outcome:'#ff6b6b' };
+function hex(c,a) {
+  return `rgba(${parseInt(c.slice(1,3),16)},${parseInt(c.slice(3,5),16)},${parseInt(c.slice(5,7),16)},${a})`;
 }
 
-// ── NODES ──
-// Layout: fixed positions, designed not simulated
-// Center = goal. Left hemisphere = channels (inner ring T1, outer T2/T3).
-// Bottom-left = tools. Top-left = infra. Right = outcomes.
-const CX = 0, CY = 0; // center
-
+// ── NODES ── spread out more, bigger bubbles
 const nodes = [
-  // GOAL -- dead center
-  { id:'goal', label:'2,000\nMerchants', sub:'$1.4B/yr', type:'goal', r:80, fx:0, fy:0,
-    desc:'The 6-month target. 2,000 active merchants processing through Kashu. $120M/month. $1.4B annually. Every node on this map feeds this number.',
+  { id:'goal', label:'2,000\nMerchants', sub:'$1.4B/yr', type:'goal', r:90, fx:0, fy:0,
+    desc:'The 6-month target. 2,000 active merchants processing through Kashu. $120M/month. $1.4B annually.',
     stats:[{v:'2,000',l:'Target'},{v:'$120M',l:'Mo Volume'},{v:'$1.4B',l:'Annual'},{v:'6 mo',l:'Timeline'}] },
 
-  // T1 CHANNELS -- inner ring, left/top of goal
-  { id:'mrp', label:'MRP Network', sub:'400', type:'channel', r:52, fx:-220, fy:-120,
-    desc:'Merchant Referral Partners source and refer merchants for residuals. Primary scale lever. Each productive MRP feeds 3-8 merchants/month. Compounds via upline override.',
+  // T1 -- inner ring, well spaced
+  { id:'mrp', label:'MRP\nNetwork', sub:'400 merchants', type:'channel', r:60, fx:-260, fy:-160,
+    desc:'Merchant Referral Partners source and refer merchants for residuals. Primary scale lever. Each productive MRP feeds 3-8 merchants/month.',
     stats:[{v:'400',l:'Projected'},{v:'T1',l:'Priority'},{v:'Live',l:'Status'},{v:'50+',l:'MRPs Needed'}] },
-  { id:'direct', label:'Direct Outreach', sub:'350', type:'channel', r:48, fx:-240, fy:60,
-    desc:'Cold email, LinkedIn, text, calls. Coordinated multi-channel touches. Vertical-specific copy. Statement analyzer is the hook.',
+  { id:'direct', label:'Direct\nOutreach', sub:'350 merchants', type:'channel', r:56, fx:-280, fy:100,
+    desc:'Cold email, LinkedIn, text, calls. Coordinated multi-channel touches. Statement analyzer is the hook.',
     stats:[{v:'350',l:'Projected'},{v:'T1',l:'Priority'},{v:'Live',l:'Status'},{v:'5-Touch',l:'Sequence'}] },
-  { id:'cpa', label:'CPA & Bookkeeper', sub:'300', type:'channel', r:45, fx:-170, fy:180,
-    desc:'Every CPA touches 50-200 business clients. They already see the statements. They have the trust. One intro per quarter from 50 CPAs fills the pipeline.',
+  { id:'cpa', label:'CPA &\nBookkeeper', sub:'300 merchants', type:'channel', r:52, fx:-180, fy:240,
+    desc:'Every CPA touches 50-200 business clients. They already see the statements. One intro per quarter from 50 CPAs fills the pipeline.',
     stats:[{v:'300',l:'Projected'},{v:'T1',l:'Priority'},{v:'Mo 1',l:'Launch'},{v:'50',l:'Target CPAs'}] },
-  { id:'iso', label:'ISO & POS Resellers', sub:'250', type:'channel', r:42, fx:-280, fy:-30,
-    desc:'Small ISOs and POS resellers with existing merchant portfolios. One unhappy ISO with 200 merchants = a month of activations in a single deal.',
+  { id:'iso', label:'ISO &\nResellers', sub:'250 merchants', type:'channel', r:48, fx:-320, fy:-30,
+    desc:'Small ISOs and POS resellers with existing portfolios. One unhappy ISO with 200 merchants = a month of activations.',
     stats:[{v:'250',l:'Projected'},{v:'T1',l:'Priority'},{v:'Mo 1-2',l:'Launch'},{v:'Bulk',l:'Acquisition'}] },
 
-  // T2 CHANNELS -- wider ring
-  { id:'bank', label:'Bank & Credit Union', sub:'200', type:'channel', r:38, fx:-380, fy:-180,
-    desc:'Community banks and credit unions with business clients who need processing. Kashu becomes their preferred processor. Small override to the bank. Adam\'s world.',
+  // T2 -- wider, spread evenly
+  { id:'bank', label:'Bank &\nCredit Union', sub:'200', type:'channel', r:42, fx:-480, fy:-220,
+    desc:'Community banks and credit unions. Kashu becomes their preferred processor. Small override to the bank. Adam\'s world.',
     stats:[{v:'200',l:'Projected'},{v:'T2',l:'Priority'},{v:'Mo 2',l:'Launch'},{v:'Trust',l:'Leverage'}] },
-  { id:'vertical', label:'Vertical Domination', sub:'200', type:'channel', r:38, fx:-100, fy:-250,
-    desc:'Pick 3-5 verticals, own them completely. Business owners talk to each other. Case studies become referral engines. Industry groups, trade associations, niche forums.',
+  { id:'vertical', label:'Vertical\nDomination', sub:'200', type:'channel', r:42, fx:-120, fy:-340,
+    desc:'Pick 3-5 verticals, own them. Business owners talk. Case studies become referral engines.',
     stats:[{v:'200',l:'Projected'},{v:'T2',l:'Priority'},{v:'Mo 1-2',l:'Launch'},{v:'3-5',l:'Verticals'}] },
-  { id:'mca', label:'MCA & Lending', sub:'150', type:'channel', r:35, fx:-400, fy:80,
-    desc:'MCA brokers already qualify businesses on processing volume. They have the statements in hand. They know who\'s doing volume. Structure a referral fee.',
+  { id:'mca', label:'MCA &\nLending', sub:'150', type:'channel', r:38, fx:-500, fy:120,
+    desc:'MCA brokers already have the statements in hand. They know who\'s doing volume. Structure a referral fee.',
     stats:[{v:'150',l:'Projected'},{v:'T2',l:'Priority'},{v:'Mo 2',l:'Launch'},{v:'Warm',l:'Leads'}] },
-  { id:'insurance', label:'Insurance Agents', sub:'100', type:'channel', r:32, fx:-350, fy:200,
-    desc:'Commercial insurance agents renew annually with every business. One line turns a renewal call into a Kashu referral. Residual structure.',
+  { id:'insurance', label:'Insurance\nAgents', sub:'100', type:'channel', r:35, fx:-440, fy:270,
+    desc:'Commercial insurance agents renew annually with every business. One line turns a renewal call into a Kashu referral.',
     stats:[{v:'100',l:'Projected'},{v:'T2',l:'Priority'},{v:'Mo 2-3',l:'Launch'},{v:'Annual',l:'Touch'}] },
-  { id:'payroll', label:'Payroll Partners', sub:'100', type:'channel', r:32, fx:-150, fy:310,
-    desc:'Payroll companies already manage the financial relationship. Gusto, Paychex reps, regional shops introduce Kashu as the processing partner.',
+  { id:'payroll', label:'Payroll\nPartners', sub:'100', type:'channel', r:35, fx:-180, fy:400,
+    desc:'Payroll companies already manage the financial relationship. Gusto, Paychex reps introduce Kashu.',
     stats:[{v:'100',l:'Projected'},{v:'T2',l:'Priority'},{v:'Mo 2-3',l:'Launch'},{v:'B2B',l:'Channel'}] },
-  { id:'tradeshow', label:'Trade Shows', sub:'100', type:'channel', r:32, fx:40, fy:-300,
-    desc:'Walk the floor as a closer. Run the statement analyzer live. One conference = 20-30 qualified conversations in two days.',
+  { id:'tradeshow', label:'Trade\nShows', sub:'100', type:'channel', r:35, fx:60, fy:-400,
+    desc:'Walk the floor as a closer. Run the statement analyzer live. One conference = 20-30 qualified conversations.',
     stats:[{v:'100',l:'Projected'},{v:'T2',l:'Priority'},{v:'Mo 2+',l:'Launch'},{v:'Live',l:'Demo'}] },
 
-  // T3 CHANNELS -- outer ring
-  { id:'franchise', label:'Franchise Groups', sub:'100', type:'channel', r:30, fx:-480, fy:-60,
-    desc:'One franchise relationship = 50-500 locations. Standardized pricing, consolidated reporting. Five groups at 20 locations each = 100 merchants.',
+  // T3 -- outer
+  { id:'franchise', label:'Franchise\nGroups', sub:'100', type:'channel', r:32, fx:-600, fy:-60,
+    desc:'One franchise relationship = 50-500 locations. Five groups at 20 each = 100 merchants.',
     stats:[{v:'100',l:'Projected'},{v:'T3',l:'Priority'},{v:'Mo 3+',l:'Launch'},{v:'Bulk',l:'Per Deal'}] },
-  { id:'portfolio', label:'Portfolio Buys', sub:'100', type:'channel', r:30, fx:-460, fy:-260,
-    desc:'Buy merchant books from retiring agents and small ISOs. 100-500 merchants per transaction. No sales cycle, just migration.',
+  { id:'portfolio', label:'Portfolio\nBuys', sub:'100', type:'channel', r:32, fx:-560, fy:-340,
+    desc:'Buy merchant books from retiring agents and small ISOs. 100-500 merchants per transaction.',
     stats:[{v:'100',l:'Projected'},{v:'T3',l:'Priority'},{v:'Mo 3+',l:'Launch'},{v:'Buy',l:'Not Build'}] },
-  { id:'assoc', label:'Merchant Assoc.', sub:'100', type:'channel', r:30, fx:-40, fy:330,
-    desc:'One deal with a buying group = hundreds of members get preferred Kashu pricing. Restaurant associations, retail groups, healthcare networks.',
+  { id:'assoc', label:'Merchant\nAssoc.', sub:'100', type:'channel', r:32, fx:-40, fy:440,
+    desc:'One deal with a buying group = hundreds of members at preferred Kashu pricing.',
     stats:[{v:'100',l:'Projected'},{v:'T3',l:'Priority'},{v:'Mo 3+',l:'Launch'},{v:'Group',l:'Pricing'}] },
-  { id:'pe', label:'PE Managed Svc', sub:'75', type:'channel', r:28, fx:100, fy:280,
-    desc:'Private equity funds with portfolios of operating businesses. Retainer + rev share model. Double play: processing + C2C.',
+  { id:'pe', label:'PE Managed\nService', sub:'75', type:'channel', r:30, fx:140, fy:360,
+    desc:'PE funds with portfolio companies. Retainer + rev share. Double play: processing + C2C.',
     stats:[{v:'75',l:'Projected'},{v:'T3',l:'Priority'},{v:'Mo 3+',l:'Launch'},{v:'$10-25K',l:'Retainer'}] },
-  { id:'bni', label:'BNI & Chambers', sub:'75', type:'channel', r:28, fx:140, fy:-260,
-    desc:'Structured referral networks. One seat = 30 business owners weekly. Plant an MRP in every major metro BNI group.',
+  { id:'bni', label:'BNI &\nChambers', sub:'75', type:'channel', r:30, fx:200, fy:-320,
+    desc:'Structured referral networks. One seat = 30 business owners weekly.',
     stats:[{v:'75',l:'Projected'},{v:'T3',l:'Priority'},{v:'Mo 2+',l:'Launch'},{v:'Weekly',l:'Exposure'}] },
-  { id:'saas', label:'SaaS Integrations', sub:'50', type:'channel', r:26, fx:200, fy:-180,
-    desc:'POS, invoicing, booking, ecommerce platforms. Get listed as preferred processor. Inbound merchants already looking for a solution.',
+  { id:'saas', label:'SaaS\nIntegrations', sub:'50', type:'channel', r:28, fx:280, fy:-220,
+    desc:'POS, invoicing, booking platforms. Get listed as preferred processor.',
     stats:[{v:'50',l:'Projected'},{v:'T3',l:'Priority'},{v:'Mo 4+',l:'Launch'},{v:'Inbound',l:'Passive'}] },
-  { id:'seo', label:'Content & SEO', sub:'50', type:'channel', r:26, fx:200, fy:180,
-    desc:'Merchants Google "lower processing fees" every day. Landing pages with ROI calculator. Captures leads while you sleep.',
+  { id:'seo', label:'Content\n& SEO', sub:'50', type:'channel', r:28, fx:280, fy:230,
+    desc:'Landing pages with ROI calculator. Captures leads 24/7.',
     stats:[{v:'50',l:'Projected'},{v:'T3',l:'Priority'},{v:'Mo 3+',l:'Launch'},{v:'24/7',l:'Passive'}] },
 
-  // TOOLS -- bottom zone
-  { id:'statement', label:'Statement\nAnalyzer', sub:'', type:'tool', r:28, fx:-80, fy:480,
-    desc:'Upload a merchant processing statement PDF. Auto-parses rates, fees, volume. Generates savings pitch instantly. The live demo weapon at trade shows and meetings.',
+  // TOOLS -- bottom, well spaced
+  { id:'statement', label:'Statement\nAnalyzer', sub:'', type:'tool', r:30, fx:-100, fy:600,
+    desc:'Upload statement PDF. Auto-parses rates, fees, volume. Generates savings pitch instantly.',
     stats:[{v:'PDF',l:'Upload'},{v:'Auto',l:'Parse'},{v:'Live',l:'Demo'},{v:'Instant',l:'Pitch'}] },
-  { id:'competitor', label:'Competitor\nTool', sub:'', type:'tool', r:26, fx:80, fy:480,
-    desc:'8-processor displacement tool. Square, Stripe, Toast, Clover, Heartland, Worldpay, PayPal, Elavon. Live savings calculator.',
+  { id:'competitor', label:'Competitor\nTool', sub:'', type:'tool', r:28, fx:100, fy:600,
+    desc:'8-processor displacement tool with live savings calculator.',
     stats:[{v:'8',l:'Processors'},{v:'Live',l:'Savings'}] },
-  { id:'roi', label:'ROI\nCalculator', sub:'', type:'tool', r:24, fx:-220, fy:460,
-    desc:'Merchant-facing shareable savings calculator with lead capture. Embeddable on landing pages.',
+  { id:'roi', label:'ROI\nCalculator', sub:'', type:'tool', r:26, fx:-300, fy:560,
+    desc:'Merchant-facing shareable savings calculator with lead capture.',
     stats:[{v:'Lead',l:'Capture'},{v:'Share',l:'able'}] },
-  { id:'sequences', label:'Sequence\nBuilder', sub:'', type:'tool', r:24, fx:220, fy:460,
-    desc:'5-touch merchant sequences + MRP recruiting sequences across 9 partner personas. GHL-ready.',
+  { id:'sequences', label:'Sequence\nBuilder', sub:'', type:'tool', r:26, fx:300, fy:560,
+    desc:'5-touch merchant sequences + MRP recruiting sequences. GHL-ready.',
     stats:[{v:'5-Touch',l:'Merchant'},{v:'9',l:'MRP Types'}] },
-  { id:'onepager', label:'One-Pager\nGen', sub:'', type:'tool', r:22, fx:-340, fy:420,
+  { id:'onepager', label:'One-Pager\nGen', sub:'', type:'tool', r:24, fx:-460, fy:480,
     desc:'Niche-specific one-pagers with auto-generated pitch emails. 10 verticals.',
     stats:[{v:'10',l:'Verticals'},{v:'Auto',l:'Email'}] },
-  { id:'objection', label:'Objection\nHandler', sub:'', type:'tool', r:22, fx:340, fy:420,
+  { id:'objection', label:'Objection\nHandler', sub:'', type:'tool', r:24, fx:460, fy:480,
     desc:'27 objections across Merchant, MRP, and PE. Copy buttons.',
     stats:[{v:'27',l:'Objections'},{v:'3',l:'Categories'}] },
-  { id:'intake', label:'Merchant\nIntake', sub:'', type:'tool', r:22, fx:0, fy:520,
-    desc:'Savings estimator + lead capture + GHL webhook + MRP attribution + underwriting screening.',
+  { id:'intake', label:'Merchant\nIntake', sub:'', type:'tool', r:24, fx:0, fy:660,
+    desc:'Savings estimator + lead capture + GHL webhook + MRP attribution.',
     stats:[{v:'GHL',l:'Webhook'},{v:'MRP',l:'Attribution'}] },
-  { id:'residual', label:'Residual\nCalc', sub:'', type:'tool', r:22, fx:-450, fy:360,
-    desc:'MRP earnings calculator. T1/T2 tiers, downline override projections, what-if scenarios.',
+  { id:'residual', label:'Residual\nCalc', sub:'', type:'tool', r:24, fx:-560, fy:400,
+    desc:'MRP earnings calculator. T1/T2 tiers, downline projections.',
     stats:[{v:'T1/T2',l:'Tiers'},{v:'What-If',l:'Scenarios'}] },
-  { id:'pepitch', label:'PE Pitch\nDeck', sub:'', type:'tool', r:20, fx:430, fy:350,
-    desc:'Interactive PE pitch with ROI calculator, outreach templates, objection handling.',
+  { id:'pepitch', label:'PE Pitch\nDeck', sub:'', type:'tool', r:22, fx:540, fy:400,
+    desc:'Interactive PE pitch with ROI calculator and outreach templates.',
     stats:[{v:'ROI',l:'Built In'},{v:'Interactive',l:'Format'}] },
 
-  // INFRASTRUCTURE -- top zone
-  { id:'vapi', label:'AI Voice\nCloser', sub:'', type:'infra', r:34, fx:0, fy:-430,
-    desc:'The force multiplier. Vapi.ai + ElevenLabs voice clone handles 1:1 merchant calls. John handles escalations and whales. Removes the sole-closer bottleneck. Makes every channel scale.',
+  // INFRA -- top, well spaced
+  { id:'vapi', label:'AI Voice\nCloser', sub:'23+ calls/day', type:'infra', r:40, fx:0, fy:-520,
+    desc:'Vapi.ai + ElevenLabs voice clone handles 1:1 merchant calls. John handles escalations. The force multiplier.',
     stats:[{v:'23+',l:'Calls/Day'},{v:'ALL',l:'Channels'},{v:'Clone',l:'Voice'},{v:'Auto',l:'Close'}] },
-  { id:'ghl', label:'GoHighLevel\nCRM', sub:'', type:'infra', r:30, fx:-250, fy:-380,
-    desc:'Central CRM. All pipeline, follow-up, contact management. Every channel feeds here. 6 automation workflows.',
+  { id:'ghl', label:'GoHighLevel\nCRM', sub:'', type:'infra', r:34, fx:-300, fy:-480,
+    desc:'Central CRM. All pipeline, follow-up, contact management. 6 automation workflows.',
     stats:[{v:'6',l:'Workflows'},{v:'Central',l:'Pipeline'}] },
-  { id:'automations', label:'Daily\nAutomations', sub:'', type:'infra', r:28, fx:250, fy:-380,
-    desc:'CRO Briefing 6:55am. Call Prep 6:50am. Gmail Triage 7am. Post-Call every 5 min. Monday.com webhooks real-time.',
+  { id:'automations', label:'Daily\nAutomations', sub:'24/7', type:'infra', r:32, fx:300, fy:-480,
+    desc:'CRO Briefing, Call Prep, Gmail Triage, Post-Call, Monday.com webhooks.',
     stats:[{v:'6',l:'Agents'},{v:'24/7',l:'Running'}] },
-  { id:'dash', label:'CRO\nDashboard', sub:'', type:'infra', r:26, fx:350, fy:-300,
-    desc:'Daily ops dashboard. Metrics, pipeline by stage, top deals, MRP activity, daily focus.',
+  { id:'dash', label:'CRO\nDashboard', sub:'', type:'infra', r:28, fx:440, fy:-380,
+    desc:'Daily ops dashboard. Metrics, pipeline, top deals, daily focus.',
     stats:[{v:'Daily',l:'Ops'},{v:'Live',l:'Metrics'}] },
-  { id:'playbook', label:'Sales\nPlaybook', sub:'', type:'infra', r:26, fx:-370, fy:-320,
-    desc:'10-tab interactive sales intelligence. Challenger framework, mental models, outreach templates, objection reframes.',
+  { id:'playbook', label:'Sales\nPlaybook', sub:'', type:'infra', r:28, fx:-460, fy:-400,
+    desc:'10-tab interactive sales intelligence. Challenger framework, mental models.',
     stats:[{v:'10',l:'Tabs'},{v:'Live',l:'Reference'}] },
-  { id:'dealvel', label:'Deal\nVelocity', sub:'', type:'infra', r:22, fx:430, fy:-200,
-    desc:'Pipeline tracker. Stall alerts at 7d (yellow) and 14d+ (red). Stage advancement.',
+  { id:'dealvel', label:'Deal\nVelocity', sub:'', type:'infra', r:24, fx:520, fy:-260,
+    desc:'Pipeline tracker. Stall alerts at 7d and 14d+.',
     stats:[{v:'7d',l:'Yellow'},{v:'14d+',l:'Red'}] },
-  { id:'scorecard', label:'Partner\nScorecard', sub:'', type:'infra', r:22, fx:-430, fy:-220,
-    desc:'MRP tracker. Auto-status: Producing/Active/Dormant/New. Residual projections. Reactivation queue.',
+  { id:'scorecard', label:'Partner\nScorecard', sub:'', type:'infra', r:24, fx:-540, fy:-280,
+    desc:'MRP tracker. Auto-status, residual projections, reactivation queue.',
     stats:[{v:'Auto',l:'Status'},{v:'Queue',l:'Reactivate'}] },
-  { id:'dream100', label:'Dream 100', sub:'', type:'infra', r:22, fx:140, fy:-380,
-    desc:'Top prospect tracker. Merchant, MRP, PE categories. Touch logging, overdue alerts, persistence score.',
+  { id:'dream100', label:'Dream\n100', sub:'', type:'infra', r:24, fx:180, fy:-480,
+    desc:'Top prospect tracker. Touch logging, overdue alerts, persistence score.',
     stats:[{v:'3',l:'Categories'},{v:'Touch',l:'Logging'}] },
 
-  // OUTCOMES -- right side
-  { id:'volume', label:'$120M/mo\nVolume', sub:'$1.4B/yr', type:'outcome', r:44, fx:340, fy:0,
-    desc:'2,000 merchants at $60K/month average = $120M/month processing volume = $1.4B annually. The revenue engine at scale.',
+  // OUTCOMES -- right, well spaced
+  { id:'volume', label:'$120M/mo\nVolume', sub:'$1.4B/yr', type:'outcome', r:52, fx:440, fy:0,
+    desc:'2,000 merchants at $60K/month = $120M/month = $1.4B annually.',
     stats:[{v:'$120M',l:'Monthly'},{v:'$1.4B',l:'Annual'},{v:'$60K',l:'Avg/Merchant'},{v:'2,000',l:'Merchants'}] },
-  { id:'c2c', label:'C2C\nCross-Sell', sub:'2nd Revenue Line', type:'outcome', r:34, fx:420, fy:130,
-    desc:'Every processing merchant becomes a cross-sell for Credit to Cash. Second revenue line on the same customer base. No additional acquisition cost.',
+  { id:'c2c', label:'C2C\nCross-Sell', sub:'2nd line', type:'outcome', r:38, fx:540, fy:160,
+    desc:'Every processing merchant becomes a C2C cross-sell. Second revenue line, zero acquisition cost.',
     stats:[{v:'2nd',l:'Revenue Line'},{v:'$0',l:'Acq Cost'}] },
-  { id:'network', label:'Self-Growing\nNetwork', sub:'Compounds', type:'outcome', r:34, fx:420, fy:-130,
-    desc:'MRPs recruit MRPs. Merchants refer merchants. CPAs refer CPAs. The network compounds without additional effort from core team.',
+  { id:'network', label:'Self-Growing\nNetwork', sub:'compounds', type:'outcome', r:38, fx:540, fy:-160,
+    desc:'MRPs recruit MRPs. Merchants refer merchants. CPAs refer CPAs. Compounds without effort.',
     stats:[{v:'Compound',l:'Growth'},{v:'Passive',l:'Referrals'}] },
 ];
 
 // ── EDGES ──
 const edges = [
-  // T1 -> Goal (thick)
   {f:'mrp',t:'goal',s:4},{f:'direct',t:'goal',s:4},{f:'cpa',t:'goal',s:3},{f:'iso',t:'goal',s:3},
-  // T2 -> Goal
   {f:'bank',t:'goal',s:2},{f:'vertical',t:'goal',s:2},{f:'mca',t:'goal',s:2},
   {f:'insurance',t:'goal',s:1.5},{f:'payroll',t:'goal',s:1.5},{f:'tradeshow',t:'goal',s:1.5},
-  // T3 -> Goal
   {f:'franchise',t:'goal',s:1},{f:'portfolio',t:'goal',s:1},{f:'assoc',t:'goal',s:1},
   {f:'pe',t:'goal',s:1},{f:'bni',t:'goal',s:1},{f:'saas',t:'goal',s:1},{f:'seo',t:'goal',s:1},
-  // Goal -> Outcomes
   {f:'goal',t:'volume',s:4},{f:'goal',t:'c2c',s:2.5},{f:'goal',t:'network',s:2.5},
-  // Tools -> Channels
-  {f:'statement',t:'direct',s:2},{f:'statement',t:'tradeshow',s:1.5},{f:'statement',t:'cpa',s:1},
-  {f:'competitor',t:'direct',s:1.5},{f:'competitor',t:'iso',s:1},
-  {f:'roi',t:'seo',s:1.5},{f:'roi',t:'cpa',s:1},{f:'roi',t:'direct',s:1},
-  {f:'onepager',t:'direct',s:1.5},{f:'onepager',t:'vertical',s:1.5},
-  {f:'sequences',t:'direct',s:1.5},{f:'sequences',t:'mrp',s:1.5},
-  {f:'objection',t:'direct',s:1},{f:'objection',t:'mrp',s:1},
-  {f:'intake',t:'seo',s:1},{f:'intake',t:'direct',s:1},
-  {f:'residual',t:'mrp',s:1.5},{f:'residual',t:'cpa',s:1},{f:'residual',t:'insurance',s:1},
-  {f:'pepitch',t:'pe',s:1.5},
-  // Infra -> Channels/Goal
-  {f:'vapi',t:'goal',s:3},{f:'vapi',t:'mrp',s:1},{f:'vapi',t:'direct',s:1},{f:'vapi',t:'cpa',s:1},{f:'vapi',t:'bank',s:1},
-  {f:'ghl',t:'goal',s:2},{f:'ghl',t:'direct',s:1},{f:'ghl',t:'mrp',s:1},
+  {f:'statement',t:'direct',s:1.5},{f:'statement',t:'tradeshow',s:1},{f:'statement',t:'cpa',s:1},
+  {f:'competitor',t:'direct',s:1},{f:'competitor',t:'iso',s:1},
+  {f:'roi',t:'seo',s:1},{f:'roi',t:'cpa',s:1},
+  {f:'onepager',t:'direct',s:1},{f:'onepager',t:'vertical',s:1},
+  {f:'sequences',t:'direct',s:1},{f:'sequences',t:'mrp',s:1},
+  {f:'objection',t:'direct',s:0.8},{f:'objection',t:'mrp',s:0.8},
+  {f:'intake',t:'seo',s:0.8},{f:'intake',t:'direct',s:0.8},
+  {f:'residual',t:'mrp',s:1},{f:'residual',t:'cpa',s:0.8},
+  {f:'pepitch',t:'pe',s:1},
+  {f:'vapi',t:'goal',s:3},{f:'vapi',t:'mrp',s:1},{f:'vapi',t:'direct',s:1},
+  {f:'ghl',t:'goal',s:2},{f:'ghl',t:'direct',s:0.8},{f:'ghl',t:'mrp',s:0.8},
   {f:'automations',t:'goal',s:1.5},
-  {f:'dash',t:'goal',s:1},{f:'dealvel',t:'goal',s:1},
-  {f:'scorecard',t:'mrp',s:1},{f:'dream100',t:'direct',s:1},{f:'playbook',t:'direct',s:1},
-  // Cross-connections
+  {f:'dash',t:'goal',s:0.8},{f:'dealvel',t:'goal',s:0.8},
+  {f:'scorecard',t:'mrp',s:0.8},{f:'dream100',t:'direct',s:0.8},{f:'playbook',t:'direct',s:0.8},
   {f:'mrp',t:'network',s:1},{f:'cpa',t:'network',s:1},
-  {f:'bni',t:'mrp',s:1},{f:'vertical',t:'assoc',s:1},{f:'bank',t:'franchise',s:1},{f:'iso',t:'portfolio',s:1},
-  {f:'mca',t:'iso',s:0.8},
+  {f:'bni',t:'mrp',s:0.8},{f:'vertical',t:'assoc',s:0.8},{f:'bank',t:'franchise',s:0.8},{f:'iso',t:'portfolio',s:0.8},
 ];
 
-// Build lookup
 const NM = {};
 nodes.forEach(n => { NM[n.id] = n; n.x = n.fx; n.y = n.fy; });
 
 // ── PARTICLES ──
-// Flowing dots along edges toward the goal
 const particles = [];
-const MAX_P = 200;
 function spawnParticle() {
-  if (particles.length >= MAX_P) return;
-  // Pick a random edge that connects toward goal or toward an outcome
+  if (particles.length >= 120) return;
   const goalEdges = edges.filter(e => e.t === 'goal' || NM[e.t]?.type === 'outcome');
   const e = goalEdges[Math.floor(Math.random() * goalEdges.length)];
   const from = NM[e.f], to = NM[e.t];
   if (!from || !to) return;
   particles.push({
-    x: from.x, y: from.y,
-    tx: to.x, ty: to.y,
-    progress: 0,
-    speed: 0.003 + Math.random() * 0.004,
-    color: COL[from.type],
-    size: 1.5 + Math.random() * 2,
-    alpha: 0
+    sx: from.x, sy: from.y, tx: to.x, ty: to.y,
+    p: 0, speed: 0.004 + Math.random() * 0.005,
+    color: COL[from.type], size: 1.5 + Math.random() * 1.5
   });
 }
 
-// ── PRESENTATION STEPS ──
+// ── STEPS ──
 const steps = [
-  { num: '', text: '', sub: '', highlight: [], dim: true }, // step 0 = full view
-  { num: 'The Goal', text: '<span>2,000</span> Merchants\nin 6 Months', sub: '$120M/month in volume. $1.4B annually.', highlight: ['goal'], dim: true },
-  { num: 'Tier 1 Channels', text: '<span>1,300</span> from\nFour Core Channels', sub: 'MRP Network, Direct Outreach, CPA Referrals, ISO Partnerships. All live or launching Month 1.', highlight: ['mrp','direct','cpa','iso','goal'], dim: true },
-  { num: 'Tier 2 Channels', text: '<span>850</span> from\nStrategic Partners', sub: 'Banks, verticals, MCA, insurance, payroll, trade shows. Month 2-3 ramp.', highlight: ['bank','vertical','mca','insurance','payroll','tradeshow','goal'], dim: true },
-  { num: 'Tier 3 Channels', text: '<span>550</span> from\nCompounding Plays', sub: 'Franchise groups, portfolio buys, associations, PE, BNI, SaaS, SEO. Month 3+ snowball.', highlight: ['franchise','portfolio','assoc','pe','bni','saas','seo','goal'], dim: true },
-  { num: 'Sales Arsenal', text: '<span>9</span> Tools\nAlready Built', sub: 'Statement analyzer, competitor tool, ROI calc, sequences, objection handler, intake form, one-pagers, PE pitch, residual calc.', highlight: ['statement','competitor','roi','sequences','onepager','objection','intake','residual','pepitch'], dim: true },
-  { num: 'Infrastructure', text: 'The Machine\nRuns <span>24/7</span>', sub: 'AI voice closer, CRM, daily automations, dashboard, deal tracker, partner scorecard, playbook, Dream 100.', highlight: ['vapi','ghl','automations','dash','dealvel','scorecard','playbook','dream100'], dim: true },
-  { num: 'The Unlock', text: 'AI Closes\n<span>23+ Calls/Day</span>', sub: 'Voice clone handles standard calls. John handles whales and escalations. Every channel scales without adding headcount.', highlight: ['vapi','goal','mrp','direct','cpa','bank'], dim: true },
-  { num: 'The Outcome', text: '<span>$1.4B</span> in Volume\nThen Cross-Sell', sub: 'Every processing merchant becomes a C2C opportunity. The network self-grows. Two revenue lines on one base.', highlight: ['goal','volume','c2c','network'], dim: true },
-  { num: 'The Opportunity', text: 'This System\nis <span>Replicable</span>', sub: 'Every bank, ISO, and fund Adam knows could plug into this. The playbook, tools, and infrastructure work for any partner who brings merchants.', highlight: [], dim: false },
+  { num:'', text:'', sub:'', hl:[], dim:false },
+  { num:'The Goal', text:'<span>2,000</span> Merchants in 6 Months', sub:'$120M/month in volume. $1.4B annually. Every node feeds this number.', hl:['goal'], dim:true },
+  { num:'Tier 1 -- Launch Now', text:'<span>1,300</span> from Four Core Channels', sub:'MRP Network, Direct Outreach, CPAs, ISO Partnerships. All live or Month 1.', hl:['mrp','direct','cpa','iso','goal'], dim:true },
+  { num:'Tier 2 -- Strategic Ramp', text:'<span>850</span> from Strategic Partners', sub:'Banks, verticals, MCA, insurance, payroll, trade shows. Month 2-3.', hl:['bank','vertical','mca','insurance','payroll','tradeshow','goal'], dim:true },
+  { num:'Tier 3 -- Compounding', text:'<span>550</span> from Compounding Plays', sub:'Franchise groups, portfolio buys, associations, PE, BNI, SaaS, SEO.', hl:['franchise','portfolio','assoc','pe','bni','saas','seo','goal'], dim:true },
+  { num:'Sales Arsenal', text:'<span>9</span> Tools Already Built', sub:'Statement analyzer, competitor tool, ROI calc, sequences, objections, intake, one-pagers, PE pitch, residual calc.', hl:['statement','competitor','roi','sequences','onepager','objection','intake','residual','pepitch'], dim:true },
+  { num:'Infrastructure', text:'The Machine Runs <span>24/7</span>', sub:'AI closer, CRM, automations, dashboard, deal tracker, partner scorecard, playbook, Dream 100.', hl:['vapi','ghl','automations','dash','dealvel','scorecard','playbook','dream100'], dim:true },
+  { num:'The Unlock', text:'AI Closes <span>23+</span> Calls/Day', sub:'Voice clone handles standard calls. John handles whales. Every channel scales without headcount.', hl:['vapi','goal','mrp','direct','cpa','bank'], dim:true },
+  { num:'The Outcome', text:'<span>$1.4B</span> Then Cross-Sell', sub:'Every processing merchant becomes a C2C opportunity. Two revenue lines on one base.', hl:['goal','volume','c2c','network'], dim:true },
+  { num:'For Adam', text:'This System is <span>Replicable</span>', sub:'Every bank, ISO, and fund in your network could plug into this. The playbook works for anyone who brings merchants.', hl:[], dim:false },
 ];
 
-let currentStep = 0;
-let stepFade = 0;
-let highlightSet = new Set();
-let dimMode = false;
+let curStep = 0;
+let hlSet = new Set();
+let dimOn = false;
 
 function goToStep(idx) {
-  currentStep = Math.max(0, Math.min(steps.length - 1, idx));
-  const step = steps[currentStep];
-  const overlay = document.getElementById('stepOverlay');
+  curStep = Math.max(0, Math.min(steps.length-1, idx));
+  const s = steps[curStep];
+  const card = document.getElementById('stepCard');
 
-  if (currentStep === 0) {
-    overlay.classList.remove('show');
-    highlightSet.clear();
-    dimMode = false;
+  if (curStep === 0) {
+    card.classList.remove('show');
+    hlSet.clear(); dimOn = false;
     return;
   }
 
-  document.getElementById('stepNum').textContent = step.num;
-  document.getElementById('stepText').innerHTML = step.text;
-  document.getElementById('stepSub').textContent = step.sub;
-  overlay.classList.add('show');
-  highlightSet = new Set(step.highlight);
-  dimMode = step.dim;
+  document.getElementById('stepNum').textContent = s.num;
+  document.getElementById('stepText').innerHTML = s.text;
+  document.getElementById('stepSub').textContent = s.sub;
+
+  // Progress dots
+  const prog = document.getElementById('stepProgress');
+  prog.innerHTML = '';
+  for (let i = 1; i < steps.length; i++) {
+    const d = document.createElement('div');
+    d.className = 'step-dot' + (i === curStep ? ' active' : i < curStep ? ' past' : '');
+    prog.appendChild(d);
+  }
+
+  card.classList.add('show');
+  hlSet = new Set(s.hl);
+  dimOn = s.dim;
 }
 
 // ── CAMERA ──
-let cam = { x: 0, y: 0, z: 1 };
-let tCam = { x: 0, y: 0, z: 1 };
-let drag = false, dStart = {x:0,y:0}, cStart = {x:0,y:0};
-let hovered = null, selected = null;
-let t = 0;
+let cam = {x:0,y:0,z:1}, tCam = {x:0,y:0,z:1};
+let drag=false, dS={x:0,y:0}, cS={x:0,y:0};
+let hovered=null, selected=null;
+let t=0;
 
-// ── DRAWING ──
-function getAlpha(node) {
-  if (!dimMode) return 1;
-  if (highlightSet.size === 0) return 1;
-  if (highlightSet.has(node.id)) return 1;
-  return 0.08;
+function getAlpha(n) {
+  if (!dimOn) return 1;
+  if (hlSet.size===0) return 1;
+  return hlSet.has(n.id) ? 1 : 0.04;
 }
-function getEdgeAlpha(e) {
-  if (selected) {
-    if (e.f === selected.id || e.t === selected.id) return 0.5;
-    return 0.02;
-  }
-  if (!dimMode) return 0.1;
-  if (highlightSet.size === 0) return 0.1;
-  if (highlightSet.has(e.f) && highlightSet.has(e.t)) return 0.35;
-  if (highlightSet.has(e.f) || highlightSet.has(e.t)) return 0.08;
-  return 0.02;
+function getEA(e) {
+  if (selected) return (e.f===selected.id||e.t===selected.id) ? 0.4 : 0.015;
+  if (!dimOn) return 0.07;
+  if (hlSet.size===0) return 0.07;
+  if (hlSet.has(e.f)&&hlSet.has(e.t)) return 0.3;
+  return 0.01;
 }
 
-function drawEdgeCurved(ax, ay, bx, by, alpha, strength) {
-  // Slight curve via midpoint offset
-  const mx = (ax + bx) / 2;
-  const my = (ay + by) / 2;
-  const dx = bx - ax, dy = by - ay;
-  const len = Math.sqrt(dx*dx + dy*dy) || 1;
-  // perpendicular offset proportional to distance
-  const off = len * 0.06;
-  const cx = mx + (-dy/len) * off;
-  const cy = my + (dx/len) * off;
-
+function drawEdge(ax,ay,bx,by,alpha,s) {
+  const mx=(ax+bx)/2, my=(ay+by)/2;
+  const dx=bx-ax, dy=by-ay, len=Math.sqrt(dx*dx+dy*dy)||1;
+  const off=len*0.05;
+  const cx=mx+(-dy/len)*off, cy=my+(dx/len)*off;
   X.beginPath();
-  X.moveTo(ax, ay);
-  X.quadraticCurveTo(cx, cy, bx, by);
+  X.moveTo(ax,ay);
+  X.quadraticCurveTo(cx,cy,bx,by);
   X.strokeStyle = hex('#01de8f', alpha);
-  X.lineWidth = (strength * 0.8) / cam.z;
+  X.lineWidth = Math.max(0.5, s*0.6) / cam.z;
   X.stroke();
 }
 
 function render() {
   t += 0.008;
+  cam.x+=(tCam.x-cam.x)*0.08;
+  cam.y+=(tCam.y-cam.y)*0.08;
+  cam.z+=(tCam.z-cam.z)*0.08;
 
-  // Smooth camera
-  cam.x += (tCam.x - cam.x) * 0.08;
-  cam.y += (tCam.y - cam.y) * 0.08;
-  cam.z += (tCam.z - cam.z) * 0.08;
+  if (Math.random()<0.2) spawnParticle();
 
-  // Spawn particles
-  if (Math.random() < 0.3) spawnParticle();
-
-  X.clearRect(0, 0, W, H);
-
-  // Subtle background grid
+  X.clearRect(0,0,W,H);
   X.save();
-  X.translate(W/2 + cam.x, H/2 + cam.y);
-  X.scale(cam.z, cam.z);
+  X.translate(W/2+cam.x, H/2+cam.y);
+  X.scale(cam.z,cam.z);
 
-  // Ambient glow at center
-  const cg = X.createRadialGradient(0, 0, 0, 0, 0, 500);
-  cg.addColorStop(0, 'rgba(1,222,143,0.03)');
-  cg.addColorStop(1, 'transparent');
-  X.fillStyle = cg;
-  X.fillRect(-800, -800, 1600, 1600);
+  // Ambient center glow
+  const cg = X.createRadialGradient(0,0,0,0,0,600);
+  cg.addColorStop(0,'rgba(1,222,143,0.025)');
+  cg.addColorStop(1,'transparent');
+  X.fillStyle=cg;
+  X.fillRect(-900,-900,1800,1800);
 
-  // Draw ring guides (subtle)
-  [220, 380, 480].forEach((r, i) => {
-    X.beginPath();
-    X.arc(0, 0, r, 0, Math.PI * 2);
-    X.strokeStyle = `rgba(255,255,255,${dimMode && highlightSet.size > 0 ? 0.01 : 0.02})`;
-    X.lineWidth = 1 / cam.z;
-    X.setLineDash([4/cam.z, 8/cam.z]);
-    X.stroke();
-    X.setLineDash([]);
-  });
-
-  // Draw edges
+  // Edges
   edges.forEach(e => {
-    const a = NM[e.f], b = NM[e.t];
-    if (!a || !b) return;
-    const alpha = getEdgeAlpha(e);
-    drawEdgeCurved(a.x, a.y, b.x, b.y, alpha, e.s);
+    const a=NM[e.f], b=NM[e.t];
+    if (!a||!b) return;
+    drawEdge(a.x,a.y,b.x,b.y,getEA(e),e.s);
   });
 
-  // Draw particles
-  for (let i = particles.length - 1; i >= 0; i--) {
-    const p = particles[i];
-    p.progress += p.speed;
-
-    // Ease in/out alpha
-    if (p.progress < 0.1) p.alpha = p.progress / 0.1;
-    else if (p.progress > 0.85) p.alpha = (1 - p.progress) / 0.15;
-    else p.alpha = 1;
-
-    if (p.progress >= 1) { particles.splice(i, 1); continue; }
-
-    const ease = p.progress; // linear for now
-    p.x = p.x + (p.tx - (p.x - (p.tx - p.x) * (1 - ease) / ease || p.x)) * p.speed;
-    // simpler: lerp
-    const lx = NM[edges[0]?.f]?.x || 0; // skip, just use direct lerp
-    const px = p.x + (p.tx - p.x) * p.speed * 2;
-    const py = p.y + (p.ty - p.y) * p.speed * 2;
-    p.x = px; p.y = py;
-
-    const finalAlpha = p.alpha * (dimMode && highlightSet.size > 0 ? 0.15 : 0.6);
+  // Particles
+  for (let i=particles.length-1; i>=0; i--) {
+    const p=particles[i];
+    p.p += p.speed;
+    if (p.p>=1) { particles.splice(i,1); continue; }
+    // Smooth lerp
+    const ease = p.p;
+    const px = p.sx + (p.tx-p.sx)*ease;
+    const py = p.sy + (p.ty-p.sy)*ease;
+    // Fade in/out
+    let a = 1;
+    if (p.p<0.15) a=p.p/0.15;
+    else if (p.p>0.8) a=(1-p.p)/0.2;
+    const fa = a * (dimOn&&hlSet.size>0 ? 0.08 : 0.4);
     X.beginPath();
-    X.arc(p.x, p.y, p.size / cam.z, 0, Math.PI * 2);
-    X.fillStyle = hex(p.color, finalAlpha);
-    X.fill();
-
-    // Glow trail
-    const tg = X.createRadialGradient(p.x, p.y, 0, p.x, p.y, (p.size * 4) / cam.z);
-    tg.addColorStop(0, hex(p.color, finalAlpha * 0.3));
-    tg.addColorStop(1, 'transparent');
-    X.fillStyle = tg;
-    X.beginPath();
-    X.arc(p.x, p.y, (p.size * 4) / cam.z, 0, Math.PI * 2);
+    X.arc(px,py,p.size/cam.z,0,Math.PI*2);
+    X.fillStyle=hex(p.color,fa);
     X.fill();
   }
 
-  // Draw nodes
+  // Nodes
   nodes.forEach(node => {
     const alpha = getAlpha(node);
+    if (alpha < 0.02) return; // don't draw invisible nodes
     const col = COL[node.type];
-    const isH = hovered === node;
-    const isS = selected === node;
-    const r = node.r * (isH ? 1.06 : 1);
+    const isH = hovered===node, isS = selected===node;
+    const r = node.r * (isH?1.05:1);
 
-    // Outer glow for highlighted/hovered
-    if ((isH || isS || (highlightSet.has(node.id) && dimMode)) && alpha > 0.5) {
-      const gg = X.createRadialGradient(node.x, node.y, r * 0.8, node.x, node.y, r * 2.2);
-      gg.addColorStop(0, hex(col, 0.12));
-      gg.addColorStop(1, 'transparent');
-      X.fillStyle = gg;
+    // Glow for active nodes
+    if ((isH||isS||(hlSet.has(node.id)&&dimOn)) && alpha>0.5) {
+      const gg = X.createRadialGradient(node.x,node.y,r*0.5,node.x,node.y,r*2);
+      gg.addColorStop(0,hex(col,0.1));
+      gg.addColorStop(1,'transparent');
+      X.fillStyle=gg;
       X.beginPath();
-      X.arc(node.x, node.y, r * 2.2, 0, Math.PI * 2);
+      X.arc(node.x,node.y,r*2,0,Math.PI*2);
       X.fill();
     }
 
-    // Goal pulse rings
-    if (node.id === 'goal') {
-      for (let ring = 0; ring < 3; ring++) {
-        const phase = (t * 1.5 + ring * 0.7) % 2;
-        if (phase > 1) continue;
-        const pr = r + phase * 40;
-        const pa = (1 - phase) * 0.12 * alpha;
+    // Goal pulse
+    if (node.id==='goal' && alpha>0.5) {
+      for (let ring=0;ring<2;ring++) {
+        const phase=(t*1.2+ring*0.8)%2;
+        if (phase>1) continue;
         X.beginPath();
-        X.arc(node.x, node.y, pr, 0, Math.PI * 2);
-        X.strokeStyle = hex(col, pa);
-        X.lineWidth = 2 / cam.z;
+        X.arc(node.x,node.y,r+phase*50,0,Math.PI*2);
+        X.strokeStyle=hex(col,(1-phase)*0.08*alpha);
+        X.lineWidth=1.5/cam.z;
         X.stroke();
       }
     }
 
-    // Glass fill
-    const bg = X.createRadialGradient(node.x, node.y - r * 0.3, r * 0.1, node.x, node.y, r);
-    bg.addColorStop(0, hex(col, alpha * (node.type === 'goal' ? 0.25 : 0.12)));
-    bg.addColorStop(1, hex(col, alpha * (node.type === 'goal' ? 0.08 : 0.04)));
+    // Fill
+    const bg = X.createRadialGradient(node.x,node.y-r*0.3,r*0.1,node.x,node.y,r);
+    bg.addColorStop(0,hex(col,alpha*(node.type==='goal'?0.22:0.1)));
+    bg.addColorStop(1,hex(col,alpha*(node.type==='goal'?0.06:0.03)));
     X.beginPath();
-    X.arc(node.x, node.y, r, 0, Math.PI * 2);
-    X.fillStyle = bg;
+    X.arc(node.x,node.y,r,0,Math.PI*2);
+    X.fillStyle=bg;
     X.fill();
 
     // Border
-    X.strokeStyle = hex(col, alpha * (isS ? 0.85 : isH ? 0.6 : 0.3));
-    X.lineWidth = (isS ? 2.5 : isH ? 2 : 1.2) / cam.z;
+    X.strokeStyle=hex(col,alpha*(isS?0.8:isH?0.55:0.25));
+    X.lineWidth=(isS?2.5:isH?2:1)/cam.z;
     X.stroke();
 
-    // Label
+    // Label -- BIGGER text, with shadow for readability
     const lines = node.label.split('\n');
-    const fs = Math.max(9, Math.min(r * 0.3, 15));
+    const fs = Math.max(11, Math.min(r*0.34, 18));
     X.font = `700 ${fs}px 'DM Sans', sans-serif`;
-    X.textAlign = 'center';
-    X.textBaseline = 'middle';
+    X.textAlign='center';
+    X.textBaseline='middle';
 
-    const hasSubtext = node.sub && node.sub.length > 0;
-    const totalHeight = lines.length * fs * 1.2 + (hasSubtext ? fs * 0.9 : 0);
-    const startY = node.y - totalHeight / 2 + fs * 0.6;
+    const hasSub = node.sub && node.sub.length>0;
+    const totalH = lines.length*fs*1.25 + (hasSub?fs*0.85:0);
+    const startY = node.y - totalH/2 + fs*0.6;
 
-    X.fillStyle = hex(col, alpha * 0.95);
-    lines.forEach((line, i) => {
-      X.fillText(line, node.x, startY + i * fs * 1.2);
+    // Text shadow for readability
+    X.shadowColor = 'rgba(0,0,0,0.6)';
+    X.shadowBlur = 6;
+    X.fillStyle=hex(col, alpha*0.95);
+    lines.forEach((line,i) => {
+      X.fillText(line, node.x, startY+i*fs*1.25);
     });
 
-    // Sub-label (merchant count or descriptor)
-    if (hasSubtext) {
-      const subFs = Math.max(8, fs * 0.75);
-      X.font = `800 ${subFs}px 'DM Sans', sans-serif`;
-      X.fillStyle = hex('#ffffff', alpha * 0.55);
-      X.fillText(node.sub, node.x, startY + lines.length * fs * 1.2 + 2);
+    if (hasSub) {
+      const sf = Math.max(9, fs*0.7);
+      X.font = `800 ${sf}px 'DM Sans', sans-serif`;
+      X.fillStyle = hex('#ffffff', alpha*0.5);
+      X.fillText(node.sub, node.x, startY+lines.length*fs*1.25+2);
     }
+    X.shadowColor='transparent';
+    X.shadowBlur=0;
   });
 
-  // Selected node edge highlights
+  // Selected edge highlights
   if (selected) {
     edges.forEach(e => {
-      if (e.f !== selected.id && e.t !== selected.id) return;
-      const a = NM[e.f], b = NM[e.t];
-      if (!a || !b) return;
-      drawEdgeCurved(a.x, a.y, b.x, b.y, 0.45, e.s * 1.5);
+      if (e.f!==selected.id&&e.t!==selected.id) return;
+      const a=NM[e.f], b=NM[e.t];
+      if (!a||!b) return;
+      drawEdge(a.x,a.y,b.x,b.y,0.4,e.s*1.5);
     });
   }
 
@@ -678,119 +609,75 @@ function render() {
   requestAnimationFrame(render);
 }
 
-// ── INTERACTION ──
-function s2w(sx, sy) {
-  return { x: (sx - W/2 - cam.x) / cam.z, y: (sy - H/2 - cam.y) / cam.z };
-}
-function hit(mx, my) {
-  const {x, y} = s2w(mx, my);
-  for (let i = nodes.length - 1; i >= 0; i--) {
-    const n = nodes[i];
-    const dx = x - n.x, dy = y - n.y;
-    if (dx*dx + dy*dy < n.r*n.r) return n;
+// ── INPUT ──
+function s2w(sx,sy) { return {x:(sx-W/2-cam.x)/cam.z, y:(sy-H/2-cam.y)/cam.z}; }
+function hit(mx,my) {
+  const {x,y}=s2w(mx,my);
+  for (let i=nodes.length-1;i>=0;i--) {
+    const n=nodes[i]; const dx=x-n.x,dy=y-n.y;
+    if (dx*dx+dy*dy<n.r*n.r) return n;
   }
   return null;
 }
 
-C.addEventListener('mousedown', e => {
-  const n = hit(e.clientX, e.clientY);
-  if (n) { selectNode(n); }
-  else { drag = true; dStart = {x:e.clientX,y:e.clientY}; cStart = {x:tCam.x,y:tCam.y}; closePanel(); }
+C.addEventListener('mousedown',e=>{
+  const n=hit(e.clientX,e.clientY);
+  if(n){selectNode(n);}
+  else{drag=true;dS={x:e.clientX,y:e.clientY};cS={x:tCam.x,y:tCam.y};closePanel();}
 });
-C.addEventListener('mousemove', e => {
-  if (drag) { tCam.x = cStart.x + (e.clientX - dStart.x); tCam.y = cStart.y + (e.clientY - dStart.y); }
-  else { const n = hit(e.clientX, e.clientY); hovered = n; C.style.cursor = n ? 'pointer' : 'grab'; }
+C.addEventListener('mousemove',e=>{
+  if(drag){tCam.x=cS.x+(e.clientX-dS.x);tCam.y=cS.y+(e.clientY-dS.y);}
+  else{const n=hit(e.clientX,e.clientY);hovered=n;C.style.cursor=n?'pointer':'grab';}
 });
-C.addEventListener('mouseup', () => drag = false);
-C.addEventListener('mouseleave', () => { drag = false; hovered = null; });
-C.addEventListener('wheel', e => {
+C.addEventListener('mouseup',()=>drag=false);
+C.addEventListener('mouseleave',()=>{drag=false;hovered=null;});
+C.addEventListener('wheel',e=>{
   e.preventDefault();
-  const d = e.deltaY > 0 ? 0.92 : 1.08;
-  tCam.z = Math.max(0.25, Math.min(3, tCam.z * d));
-}, { passive: false });
+  tCam.z=Math.max(0.2,Math.min(3,tCam.z*(e.deltaY>0?0.92:1.08)));
+},{passive:false});
 
-// Touch
-let lastTD = 0;
-C.addEventListener('touchstart', e => {
-  if (e.touches.length === 1) {
-    const tc = e.touches[0];
-    const n = hit(tc.clientX, tc.clientY);
-    if (n) selectNode(n);
-    else { drag = true; dStart = {x:tc.clientX,y:tc.clientY}; cStart = {x:tCam.x,y:tCam.y}; }
-  } else if (e.touches.length === 2) {
-    const dx = e.touches[0].clientX - e.touches[1].clientX;
-    const dy = e.touches[0].clientY - e.touches[1].clientY;
-    lastTD = Math.sqrt(dx*dx+dy*dy);
-  }
-}, {passive:true});
-C.addEventListener('touchmove', e => {
+let lastTD=0;
+C.addEventListener('touchstart',e=>{
+  if(e.touches.length===1){const tc=e.touches[0];const n=hit(tc.clientX,tc.clientY);if(n)selectNode(n);else{drag=true;dS={x:tc.clientX,y:tc.clientY};cS={x:tCam.x,y:tCam.y};}}
+  else if(e.touches.length===2){const dx=e.touches[0].clientX-e.touches[1].clientX;const dy=e.touches[0].clientY-e.touches[1].clientY;lastTD=Math.sqrt(dx*dx+dy*dy);}
+},{passive:true});
+C.addEventListener('touchmove',e=>{
   e.preventDefault();
-  if (e.touches.length === 1 && drag) {
-    const tc = e.touches[0];
-    tCam.x = cStart.x + (tc.clientX - dStart.x);
-    tCam.y = cStart.y + (tc.clientY - dStart.y);
-  } else if (e.touches.length === 2) {
-    const dx = e.touches[0].clientX - e.touches[1].clientX;
-    const dy = e.touches[0].clientY - e.touches[1].clientY;
-    const d = Math.sqrt(dx*dx+dy*dy);
-    tCam.z = Math.max(0.25, Math.min(3, tCam.z * (d/lastTD)));
-    lastTD = d;
-  }
-}, {passive:false});
-C.addEventListener('touchend', () => drag = false);
+  if(e.touches.length===1&&drag){const tc=e.touches[0];tCam.x=cS.x+(tc.clientX-dS.x);tCam.y=cS.y+(tc.clientY-dS.y);}
+  else if(e.touches.length===2){const dx=e.touches[0].clientX-e.touches[1].clientX;const dy=e.touches[0].clientY-e.touches[1].clientY;const d=Math.sqrt(dx*dx+dy*dy);tCam.z=Math.max(0.2,Math.min(3,tCam.z*(d/lastTD)));lastTD=d;}
+},{passive:false});
+C.addEventListener('touchend',()=>drag=false);
 
-// Keyboard -- presentation mode
-addEventListener('keydown', e => {
-  if (e.code === 'Space') { e.preventDefault(); goToStep(currentStep + 1); }
-  if (e.code === 'ArrowRight') { e.preventDefault(); goToStep(currentStep + 1); }
-  if (e.code === 'ArrowLeft') { e.preventDefault(); goToStep(currentStep - 1); }
-  if (e.code === 'Escape') { goToStep(0); closePanel(); }
+addEventListener('keydown',e=>{
+  if(e.code==='Space'){e.preventDefault();goToStep(curStep+1);}
+  if(e.code==='ArrowRight'){e.preventDefault();goToStep(curStep+1);}
+  if(e.code==='ArrowLeft'){e.preventDefault();goToStep(curStep-1);}
+  if(e.code==='Escape'){goToStep(0);closePanel();}
 });
 
 function selectNode(node) {
-  // If in presentation mode, exit it
-  if (currentStep > 0) goToStep(0);
-
-  selected = node;
-  const typeLabels = {goal:'Core Target',channel:'Distribution Channel',tool:'Sales Tool',infra:'Infrastructure',outcome:'Outcome'};
-  document.getElementById('pCat').textContent = typeLabels[node.type];
-  document.getElementById('pCat').style.color = COL[node.type];
-  document.getElementById('pName').textContent = node.label.replace('\n',' ');
-  document.getElementById('pDesc').textContent = node.desc;
-
-  const se = document.getElementById('pStats');
-  se.innerHTML = '';
-  (node.stats||[]).forEach(s => {
-    se.innerHTML += `<div class="p-stat"><div class="p-stat-v">${s.v}</div><div class="p-stat-l">${s.l}</div></div>`;
+  if(curStep>0) goToStep(0);
+  selected=node;
+  const tl={goal:'Core Target',channel:'Distribution Channel',tool:'Sales Tool',infra:'Infrastructure',outcome:'Outcome'};
+  document.getElementById('pCat').textContent=tl[node.type];
+  document.getElementById('pCat').style.color=COL[node.type];
+  document.getElementById('pName').textContent=node.label.replace('\n',' ');
+  document.getElementById('pDesc').textContent=node.desc;
+  const se=document.getElementById('pStats');se.innerHTML='';
+  (node.stats||[]).forEach(s=>{se.innerHTML+=`<div class="p-stat"><div class="p-stat-v">${s.v}</div><div class="p-stat-l">${s.l}</div></div>`;});
+  const cl=document.getElementById('pConnList');cl.innerHTML='';
+  const seen=new Set();
+  edges.forEach(e=>{
+    if(e.f===node.id&&NM[e.t]&&!seen.has(e.t)){seen.add(e.t);cl.innerHTML+=`<div class="panel-conn" style="color:${COL[NM[e.t].type]}">${NM[e.t].label.replace('\n',' ')}</div>`;}
+    if(e.t===node.id&&NM[e.f]&&!seen.has(e.f)){seen.add(e.f);cl.innerHTML+=`<div class="panel-conn" style="color:${COL[NM[e.f].type]}">${NM[e.f].label.replace('\n',' ')}</div>`;}
   });
-
-  const cl = document.getElementById('pConnList');
-  cl.innerHTML = '';
-  const conns = [];
-  edges.forEach(e => {
-    if (e.f === node.id && NM[e.t]) conns.push(NM[e.t]);
-    if (e.t === node.id && NM[e.f]) conns.push(NM[e.f]);
-  });
-  // Dedupe
-  const seen = new Set();
-  conns.forEach(c => {
-    if (seen.has(c.id)) return;
-    seen.add(c.id);
-    cl.innerHTML += `<div class="panel-conn" style="color:${COL[c.type]}">${c.label.replace('\n',' ')}</div>`;
-  });
-
   document.getElementById('panel').classList.add('show');
 }
 
-function closePanel() {
-  document.getElementById('panel').classList.remove('show');
-  selected = null;
-}
+function closePanel() { document.getElementById('panel').classList.remove('show'); selected=null; }
 
-// Init zoom
-tCam.z = Math.min(W, H) / 1300;
+tCam.z = Math.min(W,H)/1500;
 cam.z = tCam.z;
-
 render();
 </script>
 </body>
