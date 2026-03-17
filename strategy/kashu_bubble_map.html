@@ -176,8 +176,8 @@
     <div class="leg-item"><div class="leg-dot" style="background:var(--coral)"></div><div class="leg-label">Outcome</div></div>
   </div>
   <div class="counter">
-    <div class="counter-val">2,700</div>
-    <div class="counter-label">Projected Merchants (35% Buffer)</div>
+    <div class="counter-val">2,525</div>
+    <div class="counter-label">Projected Merchants (25% Buffer Over 2K)</div>
   </div>
   <div class="nav-hint">
     <span class="key-badge">Space</span> Present
@@ -220,132 +220,158 @@ function hex(c,a) {
   return `rgba(${parseInt(c.slice(1,3),16)},${parseInt(c.slice(3,5),16)},${parseInt(c.slice(5,7),16)},${a})`;
 }
 
-// ── NODES ── spread out more, bigger bubbles
+// ── NODES ──
 const nodes = [
   { id:'goal', label:'2,000\nMerchants', sub:'$1.4B/yr', type:'goal', r:90, fx:0, fy:0,
+    tip:'6-month target. Every node feeds this.',
     desc:'The 6-month target. 2,000 active merchants processing through Kashu. $120M/month. $1.4B annually.',
     stats:[{v:'2,000',l:'Target'},{v:'$120M',l:'Mo Volume'},{v:'$1.4B',l:'Annual'},{v:'6 mo',l:'Timeline'}] },
 
-  // T1 -- inner ring, well spaced
+  // T1
   { id:'mrp', label:'MRP\nNetwork', sub:'400 merchants', type:'channel', r:60, fx:-260, fy:-160,
+    tip:'Referral partners earn residuals for every merchant they send',
     desc:'Merchant Referral Partners source and refer merchants for residuals. Primary scale lever. Each productive MRP feeds 3-8 merchants/month.',
     stats:[{v:'400',l:'Projected'},{v:'T1',l:'Priority'},{v:'Live',l:'Status'},{v:'50+',l:'MRPs Needed'}] },
   { id:'direct', label:'Direct\nOutreach', sub:'350 merchants', type:'channel', r:56, fx:-280, fy:100,
+    tip:'Cold email, LinkedIn, text, calls. Multi-channel coordinated touches.',
     desc:'Cold email, LinkedIn, text, calls. Coordinated multi-channel touches. Statement analyzer is the hook.',
     stats:[{v:'350',l:'Projected'},{v:'T1',l:'Priority'},{v:'Live',l:'Status'},{v:'5-Touch',l:'Sequence'}] },
   { id:'cpa', label:'CPA &\nBookkeeper', sub:'300 merchants', type:'channel', r:52, fx:-180, fy:240,
+    tip:'CPAs see 50-200 biz clients. They have the trust and the statements.',
     desc:'Every CPA touches 50-200 business clients. They already see the statements. One intro per quarter from 50 CPAs fills the pipeline.',
     stats:[{v:'300',l:'Projected'},{v:'T1',l:'Priority'},{v:'Mo 1',l:'Launch'},{v:'50',l:'Target CPAs'}] },
   { id:'iso', label:'ISO &\nResellers', sub:'250 merchants', type:'channel', r:48, fx:-320, fy:-30,
+    tip:'One unhappy ISO with 200 merchants = a full month of activations',
     desc:'Small ISOs and POS resellers with existing portfolios. One unhappy ISO with 200 merchants = a month of activations.',
     stats:[{v:'250',l:'Projected'},{v:'T1',l:'Priority'},{v:'Mo 1-2',l:'Launch'},{v:'Bulk',l:'Acquisition'}] },
 
-  // T2 -- wider, spread evenly
+  // T2
   { id:'bank', label:'Bank &\nCredit Union', sub:'200', type:'channel', r:42, fx:-480, fy:-220,
+    tip:'Banks refer biz clients who need processing. Small override per merchant.',
     desc:'Community banks and credit unions. Kashu becomes their preferred processor. Small override to the bank. Adam\'s world.',
     stats:[{v:'200',l:'Projected'},{v:'T2',l:'Priority'},{v:'Mo 2',l:'Launch'},{v:'Trust',l:'Leverage'}] },
   { id:'vertical', label:'Vertical\nDomination', sub:'200', type:'channel', r:42, fx:-120, fy:-340,
+    tip:'Own 3-5 industries. Business owners talk to each other.',
     desc:'Pick 3-5 verticals, own them. Business owners talk. Case studies become referral engines.',
     stats:[{v:'200',l:'Projected'},{v:'T2',l:'Priority'},{v:'Mo 1-2',l:'Launch'},{v:'3-5',l:'Verticals'}] },
   { id:'mca', label:'MCA &\nLending', sub:'150', type:'channel', r:38, fx:-500, fy:120,
+    tip:'MCA brokers already have the statements. They know who does volume.',
     desc:'MCA brokers already have the statements in hand. They know who\'s doing volume. Structure a referral fee.',
     stats:[{v:'150',l:'Projected'},{v:'T2',l:'Priority'},{v:'Mo 2',l:'Launch'},{v:'Warm',l:'Leads'}] },
   { id:'insurance', label:'Insurance\nAgents', sub:'100', type:'channel', r:35, fx:-440, fy:270,
+    tip:'Annual renewals = annual touchpoint with every biz client',
     desc:'Commercial insurance agents renew annually with every business. One line turns a renewal call into a Kashu referral.',
     stats:[{v:'100',l:'Projected'},{v:'T2',l:'Priority'},{v:'Mo 2-3',l:'Launch'},{v:'Annual',l:'Touch'}] },
   { id:'payroll', label:'Payroll\nPartners', sub:'100', type:'channel', r:35, fx:-180, fy:400,
+    tip:'Already manage the money. Natural intro to processing.',
     desc:'Payroll companies already manage the financial relationship. Gusto, Paychex reps introduce Kashu.',
     stats:[{v:'100',l:'Projected'},{v:'T2',l:'Priority'},{v:'Mo 2-3',l:'Launch'},{v:'B2B',l:'Channel'}] },
   { id:'tradeshow', label:'Trade\nShows', sub:'100', type:'channel', r:35, fx:60, fy:-400,
+    tip:'Walk the floor as a closer. Live statement analyzer demos.',
     desc:'Walk the floor as a closer. Run the statement analyzer live. One conference = 20-30 qualified conversations.',
     stats:[{v:'100',l:'Projected'},{v:'T2',l:'Priority'},{v:'Mo 2+',l:'Launch'},{v:'Live',l:'Demo'}] },
 
-  // T3 -- outer
-  { id:'franchise', label:'Franchise\nGroups', sub:'100', type:'channel', r:32, fx:-600, fy:-60,
+  // T3
+  { id:'franchise', label:'Franchise\nGroups', sub:'100', type:'channel', r:32, fx:-560, fy:-60,
+    tip:'One deal = 50-500 locations. Standardized pricing.',
     desc:'One franchise relationship = 50-500 locations. Five groups at 20 each = 100 merchants.',
     stats:[{v:'100',l:'Projected'},{v:'T3',l:'Priority'},{v:'Mo 3+',l:'Launch'},{v:'Bulk',l:'Per Deal'}] },
-  { id:'portfolio', label:'Portfolio\nBuys', sub:'100', type:'channel', r:32, fx:-560, fy:-340,
-    desc:'Buy merchant books from retiring agents and small ISOs. 100-500 merchants per transaction.',
-    stats:[{v:'100',l:'Projected'},{v:'T3',l:'Priority'},{v:'Mo 3+',l:'Launch'},{v:'Buy',l:'Not Build'}] },
   { id:'assoc', label:'Merchant\nAssoc.', sub:'100', type:'channel', r:32, fx:-40, fy:440,
+    tip:'Group pricing deals. One agreement = hundreds of members.',
     desc:'One deal with a buying group = hundreds of members at preferred Kashu pricing.',
     stats:[{v:'100',l:'Projected'},{v:'T3',l:'Priority'},{v:'Mo 3+',l:'Launch'},{v:'Group',l:'Pricing'}] },
-  { id:'pe', label:'PE Managed\nService', sub:'75', type:'channel', r:30, fx:140, fy:360,
-    desc:'PE funds with portfolio companies. Retainer + rev share. Double play: processing + C2C.',
-    stats:[{v:'75',l:'Projected'},{v:'T3',l:'Priority'},{v:'Mo 3+',l:'Launch'},{v:'$10-25K',l:'Retainer'}] },
   { id:'bni', label:'BNI &\nChambers', sub:'75', type:'channel', r:30, fx:200, fy:-320,
+    tip:'One seat = 30 business owners every week. Compounds fast.',
     desc:'Structured referral networks. One seat = 30 business owners weekly.',
     stats:[{v:'75',l:'Projected'},{v:'T3',l:'Priority'},{v:'Mo 2+',l:'Launch'},{v:'Weekly',l:'Exposure'}] },
   { id:'saas', label:'SaaS\nIntegrations', sub:'50', type:'channel', r:28, fx:280, fy:-220,
+    tip:'Get listed as preferred processor on biz software platforms',
     desc:'POS, invoicing, booking platforms. Get listed as preferred processor.',
     stats:[{v:'50',l:'Projected'},{v:'T3',l:'Priority'},{v:'Mo 4+',l:'Launch'},{v:'Inbound',l:'Passive'}] },
   { id:'seo', label:'Content\n& SEO', sub:'50', type:'channel', r:28, fx:280, fy:230,
+    tip:'Merchants Google "lower processing fees" every day. Capture them.',
     desc:'Landing pages with ROI calculator. Captures leads 24/7.',
     stats:[{v:'50',l:'Projected'},{v:'T3',l:'Priority'},{v:'Mo 3+',l:'Launch'},{v:'24/7',l:'Passive'}] },
 
-  // TOOLS -- bottom, well spaced
+  // TOOLS
   { id:'statement', label:'Statement\nAnalyzer', sub:'', type:'tool', r:30, fx:-100, fy:600,
+    tip:'Upload a PDF statement, auto-parse rates, generate savings pitch',
     desc:'Upload statement PDF. Auto-parses rates, fees, volume. Generates savings pitch instantly.',
     stats:[{v:'PDF',l:'Upload'},{v:'Auto',l:'Parse'},{v:'Live',l:'Demo'},{v:'Instant',l:'Pitch'}] },
   { id:'competitor', label:'Competitor\nTool', sub:'', type:'tool', r:28, fx:100, fy:600,
+    tip:'Compare Kashu vs 8 major processors with live savings calc',
     desc:'8-processor displacement tool with live savings calculator.',
     stats:[{v:'8',l:'Processors'},{v:'Live',l:'Savings'}] },
   { id:'roi', label:'ROI\nCalculator', sub:'', type:'tool', r:26, fx:-300, fy:560,
+    tip:'Shareable savings calculator with built-in lead capture',
     desc:'Merchant-facing shareable savings calculator with lead capture.',
     stats:[{v:'Lead',l:'Capture'},{v:'Share',l:'able'}] },
   { id:'sequences', label:'Sequence\nBuilder', sub:'', type:'tool', r:26, fx:300, fy:560,
+    tip:'Auto-generates 5-touch follow-up sequences for GHL',
     desc:'5-touch merchant sequences + MRP recruiting sequences. GHL-ready.',
     stats:[{v:'5-Touch',l:'Merchant'},{v:'9',l:'MRP Types'}] },
   { id:'onepager', label:'One-Pager\nGen', sub:'', type:'tool', r:24, fx:-460, fy:480,
+    tip:'Vertical-specific one-pagers with auto pitch email',
     desc:'Niche-specific one-pagers with auto-generated pitch emails. 10 verticals.',
     stats:[{v:'10',l:'Verticals'},{v:'Auto',l:'Email'}] },
   { id:'objection', label:'Objection\nHandler', sub:'', type:'tool', r:24, fx:460, fy:480,
+    tip:'27 pre-built objection responses across merchant, MRP, PE',
     desc:'27 objections across Merchant, MRP, and PE. Copy buttons.',
     stats:[{v:'27',l:'Objections'},{v:'3',l:'Categories'}] },
   { id:'intake', label:'Merchant\nIntake', sub:'', type:'tool', r:24, fx:0, fy:660,
+    tip:'Savings estimator + lead capture + underwriting pre-screen',
     desc:'Savings estimator + lead capture + GHL webhook + MRP attribution.',
     stats:[{v:'GHL',l:'Webhook'},{v:'MRP',l:'Attribution'}] },
   { id:'residual', label:'Residual\nCalc', sub:'', type:'tool', r:24, fx:-560, fy:400,
+    tip:'Shows MRPs exactly what they earn at any volume tier',
     desc:'MRP earnings calculator. T1/T2 tiers, downline projections.',
     stats:[{v:'T1/T2',l:'Tiers'},{v:'What-If',l:'Scenarios'}] },
-  { id:'pepitch', label:'PE Pitch\nDeck', sub:'', type:'tool', r:22, fx:540, fy:400,
-    desc:'Interactive PE pitch with ROI calculator and outreach templates.',
-    stats:[{v:'ROI',l:'Built In'},{v:'Interactive',l:'Format'}] },
 
-  // INFRA -- top, well spaced
+  // INFRA
   { id:'vapi', label:'AI Voice\nCloser', sub:'23+ calls/day', type:'infra', r:40, fx:0, fy:-520,
+    tip:'AI handles 1:1 merchant calls. John handles whales only.',
     desc:'Vapi.ai + ElevenLabs voice clone handles 1:1 merchant calls. John handles escalations. The force multiplier.',
     stats:[{v:'23+',l:'Calls/Day'},{v:'ALL',l:'Channels'},{v:'Clone',l:'Voice'},{v:'Auto',l:'Close'}] },
   { id:'ghl', label:'GoHighLevel\nCRM', sub:'', type:'infra', r:34, fx:-300, fy:-480,
+    tip:'Central pipeline. Every channel feeds leads here.',
     desc:'Central CRM. All pipeline, follow-up, contact management. 6 automation workflows.',
     stats:[{v:'6',l:'Workflows'},{v:'Central',l:'Pipeline'}] },
   { id:'automations', label:'Daily\nAutomations', sub:'24/7', type:'infra', r:32, fx:300, fy:-480,
+    tip:'Morning briefings, call prep, email triage, pipeline alerts',
     desc:'CRO Briefing, Call Prep, Gmail Triage, Post-Call, Monday.com webhooks.',
     stats:[{v:'6',l:'Agents'},{v:'24/7',l:'Running'}] },
   { id:'dash', label:'CRO\nDashboard', sub:'', type:'infra', r:28, fx:440, fy:-380,
+    tip:'Live metrics, pipeline by stage, daily focus',
     desc:'Daily ops dashboard. Metrics, pipeline, top deals, daily focus.',
     stats:[{v:'Daily',l:'Ops'},{v:'Live',l:'Metrics'}] },
   { id:'playbook', label:'Sales\nPlaybook', sub:'', type:'infra', r:28, fx:-460, fy:-400,
+    tip:'Challenger framework, mental models, scripts, objection reframes',
     desc:'10-tab interactive sales intelligence. Challenger framework, mental models.',
     stats:[{v:'10',l:'Tabs'},{v:'Live',l:'Reference'}] },
   { id:'dealvel', label:'Deal\nVelocity', sub:'', type:'infra', r:24, fx:520, fy:-260,
+    tip:'Stall alerts at 7 and 14 days. Nothing falls through.',
     desc:'Pipeline tracker. Stall alerts at 7d and 14d+.',
     stats:[{v:'7d',l:'Yellow'},{v:'14d+',l:'Red'}] },
   { id:'scorecard', label:'Partner\nScorecard', sub:'', type:'infra', r:24, fx:-540, fy:-280,
+    tip:'Auto-ranks MRPs. Flags dormant partners for reactivation.',
     desc:'MRP tracker. Auto-status, residual projections, reactivation queue.',
     stats:[{v:'Auto',l:'Status'},{v:'Queue',l:'Reactivate'}] },
   { id:'dream100', label:'Dream\n100', sub:'', type:'infra', r:24, fx:180, fy:-480,
+    tip:'Top prospect tracker with touch logging and persistence score',
     desc:'Top prospect tracker. Touch logging, overdue alerts, persistence score.',
     stats:[{v:'3',l:'Categories'},{v:'Touch',l:'Logging'}] },
 
-  // OUTCOMES -- right, well spaced
+  // OUTCOMES
   { id:'volume', label:'$120M/mo\nVolume', sub:'$1.4B/yr', type:'outcome', r:52, fx:440, fy:0,
+    tip:'2,000 merchants x $60K avg = $120M/mo processed',
     desc:'2,000 merchants at $60K/month = $120M/month = $1.4B annually.',
     stats:[{v:'$120M',l:'Monthly'},{v:'$1.4B',l:'Annual'},{v:'$60K',l:'Avg/Merchant'},{v:'2,000',l:'Merchants'}] },
   { id:'c2c', label:'C2C\nCross-Sell', sub:'2nd line', type:'outcome', r:38, fx:540, fy:160,
+    tip:'Every processing merchant = a C2C cross-sell. Zero acq cost.',
     desc:'Every processing merchant becomes a C2C cross-sell. Second revenue line, zero acquisition cost.',
     stats:[{v:'2nd',l:'Revenue Line'},{v:'$0',l:'Acq Cost'}] },
   { id:'network', label:'Self-Growing\nNetwork', sub:'compounds', type:'outcome', r:38, fx:540, fy:-160,
+    tip:'MRPs recruit MRPs. Merchants refer merchants. Compounds.',
     desc:'MRPs recruit MRPs. Merchants refer merchants. CPAs refer CPAs. Compounds without effort.',
     stats:[{v:'Compound',l:'Growth'},{v:'Passive',l:'Referrals'}] },
 ];
@@ -355,8 +381,8 @@ const edges = [
   {f:'mrp',t:'goal',s:4},{f:'direct',t:'goal',s:4},{f:'cpa',t:'goal',s:3},{f:'iso',t:'goal',s:3},
   {f:'bank',t:'goal',s:2},{f:'vertical',t:'goal',s:2},{f:'mca',t:'goal',s:2},
   {f:'insurance',t:'goal',s:1.5},{f:'payroll',t:'goal',s:1.5},{f:'tradeshow',t:'goal',s:1.5},
-  {f:'franchise',t:'goal',s:1},{f:'portfolio',t:'goal',s:1},{f:'assoc',t:'goal',s:1},
-  {f:'pe',t:'goal',s:1},{f:'bni',t:'goal',s:1},{f:'saas',t:'goal',s:1},{f:'seo',t:'goal',s:1},
+  {f:'franchise',t:'goal',s:1},{f:'assoc',t:'goal',s:1},
+  {f:'bni',t:'goal',s:1},{f:'saas',t:'goal',s:1},{f:'seo',t:'goal',s:1},
   {f:'goal',t:'volume',s:4},{f:'goal',t:'c2c',s:2.5},{f:'goal',t:'network',s:2.5},
   {f:'statement',t:'direct',s:1.5},{f:'statement',t:'tradeshow',s:1},{f:'statement',t:'cpa',s:1},
   {f:'competitor',t:'direct',s:1},{f:'competitor',t:'iso',s:1},
@@ -366,14 +392,13 @@ const edges = [
   {f:'objection',t:'direct',s:0.8},{f:'objection',t:'mrp',s:0.8},
   {f:'intake',t:'seo',s:0.8},{f:'intake',t:'direct',s:0.8},
   {f:'residual',t:'mrp',s:1},{f:'residual',t:'cpa',s:0.8},
-  {f:'pepitch',t:'pe',s:1},
   {f:'vapi',t:'goal',s:3},{f:'vapi',t:'mrp',s:1},{f:'vapi',t:'direct',s:1},
   {f:'ghl',t:'goal',s:2},{f:'ghl',t:'direct',s:0.8},{f:'ghl',t:'mrp',s:0.8},
   {f:'automations',t:'goal',s:1.5},
   {f:'dash',t:'goal',s:0.8},{f:'dealvel',t:'goal',s:0.8},
   {f:'scorecard',t:'mrp',s:0.8},{f:'dream100',t:'direct',s:0.8},{f:'playbook',t:'direct',s:0.8},
   {f:'mrp',t:'network',s:1},{f:'cpa',t:'network',s:1},
-  {f:'bni',t:'mrp',s:0.8},{f:'vertical',t:'assoc',s:0.8},{f:'bank',t:'franchise',s:0.8},{f:'iso',t:'portfolio',s:0.8},
+  {f:'bni',t:'mrp',s:0.8},{f:'vertical',t:'assoc',s:0.8},{f:'bank',t:'franchise',s:0.8},
 ];
 
 const NM = {};
@@ -400,8 +425,8 @@ const steps = [
   { num:'The Goal', text:'<span>2,000</span> Merchants in 6 Months', sub:'$120M/month in volume. $1.4B annually. Every node feeds this number.', hl:['goal'], dim:true },
   { num:'Tier 1 -- Launch Now', text:'<span>1,300</span> from Four Core Channels', sub:'MRP Network, Direct Outreach, CPAs, ISO Partnerships. All live or Month 1.', hl:['mrp','direct','cpa','iso','goal'], dim:true },
   { num:'Tier 2 -- Strategic Ramp', text:'<span>850</span> from Strategic Partners', sub:'Banks, verticals, MCA, insurance, payroll, trade shows. Month 2-3.', hl:['bank','vertical','mca','insurance','payroll','tradeshow','goal'], dim:true },
-  { num:'Tier 3 -- Compounding', text:'<span>550</span> from Compounding Plays', sub:'Franchise groups, portfolio buys, associations, PE, BNI, SaaS, SEO.', hl:['franchise','portfolio','assoc','pe','bni','saas','seo','goal'], dim:true },
-  { num:'Sales Arsenal', text:'<span>9</span> Tools Already Built', sub:'Statement analyzer, competitor tool, ROI calc, sequences, objections, intake, one-pagers, PE pitch, residual calc.', hl:['statement','competitor','roi','sequences','onepager','objection','intake','residual','pepitch'], dim:true },
+  { num:'Tier 3 -- Compounding', text:'<span>375</span> from Compounding Plays', sub:'Franchise groups, associations, BNI, SaaS, SEO. Month 3+ snowball.', hl:['franchise','assoc','bni','saas','seo','goal'], dim:true },
+  { num:'Sales Arsenal', text:'<span>8</span> Tools Already Built', sub:'Statement analyzer, competitor tool, ROI calc, sequences, objections, intake, one-pagers, residual calc.', hl:['statement','competitor','roi','sequences','onepager','objection','intake','residual'], dim:true },
   { num:'Infrastructure', text:'The Machine Runs <span>24/7</span>', sub:'AI closer, CRM, automations, dashboard, deal tracker, partner scorecard, playbook, Dream 100.', hl:['vapi','ghl','automations','dash','dealvel','scorecard','playbook','dream100'], dim:true },
   { num:'The Unlock', text:'AI Closes <span>23+</span> Calls/Day', sub:'Voice clone handles standard calls. John handles whales. Every channel scales without headcount.', hl:['vapi','goal','mrp','direct','cpa','bank'], dim:true },
   { num:'The Outcome', text:'<span>$1.4B</span> Then Cross-Sell', sub:'Every processing merchant becomes a C2C opportunity. Two revenue lines on one base.', hl:['goal','volume','c2c','network'], dim:true },
@@ -594,6 +619,55 @@ function render() {
     X.shadowColor='transparent';
     X.shadowBlur=0;
   });
+
+  // Hover tooltip
+  if (hovered && !selected && curStep === 0 && hovered.tip) {
+    const tipText = hovered.tip;
+    const tipFs = 12;
+    X.font = `500 ${tipFs}px 'DM Sans', sans-serif`;
+    const tw = X.measureText(tipText).width;
+    const pad = 10;
+    const tipW = tw + pad * 2;
+    const tipH = tipFs + pad * 1.6;
+    // Position above the bubble
+    let tx = hovered.x - tipW / 2;
+    let ty = hovered.y - hovered.r - tipH - 12;
+
+    // Draw tooltip bg
+    X.fillStyle = 'rgba(6,15,13,0.92)';
+    X.beginPath();
+    const br = 8;
+    X.moveTo(tx + br, ty);
+    X.lineTo(tx + tipW - br, ty);
+    X.quadraticCurveTo(tx + tipW, ty, tx + tipW, ty + br);
+    X.lineTo(tx + tipW, ty + tipH - br);
+    X.quadraticCurveTo(tx + tipW, ty + tipH, tx + tipW - br, ty + tipH);
+    X.lineTo(tx + br, ty + tipH);
+    X.quadraticCurveTo(tx, ty + tipH, tx, ty + tipH - br);
+    X.lineTo(tx, ty + br);
+    X.quadraticCurveTo(tx, ty, tx + br, ty);
+    X.closePath();
+    X.fill();
+    X.strokeStyle = hex(COL[hovered.type], 0.3);
+    X.lineWidth = 1 / cam.z;
+    X.stroke();
+
+    // Arrow
+    X.fillStyle = 'rgba(6,15,13,0.92)';
+    X.beginPath();
+    X.moveTo(hovered.x - 6, ty + tipH);
+    X.lineTo(hovered.x, ty + tipH + 6);
+    X.lineTo(hovered.x + 6, ty + tipH);
+    X.closePath();
+    X.fill();
+
+    // Text
+    X.fillStyle = 'rgba(255,255,255,0.7)';
+    X.font = `500 ${tipFs}px 'DM Sans', sans-serif`;
+    X.textAlign = 'center';
+    X.textBaseline = 'middle';
+    X.fillText(tipText, tx + tipW / 2, ty + tipH / 2);
+  }
 
   // Selected edge highlights
   if (selected) {
