@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu — Growth Ecosystem Map</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --dark: #0b1a17;
+    --dark-teal: #0b5147;
+    --green: #01de8f;
+    --yellow: #f5a623;
+    --blue: #4a9eff;
+    --purple: #a855f7;
+    --red: #ef4444;
+    --white: #ffffff;
+  }
+
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--dark);
+    color: var(--white);
+    min-height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  canvas {
+    display: block;
+    cursor: grab;
+  }
+  canvas:active { cursor: grabbing; }
+
+  /* HEADER */
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(11,26,23,0.95), rgba(11,26,23,0));
+    pointer-events: none;
+  }
+  .header > * { pointer-events: auto; }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-mark {
+    width: 44px;
+    height: 44px;
+    background: var(--green);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--dark-teal);
+  }
+  .header-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.3px;
+  }
+  .header-title span { color: var(--green); }
+
+  /* LEGEND */
+  .legend {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 100;
+    background: rgba(11,26,23,0.9);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 18px 22px;
+    backdrop-filter: blur(12px);
+  }
+  .legend-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 12px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+  }
+
+  /* INFO PANEL */
+  .info-panel {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    z-index: 100;
+    width: 340px;
+    background: rgba(11,26,23,0.92);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 24px;
+    backdrop-filter: blur(16px);
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+  .info-panel.visible {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  .info-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    border: none;
+    color: rgba(255,255,255,0.4);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .info-close:hover { background: rgba(255,255,255,0.12); color: var(--white); }
+  .info-category {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .info-name {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.3px;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .info-desc {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .info-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .info-stat {
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .info-stat-val {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--green);
+    letter-spacing: -0.3px;
+  }
+  .info-stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+  }
+  .info-connections {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .info-conn-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 8px;
+  }
+  .info-conn-item {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    padding: 3px 0;
+  }
+
+  /* CONTROLS */
+  .controls {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 100;
+    display: flex;
+    gap: 8px;
+  }
+  .ctrl-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(11,26,23,0.9);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.5);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(12px);
+    transition: all 0.2s;
+  }
+  .ctrl-btn:hover {
+    background: rgba(1,222,143,0.1);
+    border-color: rgba(1,222,143,0.3);
+    color: var(--green);
+  }
+
+  /* TOTAL COUNTER */
+  .total-counter {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    background: rgba(11,26,23,0.92);
+    border: 1px solid rgba(1,222,143,0.2);
+    border-radius: 14px;
+    padding: 14px 28px;
+    backdrop-filter: blur(12px);
+    text-align: center;
+  }
+  .total-val {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--green);
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .total-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-top: 2px;
+  }
+
+  /* FILTER PILLS */
+  .filters {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    gap: 6px;
+    background: rgba(11,26,23,0.9);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 6px;
+    backdrop-filter: blur(12px);
+  }
+  .filter-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.45);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover { color: rgba(255,255,255,0.7); }
+  .filter-btn.active {
+    background: var(--green);
+    color: var(--dark-teal);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo-mark">K</div>
+    <div class="header-title">Kashu <span>Growth Ecosystem</span></div>
+  </div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="setFilter('all')">All</button>
+  <button class="filter-btn" onclick="setFilter('channel')">Channels</button>
+  <button class="filter-btn" onclick="setFilter('tool')">Tools</button>
+  <button class="filter-btn" onclick="setFilter('infra')">Infrastructure</button>
+  <button class="filter-btn" onclick="setFilter('outcome')">Outcomes</button>
+</div>
+
+<div class="legend">
+  <div class="legend-title">Node Types</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#01de8f"></div><div class="legend-label">Goal / Core</div></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#4a9eff"></div><div class="legend-label">Distribution Channel</div></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f5a623"></div><div class="legend-label">Sales Tool</div></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div><div class="legend-label">Infrastructure</div></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div><div class="legend-label">Outcome</div></div>
+</div>
+
+<div class="total-counter">
+  <div class="total-val">2,700</div>
+  <div class="total-label">Projected Merchants (35% Buffer)</div>
+</div>
+
+<div class="controls">
+  <button class="ctrl-btn" onclick="zoomIn()" title="Zoom in">+</button>
+  <button class="ctrl-btn" onclick="zoomOut()" title="Zoom out">-</button>
+  <button class="ctrl-btn" onclick="resetView()" title="Reset view">&#8634;</button>
+</div>
+
+<div class="info-panel" id="infoPanel">
+  <button class="info-close" onclick="closePanel()">&times;</button>
+  <div class="info-category" id="infoCategory"></div>
+  <div class="info-name" id="infoName"></div>
+  <div class="info-desc" id="infoDesc"></div>
+  <div class="info-stats" id="infoStats"></div>
+  <div class="info-connections" id="infoConnections">
+    <div class="info-conn-title">Connected To</div>
+    <div id="infoConnList"></div>
+  </div>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+let W, H;
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// Color palette
+const COLORS = {
+  goal: '#01de8f',
+  channel: '#4a9eff',
+  tool: '#f5a623',
+  infra: '#a855f7',
+  outcome: '#ef4444'
+};
+
+// Node data
+const nodes = [
+  // CENTER
+  { id: 'goal', label: '2,000\nMerchants', type: 'goal', r: 70, x: 0, y: 0, desc: 'The 6-month target. 2,000 active merchants processing through Kashu. $120M/month in volume. $1.4B annually.', stats: [{ v: '2,000', l: 'Target' }, { v: '$1.4B', l: 'Annual Vol' }, { v: '6 mo', l: 'Timeline' }, { v: '15', l: 'Channels' }] },
+
+  // TIER 1 CHANNELS
+  { id: 'mrp', label: 'MRP\nNetwork', type: 'channel', r: 48, desc: 'Merchant Referral Partners source and refer merchants for residuals. The primary scale lever. Each productive MRP feeds 3-8 merchants/month. Network compounds via upline override.', stats: [{ v: '400', l: 'Projected' }, { v: 'T1', l: 'Tier' }, { v: 'Now', l: 'Live' }, { v: '50+', l: 'MRPs' }] },
+  { id: 'direct', label: 'Direct\nOutreach', type: 'channel', r: 45, desc: 'Cold email, LinkedIn, text, calls. Multi-channel coordinated touches with vertical-specific copy. Statement analyzer is the hook that opens conversations.', stats: [{ v: '350', l: 'Projected' }, { v: 'T1', l: 'Tier' }, { v: 'Now', l: 'Live' }, { v: '5-Touch', l: 'Sequence' }] },
+  { id: 'cpa', label: 'CPA &\nBookkeeper', type: 'channel', r: 42, desc: 'Every CPA touches 50-200 business clients and already reviews their statements. They have the trust, they see the fees. One intro per quarter from 50 CPAs fills the pipeline.', stats: [{ v: '300', l: 'Projected' }, { v: 'T1', l: 'Tier' }, { v: 'Mo 1', l: 'Launch' }, { v: '50', l: 'Target CPAs' }] },
+  { id: 'iso', label: 'ISO & POS\nResellers', type: 'channel', r: 40, desc: 'Small ISOs and POS resellers with existing merchant portfolios. One unhappy ISO with 200 merchants is a month of activations in a single conversation. Portfolio moves, not individual sales.', stats: [{ v: '250', l: 'Projected' }, { v: 'T1', l: 'Tier' }, { v: 'Mo 1-2', l: 'Launch' }, { v: 'Bulk', l: 'Acquisition' }] },
+
+  // TIER 2 CHANNELS
+  { id: 'bank', label: 'Bank &\nCredit Union', type: 'channel', r: 38, desc: 'Community banks and credit unions with business clients who need processing. Kashu becomes their preferred processor. Small override to the bank. Adam\'s world.', stats: [{ v: '200', l: 'Projected' }, { v: 'T2', l: 'Tier' }, { v: 'Mo 2', l: 'Launch' }, { v: 'Trust', l: 'Leverage' }] },
+  { id: 'vertical', label: 'Vertical\nDomination', type: 'channel', r: 38, desc: 'Pick 3-5 verticals, own them. Business owners in the same industry talk to each other. Case studies become referral engines. Industry groups and trade associations.', stats: [{ v: '200', l: 'Projected' }, { v: 'T2', l: 'Tier' }, { v: 'Mo 1-2', l: 'Launch' }, { v: '3-5', l: 'Verticals' }] },
+  { id: 'mca', label: 'MCA &\nLending', type: 'channel', r: 35, desc: 'Merchant cash advance brokers already qualify businesses on processing volume. They literally have the statements in hand. They know who\'s doing volume.', stats: [{ v: '150', l: 'Projected' }, { v: 'T2', l: 'Tier' }, { v: 'Mo 2', l: 'Launch' }, { v: 'Warm', l: 'Leads' }] },
+  { id: 'insurance', label: 'Commercial\nInsurance', type: 'channel', r: 32, desc: 'Insurance agents renew annually with every business client. One line turns a renewal call into a Kashu referral. Residual structure makes it a no-brainer add-on.', stats: [{ v: '100', l: 'Projected' }, { v: 'T2', l: 'Tier' }, { v: 'Mo 2-3', l: 'Launch' }, { v: 'Annual', l: 'Touch' }] },
+  { id: 'payroll', label: 'Payroll\nPartners', type: 'channel', r: 32, desc: 'Payroll companies already manage the business financial relationship. Gusto, Paychex reps, and regional shops introduce Kashu as the processing partner.', stats: [{ v: '100', l: 'Projected' }, { v: 'T2', l: 'Tier' }, { v: 'Mo 2-3', l: 'Launch' }, { v: 'B2B', l: 'Channel' }] },
+  { id: 'tradeshow', label: 'Trade\nShows', type: 'channel', r: 32, desc: 'Walk the floor as a closer, not an exhibitor. Run the statement analyzer live on your phone. One conference = 20-30 qualified conversations in two days.', stats: [{ v: '100', l: 'Projected' }, { v: 'T2', l: 'Tier' }, { v: 'Mo 2+', l: 'Launch' }, { v: 'Live', l: 'Demo' }] },
+
+  // TIER 3 CHANNELS
+  { id: 'franchise', label: 'Franchise\nGroups', type: 'channel', r: 32, desc: 'One franchise relationship = 50-500 locations. Standardized pricing, consolidated reporting. Five groups at 20 locations each = 100 merchants from 5 conversations.', stats: [{ v: '100', l: 'Projected' }, { v: 'T3', l: 'Tier' }, { v: 'Mo 3+', l: 'Launch' }, { v: 'Bulk', l: 'Per Deal' }] },
+  { id: 'portfolio', label: 'Portfolio\nAcquisitions', type: 'channel', r: 32, desc: 'Buy merchant books from retiring agents and small ISOs. 100-500 merchants per transaction. No sales cycle, just migration to better rates.', stats: [{ v: '100', l: 'Projected' }, { v: 'T3', l: 'Tier' }, { v: 'Mo 3+', l: 'Launch' }, { v: 'Buy', l: 'Not Build' }] },
+  { id: 'assoc', label: 'Merchant\nAssociations', type: 'channel', r: 32, desc: 'One deal with a buying group = hundreds of members get preferred Kashu pricing. Restaurant associations, retail buying groups, healthcare networks.', stats: [{ v: '100', l: 'Projected' }, { v: 'T3', l: 'Tier' }, { v: 'Mo 3+', l: 'Launch' }, { v: 'Group', l: 'Pricing' }] },
+  { id: 'pe', label: 'PE Fund\nService', type: 'channel', r: 30, desc: 'Private equity funds with portfolios of operating businesses. Retainer + rev share model. Double play: processing + credit to cash.', stats: [{ v: '75', l: 'Projected' }, { v: 'T3', l: 'Tier' }, { v: 'Mo 3+', l: 'Launch' }, { v: '$10-25K', l: 'Retainer' }] },
+  { id: 'bni', label: 'BNI &\nChambers', type: 'channel', r: 28, desc: 'Structured referral networks. One seat = 30 business owners weekly. Plant an MRP in every major metro BNI group and referrals compound.', stats: [{ v: '75', l: 'Projected' }, { v: 'T3', l: 'Tier' }, { v: 'Mo 2+', l: 'Launch' }, { v: 'Weekly', l: 'Exposure' }] },
+  { id: 'saas', label: 'SaaS\nIntegrations', type: 'channel', r: 26, desc: 'POS, invoicing, booking, ecommerce platforms. Get listed as preferred processor or build integration. Inbound merchants already looking for a solution.', stats: [{ v: '50', l: 'Projected' }, { v: 'T3', l: 'Tier' }, { v: 'Mo 4+', l: 'Launch' }, { v: 'Inbound', l: 'Passive' }] },
+  { id: 'seo', label: 'Content\n& SEO', type: 'channel', r: 26, desc: 'Merchants search "lower processing fees" every day. Landing pages with ROI calculator capture leads while you sleep. Vertical comparison pages rank fast.', stats: [{ v: '50', l: 'Projected' }, { v: 'T3', l: 'Tier' }, { v: 'Mo 3+', l: 'Launch' }, { v: '24/7', l: 'Passive' }] },
+
+  // TOOLS
+  { id: 'statement', label: 'Statement\nAnalyzer', type: 'tool', r: 30, desc: 'Upload a merchant processing statement PDF. Auto-parses rates, fees, and volume. Generates a savings pitch and comparison instantly. The live demo weapon.', stats: [{ v: 'PDF', l: 'Upload' }, { v: 'Auto', l: 'Parse' }] },
+  { id: 'competitor', label: 'Competitor\nDisplacement', type: 'tool', r: 28, desc: '8-processor displacement tool. Square, Stripe, Toast, Clover, Heartland, Worldpay, PayPal, Elavon. Live savings calculator with compare-all view.', stats: [{ v: '8', l: 'Processors' }, { v: 'Live', l: 'Savings Calc' }] },
+  { id: 'roi', label: 'ROI\nCalculator', type: 'tool', r: 26, desc: 'Merchant-facing shareable savings calculator with lead capture. Shows exact dollar savings vs current processor. Embeddable on landing pages.', stats: [{ v: 'Lead', l: 'Capture' }, { v: 'Share', l: 'able' }] },
+  { id: 'onepager', label: 'One-Pager\nGenerator', type: 'tool', r: 26, desc: 'Niche-specific one-pagers with auto-generated pitch emails. 10 verticals covered. Instant collateral for any outreach.', stats: [{ v: '10', l: 'Verticals' }, { v: 'Auto', l: 'Email' }] },
+  { id: 'sequences', label: 'Sequence\nBuilder', type: 'tool', r: 26, desc: '5-touch merchant sequences with auto savings calc per touch. MRP recruiting sequences across 9 partner personas. Ready for GHL deployment.', stats: [{ v: '5-Touch', l: 'Merchant' }, { v: '9', l: 'MRP Types' }] },
+  { id: 'objection', label: 'Objection\nHandler', type: 'tool', r: 24, desc: '27 objections across Merchant (10), MRP (8), and PE (9) tabs. Copy buttons for instant response. The cheat sheet for every sales conversation.', stats: [{ v: '27', l: 'Objections' }, { v: '3', l: 'Categories' }] },
+  { id: 'intake', label: 'Merchant\nIntake', type: 'tool', r: 24, desc: 'Merchant-facing savings estimator with lead capture, GHL webhook, MRP attribution, and underwriting matrix screening. The front door.', stats: [{ v: 'GHL', l: 'Webhook' }, { v: 'MRP', l: 'Attribution' }] },
+  { id: 'pepitch', label: 'PE Pitch\nDeck', type: 'tool', r: 22, desc: 'Interactive PE partnership pitch with ROI calculator, outreach templates, and objection handling. Built for the managed service conversation.', stats: [{ v: 'ROI', l: 'Built In' }, { v: 'Interactive', l: 'Format' }] },
+  { id: 'residual', label: 'Residual\nCalculator', type: 'tool', r: 22, desc: 'MRP earnings calculator with T1/T2 tiers, downline override projections, and what-if scenarios. The tool that closes MRP recruiting conversations.', stats: [{ v: 'T1/T2', l: 'Tiers' }, { v: 'What-If', l: 'Scenarios' }] },
+
+  // INFRASTRUCTURE
+  { id: 'ghl', label: 'GoHighLevel\nCRM', type: 'infra', r: 34, desc: 'Central CRM for all pipeline, follow-up, and contact management. Every channel feeds leads here. 6 pre-built automation workflows.', stats: [{ v: '6', l: 'Workflows' }, { v: 'Central', l: 'Pipeline' }] },
+  { id: 'vapi', label: 'AI Voice\nCloser', type: 'infra', r: 34, desc: 'The force multiplier. AI voice agent using Vapi.ai + ElevenLabs voice clone handles 1:1 merchant calls. John handles escalations. Removes the sole-closer bottleneck.', stats: [{ v: '23+', l: 'Calls/Day' }, { v: 'ALL', l: 'Channels' }] },
+  { id: 'dash', label: 'CRO\nDashboard', type: 'infra', r: 28, desc: 'Daily CRO operations dashboard. Metrics, pipeline by stage, top deals, MRP activity, daily focus. The command center.', stats: [{ v: 'Daily', l: 'Ops' }, { v: 'Live', l: 'Metrics' }] },
+  { id: 'dealvel', label: 'Deal\nVelocity', type: 'infra', r: 24, desc: 'Pipeline tracker with stall alerts at 7 days (yellow) and 14+ days (red). Stage advancement tracking. Nothing falls through the cracks.', stats: [{ v: '7d', l: 'Yellow' }, { v: '14d+', l: 'Red Alert' }] },
+  { id: 'scorecard', label: 'Partner\nScorecard', type: 'infra', r: 24, desc: 'MRP performance tracker. Auto-status: Producing, Active, Dormant, New. Residual projections and reactivation queue for dormant partners.', stats: [{ v: 'Auto', l: 'Status' }, { v: 'Reactivate', l: 'Queue' }] },
+  { id: 'dream100', label: 'Dream 100\nTracker', type: 'infra', r: 24, desc: 'Top prospect tracker across Merchant, MRP, and PE categories. Touch logging, overdue alerts, persistence score, CSV export.', stats: [{ v: '3', l: 'Categories' }, { v: 'Touch', l: 'Logging' }] },
+  { id: 'automations', label: 'Daily\nAutomations', type: 'infra', r: 28, desc: 'CRO Briefing at 6:55am, Call Prep at 6:50am, Gmail Triage at 7am, Post-Call every 5 min, Monday.com webhooks for real-time alerts.', stats: [{ v: '6', l: 'Agents' }, { v: '24/7', l: 'Running' }] },
+  { id: 'playbook', label: 'CRO\nPlaybook', type: 'infra', r: 26, desc: '10-tab interactive sales intelligence dashboard. Challenger framework, mental models, psychology, outreach templates, objection reframes, daily principles.', stats: [{ v: '10', l: 'Tabs' }, { v: 'Live', l: 'Reference' }] },
+
+  // OUTCOMES
+  { id: 'volume', label: '$120M/mo\nVolume', type: 'outcome', r: 38, desc: '2,000 merchants at $60K/month average = $120M/month in processing volume. This is the revenue engine.', stats: [{ v: '$120M', l: 'Monthly' }, { v: '$1.4B', l: 'Annual' }] },
+  { id: 'c2c', label: 'C2C\nCross-Sell', type: 'outcome', r: 30, desc: 'Every merchant on the processing platform becomes a cross-sell opportunity for Credit to Cash. Second revenue line on the same customer base.', stats: [{ v: '2nd', l: 'Revenue Line' }, { v: 'Same', l: 'Customer Base' }] },
+  { id: 'network', label: 'Self-Growing\nNetwork', type: 'outcome', r: 30, desc: 'MRPs recruit MRPs. Merchants refer merchants. CPAs refer CPAs. The network compounds without additional effort from the core team.', stats: [{ v: 'Compound', l: 'Growth' }, { v: 'Passive', l: 'Referrals' }] },
+];
+
+// Edges
+const edges = [
+  // T1 channels -> goal
+  { from: 'mrp', to: 'goal', strength: 3 },
+  { from: 'direct', to: 'goal', strength: 3 },
+  { from: 'cpa', to: 'goal', strength: 3 },
+  { from: 'iso', to: 'goal', strength: 3 },
+  // T2 channels -> goal
+  { from: 'bank', to: 'goal', strength: 2 },
+  { from: 'vertical', to: 'goal', strength: 2 },
+  { from: 'mca', to: 'goal', strength: 2 },
+  { from: 'insurance', to: 'goal', strength: 1 },
+  { from: 'payroll', to: 'goal', strength: 1 },
+  { from: 'tradeshow', to: 'goal', strength: 1 },
+  // T3 channels -> goal
+  { from: 'franchise', to: 'goal', strength: 1 },
+  { from: 'portfolio', to: 'goal', strength: 1 },
+  { from: 'assoc', to: 'goal', strength: 1 },
+  { from: 'pe', to: 'goal', strength: 1 },
+  { from: 'bni', to: 'goal', strength: 1 },
+  { from: 'saas', to: 'goal', strength: 1 },
+  { from: 'seo', to: 'goal', strength: 1 },
+
+  // Tools -> Channels (which tools serve which channels)
+  { from: 'statement', to: 'direct', strength: 2 },
+  { from: 'statement', to: 'tradeshow', strength: 2 },
+  { from: 'statement', to: 'cpa', strength: 1 },
+  { from: 'statement', to: 'mca', strength: 1 },
+  { from: 'competitor', to: 'direct', strength: 2 },
+  { from: 'competitor', to: 'iso', strength: 1 },
+  { from: 'roi', to: 'direct', strength: 1 },
+  { from: 'roi', to: 'seo', strength: 2 },
+  { from: 'roi', to: 'cpa', strength: 1 },
+  { from: 'onepager', to: 'direct', strength: 2 },
+  { from: 'onepager', to: 'vertical', strength: 2 },
+  { from: 'sequences', to: 'direct', strength: 2 },
+  { from: 'sequences', to: 'mrp', strength: 2 },
+  { from: 'objection', to: 'direct', strength: 1 },
+  { from: 'objection', to: 'mrp', strength: 1 },
+  { from: 'intake', to: 'direct', strength: 1 },
+  { from: 'intake', to: 'seo', strength: 1 },
+  { from: 'pepitch', to: 'pe', strength: 2 },
+  { from: 'residual', to: 'mrp', strength: 2 },
+  { from: 'residual', to: 'cpa', strength: 1 },
+  { from: 'residual', to: 'insurance', strength: 1 },
+
+  // Infrastructure -> everything
+  { from: 'ghl', to: 'goal', strength: 2 },
+  { from: 'vapi', to: 'goal', strength: 3 },
+  { from: 'ghl', to: 'direct', strength: 1 },
+  { from: 'ghl', to: 'mrp', strength: 1 },
+  { from: 'vapi', to: 'mrp', strength: 1 },
+  { from: 'vapi', to: 'direct', strength: 1 },
+  { from: 'vapi', to: 'cpa', strength: 1 },
+  { from: 'vapi', to: 'bank', strength: 1 },
+  { from: 'dash', to: 'goal', strength: 1 },
+  { from: 'dealvel', to: 'goal', strength: 1 },
+  { from: 'scorecard', to: 'mrp', strength: 1 },
+  { from: 'dream100', to: 'direct', strength: 1 },
+  { from: 'automations', to: 'goal', strength: 1 },
+  { from: 'playbook', to: 'direct', strength: 1 },
+
+  // Goal -> Outcomes
+  { from: 'goal', to: 'volume', strength: 3 },
+  { from: 'goal', to: 'c2c', strength: 2 },
+  { from: 'goal', to: 'network', strength: 2 },
+  { from: 'mrp', to: 'network', strength: 1 },
+  { from: 'cpa', to: 'network', strength: 1 },
+
+  // Cross connections
+  { from: 'bni', to: 'mrp', strength: 1 },
+  { from: 'vertical', to: 'assoc', strength: 1 },
+  { from: 'bank', to: 'franchise', strength: 1 },
+  { from: 'iso', to: 'portfolio', strength: 1 },
+];
+
+// Physics simulation
+let camera = { x: 0, y: 0, zoom: 1 };
+let targetCamera = { x: 0, y: 0, zoom: 1 };
+let dragging = false;
+let dragStart = { x: 0, y: 0 };
+let camStart = { x: 0, y: 0 };
+let hoveredNode = null;
+let selectedNode = null;
+let activeFilter = 'all';
+let animTime = 0;
+
+// Initialize positions in a radial layout
+function initPositions() {
+  const goalNode = nodes.find(n => n.id === 'goal');
+  goalNode.x = 0;
+  goalNode.y = 0;
+  goalNode.vx = 0;
+  goalNode.vy = 0;
+  goalNode.fixed = true;
+
+  // Group by type
+  const channels = nodes.filter(n => n.type === 'channel');
+  const tools = nodes.filter(n => n.type === 'tool');
+  const infra = nodes.filter(n => n.type === 'infra');
+  const outcomes = nodes.filter(n => n.type === 'outcome');
+
+  // Channels in inner ring
+  channels.forEach((n, i) => {
+    const angle = (i / channels.length) * Math.PI * 2 - Math.PI / 2;
+    n.x = Math.cos(angle) * 320;
+    n.y = Math.sin(angle) * 320;
+    n.vx = 0;
+    n.vy = 0;
+  });
+
+  // Tools in outer ring
+  tools.forEach((n, i) => {
+    const angle = (i / tools.length) * Math.PI * 2 - Math.PI / 3;
+    n.x = Math.cos(angle) * 560;
+    n.y = Math.sin(angle) * 560;
+    n.vx = 0;
+    n.vy = 0;
+  });
+
+  // Infra spread around
+  infra.forEach((n, i) => {
+    const angle = (i / infra.length) * Math.PI * 2 + Math.PI / 6;
+    n.x = Math.cos(angle) * 480;
+    n.y = Math.sin(angle) * 480;
+    n.vx = 0;
+    n.vy = 0;
+  });
+
+  // Outcomes on right side
+  outcomes.forEach((n, i) => {
+    const angle = -0.4 + (i / (outcomes.length - 1)) * 0.8;
+    n.x = Math.cos(angle) * 200 + 300;
+    n.y = Math.sin(angle) * 200;
+    n.vx = 0;
+    n.vy = 0;
+  });
+}
+initPositions();
+
+// Force simulation
+function simulate() {
+  const alpha = 0.15;
+  const repulsion = 8000;
+  const springLen = 250;
+  const springK = 0.003;
+  const damping = 0.85;
+  const centerPull = 0.001;
+
+  // Repulsion between all nodes
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const a = nodes[i], b = nodes[j];
+      let dx = b.x - a.x;
+      let dy = b.y - a.y;
+      let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      let minDist = a.r + b.r + 30;
+      let force = repulsion / (dist * dist);
+      if (dist < minDist) force *= 3;
+      let fx = (dx / dist) * force;
+      let fy = (dy / dist) * force;
+      if (!a.fixed) { a.vx -= fx; a.vy -= fy; }
+      if (!b.fixed) { b.vx += fx; b.vy += fy; }
+    }
+  }
+
+  // Spring forces on edges
+  const nodeMap = {};
+  nodes.forEach(n => nodeMap[n.id] = n);
+  edges.forEach(e => {
+    const a = nodeMap[e.from], b = nodeMap[e.to];
+    if (!a || !b) return;
+    let dx = b.x - a.x;
+    let dy = b.y - a.y;
+    let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+    let target = springLen * (1 / (e.strength || 1));
+    let force = (dist - target) * springK * (e.strength || 1);
+    let fx = (dx / dist) * force;
+    let fy = (dy / dist) * force;
+    if (!a.fixed) { a.vx += fx; a.vy += fy; }
+    if (!b.fixed) { b.vx -= fx; b.vy -= fy; }
+  });
+
+  // Center gravity
+  nodes.forEach(n => {
+    if (n.fixed) return;
+    n.vx -= n.x * centerPull;
+    n.vy -= n.y * centerPull;
+    n.vx *= damping;
+    n.vy *= damping;
+    n.x += n.vx;
+    n.y += n.vy;
+  });
+}
+
+// Rendering
+function getNodeAlpha(node) {
+  if (activeFilter === 'all') return 1;
+  if (activeFilter === node.type) return 1;
+  if (node.id === 'goal') return 0.6;
+  return 0.1;
+}
+
+function getEdgeAlpha(edge) {
+  const fromNode = nodes.find(n => n.id === edge.from);
+  const toNode = nodes.find(n => n.id === edge.to);
+  if (selectedNode) {
+    if (edge.from === selectedNode.id || edge.to === selectedNode.id) return 0.6;
+    return 0.03;
+  }
+  if (activeFilter === 'all') return 0.12;
+  const fa = getNodeAlpha(fromNode);
+  const ta = getNodeAlpha(toNode);
+  return Math.min(fa, ta) * 0.15;
+}
+
+function draw() {
+  animTime += 0.01;
+
+  // Smooth camera
+  camera.x += (targetCamera.x - camera.x) * 0.1;
+  camera.y += (targetCamera.y - camera.y) * 0.1;
+  camera.zoom += (targetCamera.zoom - camera.zoom) * 0.1;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.save();
+  ctx.translate(W / 2 + camera.x, H / 2 + camera.y);
+  ctx.scale(camera.zoom, camera.zoom);
+
+  const nodeMap = {};
+  nodes.forEach(n => nodeMap[n.id] = n);
+
+  // Draw edges
+  edges.forEach(e => {
+    const a = nodeMap[e.from], b = nodeMap[e.to];
+    if (!a || !b) return;
+    const alpha = getEdgeAlpha(e);
+    const width = (e.strength || 1) * 1.2;
+
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.strokeStyle = `rgba(1,222,143,${alpha})`;
+    ctx.lineWidth = width / camera.zoom;
+    ctx.stroke();
+  });
+
+  // Draw nodes
+  nodes.forEach(node => {
+    const alpha = getNodeAlpha(node);
+    const color = COLORS[node.type];
+    const isHovered = hoveredNode === node;
+    const isSelected = selectedNode === node;
+    const scale = isHovered ? 1.08 : 1;
+    const r = node.r * scale;
+
+    // Glow
+    if ((isHovered || isSelected) && alpha > 0.5) {
+      const grad = ctx.createRadialGradient(node.x, node.y, r, node.x, node.y, r * 2);
+      grad.addColorStop(0, color.replace(')', ',0.2)').replace('rgb', 'rgba'));
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, r * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Pulse for goal
+    if (node.id === 'goal') {
+      const pulseR = r + Math.sin(animTime * 2) * 4;
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, pulseR + 8, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(1,222,143,${0.15 * alpha})`;
+      ctx.lineWidth = 2 / camera.zoom;
+      ctx.stroke();
+    }
+
+    // Circle
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
+
+    // Fill
+    const baseAlpha = alpha * (node.type === 'goal' ? 0.3 : 0.15);
+    ctx.fillStyle = color.replace(')', `,${baseAlpha})`).replace('#', '').replace(/^(..)(..)(..)$/, (m, r, g, b) => {
+      return `rgba(${parseInt(r, 16)},${parseInt(g, 16)},${parseInt(b, 16)},${baseAlpha})`;
+    });
+    // Simpler fill
+    ctx.fillStyle = hexToRgba(color, baseAlpha);
+    ctx.fill();
+
+    // Border
+    ctx.strokeStyle = hexToRgba(color, alpha * (isSelected ? 0.9 : isHovered ? 0.7 : 0.4));
+    ctx.lineWidth = (isSelected ? 3 : isHovered ? 2.5 : 1.5) / camera.zoom;
+    ctx.stroke();
+
+    // Label
+    const lines = node.label.split('\n');
+    const fontSize = Math.max(10, Math.min(r * 0.32, 16));
+    ctx.font = `700 ${fontSize}px 'DM Sans', sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = hexToRgba(color, alpha * 0.9);
+    lines.forEach((line, i) => {
+      const yOff = (i - (lines.length - 1) / 2) * (fontSize * 1.3);
+      ctx.fillText(line, node.x, node.y + yOff);
+    });
+  });
+
+  // Highlight connected edges for selected node
+  if (selectedNode) {
+    edges.forEach(e => {
+      if (e.from !== selectedNode.id && e.to !== selectedNode.id) return;
+      const a = nodeMap[e.from], b = nodeMap[e.to];
+      if (!a || !b) return;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.strokeStyle = `rgba(1,222,143,0.5)`;
+      ctx.lineWidth = ((e.strength || 1) * 2) / camera.zoom;
+      ctx.stroke();
+    });
+  }
+
+  ctx.restore();
+
+  simulate();
+  requestAnimationFrame(draw);
+}
+
+function hexToRgba(hex, a) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+// Interaction
+function screenToWorld(sx, sy) {
+  return {
+    x: (sx - W / 2 - camera.x) / camera.zoom,
+    y: (sy - H / 2 - camera.y) / camera.zoom
+  };
+}
+
+function hitTest(mx, my) {
+  const { x, y } = screenToWorld(mx, my);
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    const n = nodes[i];
+    const dx = x - n.x;
+    const dy = y - n.y;
+    if (dx * dx + dy * dy < n.r * n.r) return n;
+  }
+  return null;
+}
+
+canvas.addEventListener('mousedown', e => {
+  const node = hitTest(e.clientX, e.clientY);
+  if (node) {
+    selectNode(node);
+  } else {
+    dragging = true;
+    dragStart = { x: e.clientX, y: e.clientY };
+    camStart = { x: targetCamera.x, y: targetCamera.y };
+    closePanel();
+  }
+});
+
+canvas.addEventListener('mousemove', e => {
+  if (dragging) {
+    targetCamera.x = camStart.x + (e.clientX - dragStart.x);
+    targetCamera.y = camStart.y + (e.clientY - dragStart.y);
+  } else {
+    const node = hitTest(e.clientX, e.clientY);
+    hoveredNode = node;
+    canvas.style.cursor = node ? 'pointer' : 'grab';
+  }
+});
+
+canvas.addEventListener('mouseup', () => { dragging = false; });
+canvas.addEventListener('mouseleave', () => { dragging = false; hoveredNode = null; });
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const delta = e.deltaY > 0 ? 0.9 : 1.1;
+  targetCamera.zoom = Math.max(0.3, Math.min(3, targetCamera.zoom * delta));
+}, { passive: false });
+
+// Touch support
+let lastTouchDist = 0;
+canvas.addEventListener('touchstart', e => {
+  if (e.touches.length === 1) {
+    const t = e.touches[0];
+    const node = hitTest(t.clientX, t.clientY);
+    if (node) {
+      selectNode(node);
+    } else {
+      dragging = true;
+      dragStart = { x: t.clientX, y: t.clientY };
+      camStart = { x: targetCamera.x, y: targetCamera.y };
+    }
+  } else if (e.touches.length === 2) {
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    lastTouchDist = Math.sqrt(dx * dx + dy * dy);
+  }
+}, { passive: true });
+
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (e.touches.length === 1 && dragging) {
+    const t = e.touches[0];
+    targetCamera.x = camStart.x + (t.clientX - dragStart.x);
+    targetCamera.y = camStart.y + (t.clientY - dragStart.y);
+  } else if (e.touches.length === 2) {
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const scale = dist / lastTouchDist;
+    targetCamera.zoom = Math.max(0.3, Math.min(3, targetCamera.zoom * scale));
+    lastTouchDist = dist;
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchend', () => { dragging = false; });
+
+function selectNode(node) {
+  selectedNode = node;
+  const panel = document.getElementById('infoPanel');
+  const typeLabels = { goal: 'Core Target', channel: 'Distribution Channel', tool: 'Sales Tool', infra: 'Infrastructure', outcome: 'Outcome' };
+
+  document.getElementById('infoCategory').textContent = typeLabels[node.type];
+  document.getElementById('infoCategory').style.color = COLORS[node.type];
+  document.getElementById('infoName').textContent = node.label.replace('\n', ' ');
+  document.getElementById('infoDesc').textContent = node.desc;
+
+  const statsEl = document.getElementById('infoStats');
+  statsEl.innerHTML = '';
+  (node.stats || []).forEach(s => {
+    statsEl.innerHTML += `<div class="info-stat"><div class="info-stat-val">${s.v}</div><div class="info-stat-label">${s.l}</div></div>`;
+  });
+
+  // Connections
+  const connList = document.getElementById('infoConnList');
+  connList.innerHTML = '';
+  const connected = [];
+  edges.forEach(e => {
+    if (e.from === node.id) {
+      const target = nodes.find(n => n.id === e.to);
+      if (target) connected.push(target);
+    }
+    if (e.to === node.id) {
+      const source = nodes.find(n => n.id === e.from);
+      if (source) connected.push(source);
+    }
+  });
+  connected.forEach(c => {
+    connList.innerHTML += `<div class="info-conn-item" style="color:${COLORS[c.type]}">${c.label.replace('\n', ' ')}</div>`;
+  });
+
+  panel.classList.add('visible');
+}
+
+function closePanel() {
+  document.getElementById('infoPanel').classList.remove('visible');
+  selectedNode = null;
+}
+
+function setFilter(f) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function zoomIn() { targetCamera.zoom = Math.min(3, targetCamera.zoom * 1.3); }
+function zoomOut() { targetCamera.zoom = Math.max(0.3, targetCamera.zoom * 0.7); }
+function resetView() {
+  targetCamera = { x: 0, y: 0, zoom: 1 };
+  closePanel();
+}
+
+// Initial zoom for screen
+targetCamera.zoom = Math.min(W, H) / 1400;
+camera.zoom = targetCamera.zoom;
+
+draw();
+</script>
+</body>
+</html>
