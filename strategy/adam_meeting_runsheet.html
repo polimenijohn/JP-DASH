@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adam Meeting — Run Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--dark:#060f0d;--green:#01de8f;--teal:#0b5147;--yellow:#f5a623;--red:#ef4444}
+  body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--dark);color:#fff;min-height:100vh;padding:0}
+
+  .page{max-width:720px;margin:0 auto;padding:40px 28px 80px}
+
+  .badge{display:inline-block;padding:6px 14px;border-radius:8px;background:rgba(1,222,143,0.1);border:1px solid rgba(1,222,143,0.2);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:16px}
+
+  h1{font-size:clamp(28px,5vw,42px);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:8px}
+  h1 span{color:var(--green)}
+
+  .meta{font-size:14px;color:rgba(255,255,255,0.3);margin-bottom:40px;font-weight:500}
+
+  .context-card{
+    background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:16px;
+    padding:24px 28px;margin-bottom:32px;
+  }
+  .context-title{font-size:13px;font-weight:700;color:var(--green);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;opacity:0.8}
+  .context-body{font-size:15px;color:rgba(255,255,255,0.5);line-height:1.65}
+  .context-body strong{color:rgba(255,255,255,0.8);font-weight:600}
+
+  /* PHASES */
+  .phase{margin-bottom:48px}
+  .phase-header{
+    display:flex;align-items:center;gap:14px;margin-bottom:20px;
+    padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .phase-num{
+    width:36px;height:36px;border-radius:10px;background:var(--green);
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;font-weight:800;color:var(--teal);flex-shrink:0;
+  }
+  .phase-title{font-size:20px;font-weight:800;letter-spacing:-0.3px}
+  .phase-time{font-size:12px;color:rgba(255,255,255,0.25);font-weight:600;margin-left:auto}
+
+  .move{
+    padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.03);
+  }
+  .move:last-child{border-bottom:none}
+  .move-label{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px}
+  .move-label.do{color:var(--green)}
+  .move-label.say{color:var(--yellow)}
+  .move-label.ask{color:#4a9eff}
+  .move-label.dont{color:var(--red)}
+  .move-label.note{color:rgba(255,255,255,0.3)}
+  .move-text{font-size:15px;color:rgba(255,255,255,0.6);line-height:1.6}
+  .move-text strong{color:var(--white);font-weight:600}
+  .move-text em{color:var(--green);font-style:normal;font-weight:600}
+
+  /* KEY NUMBERS */
+  .numbers{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;
+    margin:20px 0;
+  }
+  .num-card{
+    background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+    border-radius:12px;padding:16px;text-align:center;
+  }
+  .num-val{font-size:22px;font-weight:800;color:var(--green)}
+  .num-label{font-size:10px;font-weight:700;color:rgba(255,255,255,0.25);letter-spacing:0.06em;text-transform:uppercase;margin-top:2px}
+
+  /* DIVIDER */
+  .divider{height:1px;background:rgba(255,255,255,0.04);margin:40px 0}
+
+  /* OBJECTION PREP */
+  .obj{padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .obj-q{font-size:14px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:4px}
+  .obj-a{font-size:14px;color:rgba(255,255,255,0.4);line-height:1.55}
+  .obj-a strong{color:var(--green);font-weight:600}
+
+  /* CHEAT STRIP */
+  .cheat{
+    position:fixed;bottom:0;left:0;right:0;z-index:100;
+    background:rgba(6,15,13,0.95);border-top:1px solid rgba(1,222,143,0.12);
+    padding:12px 28px;display:flex;align-items:center;justify-content:center;gap:32px;
+    backdrop-filter:blur(16px);
+  }
+  .cheat-item{font-size:12px;color:rgba(255,255,255,0.35);font-weight:600}
+  .cheat-item span{color:var(--green);font-weight:800}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="badge">Confidential -- Meeting Prep</div>
+  <h1>Adam Meeting <span>Run Sheet</span></h1>
+  <div class="meta">Monday, March 17, 2026 -- BNP / Kashu Growth Strategy</div>
+
+  <!-- CONTEXT -->
+  <div class="context-card">
+    <div class="context-title">Who Adam Is</div>
+    <div class="context-body">
+      Adam runs <strong>BNP (Beyond Normal Payments)</strong> out of Scottsdale. BNP is Kashu's underwriting and bank placement partner. <strong>Every merchant Kashu activates processes through BNP.</strong> He's not an outside advisor -- he's the backend infrastructure. His business grows when your pipeline grows. The meeting isn't a pitch. It's a strategy session between the distribution engine (Kashu) and the processing engine (BNP) on how to hit scale together.
+    </div>
+  </div>
+
+  <div class="context-card">
+    <div class="context-title">What BNP Already Offers</div>
+    <div class="context-body">
+      In-store + ecommerce processing, POS systems, CRM software, marketing hub, 24/7 human support. They're running a <strong>1.00% promo on first $50K volume</strong>. Positioned as modern/reliable with a 4.9 star rating. Based in Scottsdale. They already have the infrastructure -- what they need is <strong>volume at scale</strong>. That's exactly what you're building.
+    </div>
+  </div>
+
+  <div class="context-card">
+    <div class="context-title">What Adam Needs to Walk Away Thinking</div>
+    <div class="context-body">
+      <strong>"Kashu is about to flood my pipeline with merchants, and they've built the infrastructure to actually do it."</strong> Not someday. Now. The tools are live, the channels are mapped, and the only thing missing is his network accelerating the flywheel. His incentive is pure -- more Kashu merchants = more BNP revenue.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PHASE 1 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num">1</div>
+      <div class="phase-title">The Live Demo (Open Cold)</div>
+      <div class="phase-time">First 5 min</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label dont">Don't</div>
+      <div class="move-text">Don't open with slides, the bubble map, or "let me show you what we've been building." That's what everyone does.</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label do">Do</div>
+      <div class="move-text">Open your laptop. Pull up the <strong>Statement Analyzer</strong>. Say one line, then demo.</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label say">Say</div>
+      <div class="move-text"><em>"Adam, before anything -- you deal with merchant statements every day. Watch this."</em> Upload a sample statement. Let it parse. Let the savings pitch generate. Don't explain what's happening. Let him watch.</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label do">Do</div>
+      <div class="move-text">Then open the <strong>Competitor Displacement Tool</strong>. Pick one of BNP's common competitors (Heartland, Worldpay, or whatever legacy processor you know his merchants are on). Plug in a volume number. Show the Kashu/BNP rate winning instantly.</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label say">Say</div>
+      <div class="move-text"><em>"That's two of the eight tools we've built. Every one of them is live right now and feeding your pipeline."</em></div>
+    </div>
+
+    <div class="move">
+      <div class="move-label note">Why This Works</div>
+      <div class="move-text">Adam has seen a thousand processor pitches. He's never seen someone upload a statement and generate a pitch in real-time. The tools prove execution. Now everything you say after this has credibility because he just watched it work.</div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num">2</div>
+      <div class="phase-title">The Dashboard Tour (30 Seconds)</div>
+      <div class="phase-time">2 min</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label do">Do</div>
+      <div class="move-text">Open the <strong>Sales Command Center</strong> (JP CRO Dash). Let him see the tool grid. Don't click into each one. Just let the volume of what's built register visually.</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label say">Say</div>
+      <div class="move-text"><em>"Statement analyzer, competitor tool, ROI calculator, 5-touch outreach sequences, objection handler, residual calculator, merchant intake with underwriting pre-screen, niche one-pagers. All built. All deployed. All feeding merchants to BNP."</em></div>
+    </div>
+
+    <div class="move">
+      <div class="move-label note">Why This Works</div>
+      <div class="move-text">Speed. You're not asking for his time. You're showing density of execution in 30 seconds. He's thinking "these guys actually build, they don't just talk."</div>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num">3</div>
+      <div class="phase-title">The Growth Map (The Strategy)</div>
+      <div class="phase-time">8-10 min</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label do">Do</div>
+      <div class="move-text">Open the <strong>Bubble Map</strong>. Hit spacebar to start presentation mode. Walk him through each step.</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label say">Say at Step 1 (Goal)</div>
+      <div class="move-text"><em>"2,000 merchants in 6 months. Every one of them processing through BNP. That's $120M a month in volume hitting your platform."</em></div>
+    </div>
+
+    <div class="move">
+      <div class="move-label say">Say at Step 2 (T1 Channels)</div>
+      <div class="move-text"><em>"These four are live now. MRP network, direct outreach, CPAs, and ISO partnerships. 1,300 merchants from these alone."</em></div>
+    </div>
+
+    <div class="move">
+      <div class="move-label say">Say at Step 5 (Tools)</div>
+      <div class="move-text"><em>"You just saw two of these work live. All eight are deployed. This is the sales engine that feeds BNP."</em></div>
+    </div>
+
+    <div class="move">
+      <div class="move-label say">Say at Step 7 (AI Closer)</div>
+      <div class="move-text"><em>"Right now I'm the bottleneck -- I close 70% but I can only take so many calls. The AI voice closer removes that ceiling. Every channel scales without adding headcount."</em></div>
+    </div>
+
+    <div class="move">
+      <div class="move-label say">Say at Step 9 (Replicable)</div>
+      <div class="move-text"><em>"Here's the thing Adam -- this system isn't just for me. Every bank, ISO, and agent in your network could plug into this and feed merchants to BNP the same way. The tools, the playbook, the infrastructure -- it all works for anyone who brings merchants."</em></div>
+    </div>
+
+    <div class="move">
+      <div class="move-label note">Why This Works</div>
+      <div class="move-text">You just connected HIS growth to YOUR system. He's not evaluating Kashu anymore. He's seeing BNP's scale path. Every merchant you activate is revenue for him. And his network can multiply that.</div>
+    </div>
+  </div>
+
+  <!-- PHASE 4 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num">4</div>
+      <div class="phase-title">The Partner Page (His Network's Tool)</div>
+      <div class="phase-time">5 min</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label do">Do</div>
+      <div class="move-text">Open the <strong>Partner Opportunity</strong> page. Click "I'm a Bank / Credit Union." Ask Adam for real numbers.</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label ask">Ask</div>
+      <div class="move-text"><em>"How many business clients does a typical community bank branch have that process cards?"</em> He gives a number. Plug it in. <em>"What's a reasonable average monthly volume?"</em> Plug it in. Let the calculator run.</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label say">Say</div>
+      <div class="move-text"><em>"This is what you'd send to a bank president in your network. They click their role, plug in their numbers, and see their upside. We handle everything after the intro."</em></div>
+    </div>
+
+    <div class="move">
+      <div class="move-label do">Do</div>
+      <div class="move-text">Toggle to ISO view. Then CPA. Show him it adapts. The message: one link works for every type of partner he'd refer.</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label note">Why This Works</div>
+      <div class="move-text">You just gave him a weapon. Not a pitch he has to explain -- a tool he can forward. "Check this out" to anyone in his network. The page sells itself. Adam becomes a distribution channel without you asking him to be one.</div>
+    </div>
+  </div>
+
+  <!-- PHASE 5 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num">5</div>
+      <div class="phase-title">The Close</div>
+      <div class="phase-time">2 min</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label dont">Don't</div>
+      <div class="move-text">Don't say "what do you think?" That invites critique. Don't ask for feedback on the tools. Don't ask if he's impressed.</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label say">Say</div>
+      <div class="move-text"><em>"Adam, every merchant we activate processes through BNP. The tools are built. The channels are mapped. The only question is how fast we scale this. Who in your network should I be talking to this week?"</em></div>
+    </div>
+
+    <div class="move">
+      <div class="move-label ask">Ask</div>
+      <div class="move-text">If he hesitates: <em>"Who's the one person you know who has 50+ business clients and would love a passive revenue stream from processing?"</em> Give him a specific frame. One person. That's easier than "your whole network."</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label ask">Ask</div>
+      <div class="move-text">The bigger play: <em>"What if we built this partner page with BNP's branding on it? Your sales team sends it to every bank and ISO you work with. Kashu handles the distribution engine, BNP handles the processing, and the partner just makes intros."</em></div>
+    </div>
+
+    <div class="move">
+      <div class="move-label note">Why This Works</div>
+      <div class="move-text">You're not asking him to invest, commit, or decide anything. You're asking him to text one person. That's frictionless. And the BNP-branded partner page idea plants the seed for a co-branded distribution play that makes BNP's growth your growth and vice versa.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- BNP-SPECIFIC ANGLES -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num" style="background:var(--yellow);color:#000">!</div>
+      <div class="phase-title">BNP-Specific Angles to Hit</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label note">BNP's 1% Promo</div>
+      <div class="move-text">BNP is running 1.00% on first $50K. That's a killer hook for the statement analyzer. <em>"We show them what they're paying, then hit them with 1% on the first $50K. That's not even a conversation, that's a no-brainer."</em> Use BNP's own promo as ammo in the pitch.</div>
+    </div>
+
+    <div class="move">
+      <div class="move-label note">BNP's CRM + Marketing Hub</div>
+      <div class="move-text">BNP already has CRM and marketing tools. Connect them to your GHL workflows. <em>"Your CRM and our automation layer together means merchants get followed up on every single time. Nothing falls through."</em></div>
+    </div>
+
+    <div class="move">
+      <div class="move-label note">BNP's POS Play</div>
+      <div class="move-text">BNP sells POS systems. Every new Kashu merchant is a POS upsell opportunity for BNP. <em>"We bring the merchant for processing, you upsell POS on the backend. Double monetization."</em></div>
+    </div>
+
+    <div class="move">
+      <div class="move-label note">C2C Cross-Sell</div>
+      <div class="move-text">Once merchants are processing through BNP, the C2C product layers on top. Don't lead with this. Mention it at the end as the second revenue line: <em>"And once they're processing, we cross-sell Credit to Cash. That's a second product on the same merchant base at zero acquisition cost."</em></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- OBJECTION PREP -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num" style="background:var(--red)">?</div>
+      <div class="phase-title">If He Pushes Back</div>
+    </div>
+
+    <div class="obj">
+      <div class="obj-q">"2,000 merchants in 6 months is aggressive."</div>
+      <div class="obj-a"><strong>"That's why it's 15 channels, not one."</strong> No single channel needs to carry the load. If half of them produce at 50%, we're still over target. The diversification is the insurance policy. And the tools are already built to handle it.</div>
+    </div>
+
+    <div class="obj">
+      <div class="obj-q">"You're the only closer. How does this scale?"</div>
+      <div class="obj-a"><strong>"That's exactly why we're building the AI voice closer."</strong> Right now I close 70%. The AI handles the standard calls, I handle whales and escalations. We go from 5 calls a day to 23+ without adding a single person.</div>
+    </div>
+
+    <div class="obj">
+      <div class="obj-q">"What do you need from me?"</div>
+      <div class="obj-a"><strong>"One intro this week."</strong> Someone in your network who has business clients and would love passive processing revenue. I'll do the rest. And if it works, we talk about co-branding the partner page with BNP so your whole network can feed the same funnel.</div>
+    </div>
+
+    <div class="obj">
+      <div class="obj-q">"We already have partners doing this."</div>
+      <div class="obj-a"><strong>"Do any of them have an AI statement analyzer, a competitor displacement tool, and an AI voice closer?"</strong> The tools are the moat. Any agent can make calls. Nobody else is running this level of infrastructure behind the pitch. That's why the close rate is 70%.</div>
+    </div>
+
+    <div class="obj">
+      <div class="obj-q">"The AI closer makes me nervous."</div>
+      <div class="obj-a"><strong>"It should -- it's new."</strong> But here's the thing: it's not replacing the relationship. It's handling the 80% of calls that are straightforward so the 20% that need a human get more attention, not less. Quality goes up, not down.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- QUICK REFERENCE -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num" style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.5)">#</div>
+      <div class="phase-title">Numbers to Have Ready</div>
+    </div>
+
+    <div class="numbers">
+      <div class="num-card"><div class="num-val">15</div><div class="num-label">Merchants in UW</div></div>
+      <div class="num-card"><div class="num-val">$6M</div><div class="num-label">Pipeline</div></div>
+      <div class="num-card"><div class="num-val">70%</div><div class="num-label">Close Rate</div></div>
+      <div class="num-card"><div class="num-val">2,000</div><div class="num-label">6-Mo Target</div></div>
+      <div class="num-card"><div class="num-val">$120M</div><div class="num-label">Monthly Volume</div></div>
+      <div class="num-card"><div class="num-val">13</div><div class="num-label">Channels Active</div></div>
+      <div class="num-card"><div class="num-val">8</div><div class="num-label">Tools Built</div></div>
+      <div class="num-card"><div class="num-val">6</div><div class="num-label">AI Automations</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CHEAT STRIP -->
+<div class="cheat">
+  <div class="cheat-item"><span>1</span> Live Demo</div>
+  <div class="cheat-item"><span>2</span> Dashboard Flash</div>
+  <div class="cheat-item"><span>3</span> Bubble Map Walk</div>
+  <div class="cheat-item"><span>4</span> Partner Page + His Numbers</div>
+  <div class="cheat-item"><span>5</span> "Who should I talk to this week?"</div>
+</div>
+
+</body>
+</html>
