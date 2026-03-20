@@ -1225,8 +1225,8 @@ document.querySelectorAll('.modal-overlay').forEach(el => {
 });
 
 // MONDAY.COM IMPORT
-function importFromMonday() {
-  if (!confirm('Import peptide deals from Monday.com? This will add merchants that are not already in the dashboard.')) return;
+function importFromMonday(auto) {
+  if (!auto && !confirm('Import peptide deals from Monday.com? This will add merchants that are not already in the dashboard.')) return;
   const data = loadData();
   const existingNames = new Set(data.merchants.map(m => m.name.toLowerCase()));
 
@@ -1362,6 +1362,14 @@ function importFromMonday() {
   renderAll();
   alert('Imported ' + imported + ' merchants. ' + (mondayDeals.length - imported) + ' were already in the dashboard.');
 }
+
+// AUTO-IMPORT on first load if no merchants exist
+(function() {
+  const data = loadData();
+  if (data.merchants.length === 0) {
+    importFromMonday(true);
+  }
+})();
 
 // INIT
 renderAll();
