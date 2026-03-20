@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic Adam | Kashu Intelligence</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a25;--surface3:#222233;--border:#2a2a3a;--text:#e0e0e8;--text2:#8888a0;--accent:#6366f1;--accent2:#818cf8;--green:#22c55e;--red:#ef4444;--orange:#f59e0b;--cyan:#06b6d4}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.app{display:grid;grid-template-columns:260px 1fr;height:100vh}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-header{padding:20px;border-bottom:1px solid var(--border)}
+.sidebar-header h1{font-size:18px;font-weight:700;color:var(--accent2)}
+.sidebar-header p{font-size:11px;color:var(--text2);margin-top:4px;font-style:italic}
+.nav{flex:1;overflow-y:auto;padding:12px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .2s;margin-bottom:2px}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--accent);background:linear-gradient(135deg,#6366f1,#818cf8);color:#fff}
+.nav-item .icon{font-size:16px;width:20px;text-align:center}
+.nav-section{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text2);padding:16px 12px 6px;opacity:.6}
+.main{display:flex;flex-direction:column;overflow:hidden}
+.main-header{padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:space-between}
+.main-header h2{font-size:16px;font-weight:600}
+.main-header .badge{font-size:10px;padding:3px 8px;border-radius:99px;background:var(--surface3);color:var(--text2)}
+.content{flex:1;overflow-y:auto;padding:24px}
+.panel{display:none}
+.panel.active{display:block}
+
+/* Chat Panel */
+.chat-container{display:flex;flex-direction:column;height:100%}
+.chat-messages{flex:1;overflow-y:auto;padding:0 0 16px}
+.chat-msg{display:flex;gap:12px;margin-bottom:16px;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.chat-msg.user{flex-direction:row-reverse}
+.chat-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.chat-msg.adam .chat-avatar{background:linear-gradient(135deg,#6366f1,#818cf8)}
+.chat-msg.user .chat-avatar{background:var(--surface3)}
+.chat-bubble{max-width:75%;padding:12px 16px;border-radius:12px;font-size:13px;line-height:1.6}
+.chat-msg.adam .chat-bubble{background:var(--surface2);border-top-left-radius:4px}
+.chat-msg.user .chat-bubble{background:var(--accent);color:#fff;border-top-right-radius:4px}
+.chat-input-area{display:flex;gap:8px;padding-top:12px;border-top:1px solid var(--border)}
+.chat-input-area input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-size:13px;outline:none}
+.chat-input-area input:focus{border-color:var(--accent)}
+.chat-input-area input::placeholder{color:var(--text2)}
+.chat-input-area button{padding:12px 20px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600}
+.chat-input-area button:hover{background:var(--accent2)}
+.chat-input-area button:disabled{opacity:.5;cursor:not-allowed}
+.typing-indicator{display:inline-flex;gap:4px;padding:8px 12px}
+.typing-indicator span{width:6px;height:6px;border-radius:50%;background:var(--text2);animation:bounce .6s infinite alternate}
+.typing-indicator span:nth-child(2){animation-delay:.2s}
+.typing-indicator span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{to{opacity:.3;transform:translateY(-4px)}}
+.quick-asks{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.quick-ask{padding:6px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:99px;font-size:11px;color:var(--text2);cursor:pointer;transition:all .2s}
+.quick-ask:hover{border-color:var(--accent);color:var(--accent2)}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+.status-dot.online{background:var(--green)}
+.status-dot.offline{background:var(--red)}
+
+/* Deal Evaluator */
+.eval-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.eval-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+.eval-card h3{font-size:14px;margin-bottom:12px;color:var(--accent2)}
+.eval-card label{display:block;font-size:11px;color:var(--text2);margin-bottom:4px;margin-top:10px}
+.eval-card label:first-of-type{margin-top:0}
+.eval-card input,.eval-card select,.eval-card textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-size:13px;outline:none}
+.eval-card select{cursor:pointer}
+.eval-card textarea{resize:vertical;min-height:60px;font-family:inherit}
+.eval-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;margin-top:16px}
+.eval-btn:hover{background:var(--accent2)}
+.eval-result{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:16px}
+.eval-result h3{font-size:14px;margin-bottom:12px}
+.score-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)}
+.score-row:last-child{border:none}
+.score-label{flex:1;font-size:12px;color:var(--text2)}
+.score-val{font-size:13px;font-weight:600}
+.score-bar{width:80px;height:6px;background:var(--surface3);border-radius:99px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:99px;transition:width .5s}
+.verdict{padding:16px;border-radius:8px;margin-top:12px;font-size:13px;line-height:1.6}
+.verdict.go{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--green)}
+.verdict.caution{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--orange)}
+.verdict.stop{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--red)}
+
+/* Portfolio Calculator */
+.calc-row{display:flex;gap:16px;margin-bottom:16px;align-items:end}
+.calc-field{flex:1}
+.calc-field label{display:block;font-size:11px;color:var(--text2);margin-bottom:4px}
+.calc-field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-size:14px;outline:none}
+.calc-results{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.calc-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center}
+.calc-card .label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+.calc-card .value{font-size:28px;font-weight:700;margin-top:8px}
+.calc-card .sub{font-size:11px;color:var(--text2);margin-top:4px}
+.calc-card.highlight{border-color:var(--accent);background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(129,140,248,.05))}
+.payout-timeline{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:16px}
+.payout-timeline h3{font-size:14px;margin-bottom:16px}
+.timeline-row{display:flex;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid var(--border)}
+.timeline-row:last-child{border:none}
+.timeline-year{font-size:12px;color:var(--text2);width:60px}
+.timeline-bar{flex:1;height:24px;background:var(--surface3);border-radius:4px;overflow:hidden;position:relative}
+.timeline-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:#fff;transition:width .8s}
+.timeline-amount{font-size:13px;font-weight:600;width:100px;text-align:right}
+
+/* Risk Classifier */
+.risk-input{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.risk-input h3{font-size:14px;margin-bottom:12px}
+.risk-result{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px}
+.risk-tier{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:8px;font-size:14px;font-weight:700;margin-bottom:16px}
+.risk-tier.low{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3)}
+.risk-tier.high{background:rgba(245,158,11,.15);color:var(--orange);border:1px solid rgba(245,158,11,.3)}
+.risk-tier.restricted{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.risk-tier.prohibited{background:rgba(239,68,68,.25);color:var(--red);border:2px solid rgba(239,68,68,.5)}
+.risk-detail{font-size:13px;line-height:1.7;color:var(--text2)}
+.risk-detail strong{color:var(--text)}
+
+/* Vertical Scanner */
+.vert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+.vert-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all .2s}
+.vert-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vert-card.selected{border-color:var(--accent);background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(129,140,248,.05))}
+.vert-card h4{font-size:13px;margin-bottom:4px}
+.vert-card p{font-size:11px;color:var(--text2)}
+.vert-analysis{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px}
+.vert-analysis h3{font-size:16px;margin-bottom:16px}
+.vert-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.vert-stat{text-align:center;padding:12px;background:var(--surface2);border-radius:8px}
+.vert-stat .num{font-size:20px;font-weight:700}
+.vert-stat .lbl{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.vert-notes{font-size:13px;line-height:1.7;color:var(--text2)}
+.vert-notes p{margin-bottom:8px}
+.vert-notes strong{color:var(--text)}
+
+/* Knowledge Base */
+.kb-search{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-size:14px;outline:none;margin-bottom:16px}
+.kb-search:focus{border-color:var(--accent)}
+.kb-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.kb-section-header{padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600}
+.kb-section-header:hover{background:var(--surface2)}
+.kb-section-body{padding:0 20px 16px;font-size:13px;line-height:1.7;color:var(--text2);display:none}
+.kb-section.open .kb-section-body{display:block}
+.kb-section.open .kb-arrow{transform:rotate(180deg)}
+.kb-arrow{transition:transform .2s;color:var(--text2)}
+.copy-btn{padding:4px 10px;background:var(--surface3);border:1px solid var(--border);border-radius:4px;color:var(--text2);font-size:10px;cursor:pointer}
+.copy-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* Competitive Intel */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.comp-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all .2s;text-align:center}
+.comp-card:hover{border-color:var(--accent)}
+.comp-card.selected{border-color:var(--accent);background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(129,140,248,.05))}
+.comp-card h4{font-size:14px;margin-bottom:4px}
+.comp-card .archetype{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+.comp-analysis{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px}
+
+@media(max-width:768px){
+.app{grid-template-columns:1fr}
+.sidebar{display:none}
+.eval-grid{grid-template-columns:1fr}
+.calc-results{grid-template-columns:1fr}
+.vert-stat-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar">
+<div class="sidebar-header">
+<h1>Agentic Adam</h1>
+<p>"I'm not smart. I'm just well traveled."</p>
+</div>
+<div class="nav">
+<div class="nav-section">Intelligence</div>
+<div class="nav-item active" data-panel="chat"><span class="icon">💬</span> Ask Adam</div>
+<div class="nav-item" data-panel="deal"><span class="icon">🎯</span> Deal Evaluator</div>
+<div class="nav-item" data-panel="portfolio"><span class="icon">💰</span> Portfolio Calculator</div>
+<div class="nav-section">Operations</div>
+<div class="nav-item" data-panel="risk"><span class="icon">⚡</span> Risk Classifier</div>
+<div class="nav-item" data-panel="vertical"><span class="icon">📊</span> Vertical Scanner</div>
+<div class="nav-item" data-panel="competitive"><span class="icon">🔍</span> Competitive Intel</div>
+<div class="nav-section">Reference</div>
+<div class="nav-item" data-panel="knowledge"><span class="icon">🧠</span> Knowledge Base</div>
+<div class="nav-item" data-panel="frameworks"><span class="icon">📐</span> Frameworks</div>
+</div>
+</div>
+
+<div class="main">
+<div class="main-header">
+<h2 id="panelTitle">Ask Adam</h2>
+<div>
+<span class="status-dot" id="ollamaStatus"></span>
+<span class="badge" id="ollamaLabel">Checking Ollama...</span>
+</div>
+</div>
+<div class="content">
+
+<!-- CHAT PANEL -->
+<div class="panel active" id="panel-chat" style="display:flex;flex-direction:column;height:100%">
+<div class="quick-asks">
+<div class="quick-ask" data-q="How would you evaluate a new restaurant vertical in Phoenix?">Restaurant vertical?</div>
+<div class="quick-ask" data-q="What's the best way to structure a deal for a $200K/month merchant?">$200K deal structure</div>
+<div class="quick-ask" data-q="How do I compete against Stripe on a prospect that's already using them?">Displace Stripe</div>
+<div class="quick-ask" data-q="What should I know about cashless stadiums and dispensary processing?">Cashless/cannabis</div>
+<div class="quick-ask" data-q="How do I sell a merchant portfolio and what's it worth?">Portfolio exit math</div>
+<div class="quick-ask" data-q="What's your take on building an ISO sales operation from scratch?">Build an ISO</div>
+<div class="quick-ask" data-q="How should I think about issuing vs acquiring for long-term value?">Issuing vs acquiring</div>
+<div class="quick-ask" data-q="What breaks first when you scale a payment operation past $1B?">What breaks at scale?</div>
+</div>
+<div class="chat-messages" id="chatMessages">
+<div class="chat-msg adam">
+<div class="chat-avatar">AS</div>
+<div class="chat-bubble">What do you need? Deals, risk, verticals, competitive intel, portfolio math -- whatever it is, I've seen it. Ask me something specific and I'll tell you exactly how I'd think about it. Don't waste time with vague questions. The more specific you are, the more useful I am.</div>
+</div>
+</div>
+<div class="chat-input-area">
+<input type="text" id="chatInput" placeholder="Ask Adam anything about payments, deals, risk, verticals..." autocomplete="off">
+<button id="chatSend" onclick="sendChat()">Send</button>
+</div>
+</div>
+
+<!-- DEAL EVALUATOR -->
+<div class="panel" id="panel-deal">
+<div class="eval-grid">
+<div class="eval-card">
+<h3>Merchant Details</h3>
+<label>Business Name</label>
+<input id="dealName" placeholder="e.g. Tony's Pizza">
+<label>Business Type / Vertical</label>
+<input id="dealType" placeholder="e.g. Restaurant, E-commerce, Dispensary">
+<label>Monthly Processing Volume ($)</label>
+<input id="dealVolume" type="number" placeholder="e.g. 150000">
+<label>Average Ticket ($)</label>
+<input id="dealTicket" type="number" placeholder="e.g. 45">
+<label>Current Processor</label>
+<input id="dealProcessor" placeholder="e.g. Square, Stripe, Toast">
+</div>
+<div class="eval-card">
+<h3>Deal Context</h3>
+<label>Transaction Method</label>
+<select id="dealMethod">
+<option value="inperson">In-Person / Storefront</option>
+<option value="online">E-Commerce / Online</option>
+<option value="moto">MOTO (Mail/Telephone Order)</option>
+<option value="mixed">Mixed</option>
+</select>
+<label>Delivery Timing</label>
+<select id="dealDelivery">
+<option value="immediate">Immediate (food, retail)</option>
+<option value="short">Short delay (1-7 days)</option>
+<option value="future">Future delivery (30+ days)</option>
+</select>
+<label>Time in Business</label>
+<select id="dealAge">
+<option value="established">3+ years</option>
+<option value="growing">1-3 years</option>
+<option value="new">Under 1 year</option>
+<option value="startup">Pre-revenue / Startup</option>
+</select>
+<label>Known Risk Factors</label>
+<textarea id="dealRisk" placeholder="High chargebacks, prior termination, regulated product, etc."></textarea>
+<button class="eval-btn" onclick="evaluateDeal()">Run Adam's Evaluation</button>
+</div>
+</div>
+<div id="dealResult"></div>
+</div>
+
+<!-- PORTFOLIO CALCULATOR -->
+<div class="panel" id="panel-portfolio">
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px">
+<h3 style="font-size:14px;margin-bottom:16px">Portfolio Inputs</h3>
+<div class="calc-row">
+<div class="calc-field">
+<label>Number of Merchants</label>
+<input id="portCount" type="number" value="1000" oninput="calcPortfolio()">
+</div>
+<div class="calc-field">
+<label>Avg Monthly Revenue Per Merchant ($)</label>
+<input id="portRevenue" type="number" value="7000" oninput="calcPortfolio()">
+</div>
+<div class="calc-field">
+<label>Portfolio Vertical</label>
+<select id="portVertical" onchange="calcPortfolio()">
+<option value="clean">Clean Single Vertical (44x)</option>
+<option value="mixed_low">Mixed Low Risk (38x)</option>
+<option value="general" selected>General Portfolio (32x)</option>
+<option value="high_risk">High Risk Heavy (24x)</option>
+</select>
+</div>
+</div>
+</div>
+<div class="calc-results" id="portResults"></div>
+<div class="payout-timeline" id="portTimeline"></div>
+</div>
+
+<!-- RISK CLASSIFIER -->
+<div class="panel" id="panel-risk">
+<div class="risk-input">
+<h3>Classify Merchant Risk</h3>
+<div class="calc-row" style="margin-top:12px">
+<div class="calc-field">
+<label>Business Type</label>
+<select id="riskType" onchange="classifyRisk()">
+<option value="">-- Select --</option>
+<optgroup label="Low Risk">
+<option value="restaurant">Restaurant</option>
+<option value="retail">Retail Store</option>
+<option value="salon">Salon / Barber</option>
+<option value="auto_repair">Auto Repair</option>
+<option value="medical">Medical Office</option>
+<option value="dental">Dental Office</option>
+<option value="gas_station">Gas Station</option>
+<option value="grocery">Grocery Store</option>
+<option value="hotel">Hotel / Lodging</option>
+<option value="gym">Gym / Fitness</option>
+</optgroup>
+<optgroup label="High Risk">
+<option value="consulting">Consulting Services</option>
+<option value="ecommerce_startup">E-Commerce Startup</option>
+<option value="used_cars">Used Car Dealership</option>
+<option value="vitamins">Vitamin / Supplement Sales</option>
+<option value="mortgage_broker">Mortgage Broker</option>
+<option value="auto_rental">Auto Rental</option>
+<option value="telemarketing">Telemarketing</option>
+<option value="subscription">Subscription Services</option>
+</optgroup>
+<optgroup label="Restricted">
+<option value="alcohol">Alcohol Sales</option>
+<option value="bail_bonds">Bail Bonds</option>
+<option value="dietary_supplements">Dietary Supplements</option>
+<option value="dispensary">Dispensary / Cannabis</option>
+<option value="gambling">Internet Gaming / Gambling</option>
+<option value="cruise">Cruise Lines</option>
+<option value="ticket_broker">Ticket Broker</option>
+<option value="timeshare">Timeshare</option>
+<option value="sweepstakes">Sweepstakes</option>
+</optgroup>
+<optgroup label="Prohibited">
+<option value="cbd">CBD / Hemp Sales</option>
+<option value="check_cashing">Check Cashing</option>
+<option value="crypto">Virtual Currency / Bitcoin</option>
+<option value="firearms">Firearms / Ammunition</option>
+<option value="payday">Payday Loans</option>
+<option value="debt_collection">Debt Collection (Sold Debt)</option>
+<option value="pyramid">Pyramid / MLM Schemes</option>
+<option value="offshore">Offshore Entities</option>
+</optgroup>
+</select>
+</div>
+<div class="calc-field">
+<label>Monthly Volume ($)</label>
+<input id="riskVolume" type="number" placeholder="150000" oninput="classifyRisk()">
+</div>
+<div class="calc-field">
+<label>% MOTO/Online</label>
+<input id="riskMoto" type="number" placeholder="0" max="100" oninput="classifyRisk()">
+</div>
+</div>
+</div>
+<div id="riskResult"></div>
+</div>
+
+<!-- VERTICAL SCANNER -->
+<div class="panel" id="panel-vertical">
+<div class="vert-grid" id="vertGrid"></div>
+<div id="vertAnalysis"></div>
+</div>
+
+<!-- COMPETITIVE INTEL -->
+<div class="panel" id="panel-competitive">
+<div class="comp-grid" id="compGrid"></div>
+<div id="compAnalysis"></div>
+</div>
+
+<!-- KNOWLEDGE BASE -->
+<div class="panel" id="panel-knowledge">
+<input type="text" class="kb-search" id="kbSearch" placeholder="Search Adam's knowledge base..." oninput="filterKB()">
+<div id="kbSections"></div>
+</div>
+
+<!-- FRAMEWORKS -->
+<div class="panel" id="panel-frameworks">
+<div id="frameworkContent"></div>
+</div>
+
+</div>
+</div>
+</div>
+
+<script>
+// ========== NAV ==========
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    item.classList.add('active');
+    const panel = document.getElementById('panel-' + item.dataset.panel);
+    if (panel) { panel.classList.add('active'); panel.style.display = item.dataset.panel === 'chat' ? 'flex' : 'block'; }
+    document.getElementById('panelTitle').textContent = item.textContent.trim();
+  });
+});
+
+// ========== OLLAMA CHECK ==========
+let ollamaOnline = false;
+async function checkOllama() {
+  try {
+    const r = await fetch('http://localhost:11434/api/tags');
+    if (r.ok) { ollamaOnline = true; document.getElementById('ollamaStatus').className = 'status-dot online'; document.getElementById('ollamaLabel').textContent = 'Ollama Online'; }
+  } catch(e) { document.getElementById('ollamaStatus').className = 'status-dot offline'; document.getElementById('ollamaLabel').textContent = 'Ollama Offline -- Using Built-in'; }
+}
+checkOllama();
+
+// ========== SYSTEM PROMPT ==========
+const ADAM_PROMPT = `You are Adam Spencer. 25+ years in payments, banking, and financial infrastructure. Founder of elev8 Advisors Group. Senior advisory board member at Evolve Bank & Trust.
+
+You think in infrastructure layers, not transactions. You see the full payments stack: issuing, acquiring, bank relationships, interchange economics, risk classification, portfolio valuation, vendor contracts.
+
+Your evaluation filter for any opportunity:
+1. Where in the payments stack? 2. Risk tier? 3. Retention curve? 4. Portfolio multiplier (32-44x monthly recurring)? 5. Where does it break at scale? 6. Who in the network accelerates this? 7. Cost center or profit center flip? 8. Vendor leverage? 9. Exit timeline? 10. Does everyone make money?
+
+Key knowledge:
+- Portfolio valuation: 32-44x monthly recurring. 70% at close, 15% year 2, rest year 3.
+- TSYS has 7 tiers at bank level. You're at Tier 5.
+- 40-60% of merchant accounts are inactive industry-wide.
+- Cashless stadiums/dispensaries/cannabis = 3x margin vs normal processing.
+- Restaurant retention = 3-5 years average.
+- Stripe thesis: give people the tech free, remove optics barrier, undercut on interchange.
+- Issuing is the endgame, not acquiring. Both sides = control interchange.
+- Support target: zero human contact except physical card loss overseas.
+- Challenger Sale: teach, don't pitch. Tell them what they don't know. Silence after the question.
+- The restaurant analogy: "You bring your recipe and plug in. You don't buy the stove or plates."
+
+Personality: Direct. No corporate speak. Curse naturally for emphasis. Use real analogies. Think out loud. Connect dots in real time. Generous with knowledge but expect action. Impatient with overthinking. "Less steps for more gains, always."
+
+Keep responses concise and actionable. Always end with what they should do next.`;
+
+// ========== CHAT ==========
+let chatHistory = [];
+
+document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
+document.querySelectorAll('.quick-ask').forEach(q => q.addEventListener('click', () => { document.getElementById('chatInput').value = q.dataset.q; sendChat(); }));
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  const msgs = document.getElementById('chatMessages');
+  msgs.innerHTML += `<div class="chat-msg user"><div class="chat-avatar">JP</div><div class="chat-bubble">${escHtml(msg)}</div></div>`;
+  msgs.innerHTML += `<div class="chat-msg adam" id="typing"><div class="chat-avatar">AS</div><div class="chat-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+  document.getElementById('chatSend').disabled = true;
+
+  chatHistory.push({ role: 'user', content: msg });
+  let response = '';
+
+  if (ollamaOnline) {
+    try {
+      const r = await fetch('http://localhost:11434/api/chat', {
+        method: 'POST',
+        body: JSON.stringify({ model: 'llama3.2:3b', messages: [{ role: 'system', content: ADAM_PROMPT }, ...chatHistory], stream: false })
+      });
+      const data = await r.json();
+      response = data.message?.content || 'No response from Ollama.';
+    } catch(e) { response = getFallbackResponse(msg); }
+  } else {
+    response = getFallbackResponse(msg);
+  }
+
+  chatHistory.push({ role: 'assistant', content: response });
+  document.getElementById('typing')?.remove();
+  msgs.innerHTML += `<div class="chat-msg adam"><div class="chat-avatar">AS</div><div class="chat-bubble">${formatResponse(response)}</div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+  document.getElementById('chatSend').disabled = false;
+}
+
+function getFallbackResponse(msg) {
+  const m = msg.toLowerCase();
+  if (m.includes('stripe') || m.includes('compete') || m.includes('displace')) return "Here's how I think about Stripe. They're the Microsoft of payments -- everywhere, good enough, hard to displace head-on. But after $43 billion in transactions, things break. They have opaque pricing, limited customization, and they hold funds aggressively on flagged accounts.\n\nYou don't compete with Stripe on tech. You compete on interchange optimization and service. Give the merchant the same infrastructure but show them the actual interchange math. Stripe charges 2.9% + 30 cents flat. We can beat that on every single transaction type because we're passing through interchange, not bundling it.\n\nThe real kill shot: Stripe treats processing as a cost center for the merchant. We flip it into a profit center with surcharging. That's not saving money -- that's adding a revenue line. Nobody at Stripe is having that conversation.\n\nNext step: Pull the merchant's actual Stripe statements, run the interchange comparison, and show them the delta in dollars. Not percentages. Dollars.";
+  if (m.includes('portfolio') || m.includes('exit') || m.includes('sell') || m.includes('valuation')) return "Portfolio math is simple. Clean merchant books sell for 32 to 44 times the monthly recurring revenue. The cleaner the vertical, the higher the multiple. A book of 1,000 gas stations all processing similar volume will sell for 44x. A mixed bag of random merchants sells for 32x or less.\n\nPayout structure: you get roughly 70% of the total sale price at close. Another 15% in year two. The rest in year three. But most buyers never make it to year three because they spend the money. So practically you're banking 85% within 24 months.\n\nThe play is simple: pick a vertical, stack merchants, build recurring revenue, sell the book. Then do it again. That's the business. Not processing -- portfolio manufacturing.\n\nWhat you should do: pick your strongest vertical right now, calculate your current monthly recurring from that vertical alone, and multiply it by 32. That's your floor valuation today. Now figure out how to 10x that number in 12 months.";
+  if (m.includes('cashless') || m.includes('dispensar') || m.includes('cannabis') || m.includes('stadium')) return "Cashless is the hottest vertical in payments right now. Dispensaries, head shops, anything cannabis-adjacent, plus gaming, gambling, and sports betting venues.\n\nThe terminals look like ATMs but they're running on different rails -- not visible to Visa and Mastercard. That's why the card brands don't like it. But they don't kill it because the cards still clear and they still get their fees.\n\nYou can make 3x the margin on every cashless stadium account versus normal processing. And the market is expanding every time a new state legalizes cannabis or mushrooms or sports betting.\n\nThe best part: it's a finite, targetable market. There are only so many dispensaries and stadiums. You can actually count them, build a list, and go after every single one.\n\nVisa and Mastercard already brought the hammer on some operators. The ones that survived are looking for compliant solutions. That's us.\n\nNext move: build a target list of every dispensary and cashless venue in your top three states. Start there.";
+  if (m.includes('restaurant') || m.includes('food')) return "Restaurants are the bread and butter of merchant processing. Here's why I like them:\n\nRetention: 3 to 5 years average. Once a restaurant is on your platform, they're not switching unless you give them a reason to. That's sticky recurring revenue.\n\nRisk: Low. Immediate consumption, immediate delivery, card-present transactions. Auto-approve territory up to $250K monthly.\n\nPOS upsell: Every restaurant needs a point-of-sale system. That's hardware revenue plus software subscription on top of the processing margin.\n\nThe downside: margins are tighter than other verticals. Restaurants know their numbers. They shop rates.\n\nBut here's what nobody else is telling them: surcharging turns their processing cost into zero. You're not saving them money -- you're adding a revenue line. And new restaurants that are cash-strapped? That's your credit-to-cash cross-sell. They need capital, you have a solution.\n\nStrategy: go vertical on restaurants in a specific geography. Own Scottsdale restaurants. Then Phoenix. Then Arizona. Build the book, sell at 44x because it's a clean single-vertical portfolio.";
+  if (m.includes('risk') || m.includes('underwriting')) return "Risk classification is the gatekeeper to everything. Here's how I think about it:\n\nThree tiers: Low risk gets auto-approved. High risk needs review. Restricted and prohibited need director or bank officer sign-off.\n\nThe money is in knowing where the lines are. Low risk storefront with immediate delivery? Green light up to a million a month. High risk with heavy MOTO? Caps at $250K before the bank needs to look at it.\n\nOne higher-risk criterion bumps the entire merchant up. Common ownership across locations? Same tax ID? Same IP address? All triggers. You have to look across the whole picture, not just the single application.\n\nMy philosophy: build the volume on low-risk auto-approvals. That's the foundation. Stack those fast. The high-risk stuff is where the margin lives but the churn kills you -- you win for two months and lose in four. Use the low-risk recurring to fund your high-risk experiments.\n\nThe 40-60% inactive merchant stat across the industry means there are portfolios of dead weight everywhere. Reactivation is cheaper than new acquisition. Find the dead accounts, wake them up, or replace the processor entirely.";
+  if (m.includes('issuing') || m.includes('acquiring')) return "The end of my career is in issuing. That's where the real money is.\n\nAcquiring -- merchant processing -- is the volume game. You need scale. You need thousands of merchants. The margins are thin on each transaction but they stack.\n\nIssuing is the margin game. You control the card program, you control the interchange. You're on both sides of every transaction.\n\nThink about it: if you're the acquirer AND the issuer, you control the entire interchange economics. Every basis point flows through your system. That's complete control.\n\nVITAL Card was my issuing play. Beyond Normal Partnerships with SoftPoint biometrics is the next-gen issuing infrastructure. Biometric payments at the point of sale -- not just processing, but identity verification built into the transaction.\n\nFor where you are right now: master acquiring first. Build the merchant base. But always be thinking about how you get to the issuing side. That's where you go from making money to printing it.";
+  if (m.includes('iso') || m.includes('agent') || m.includes('mrp') || m.includes('referral')) return "The agent model is the simplest distribution play in payments. Here's the reality:\n\nEven a bartender who knows 100 to 200 people a night, across a month, can connect business owners and earn recurring income from those relationships. No skill required. Just hustle and repetition.\n\nStandard residual-based comp. Fast boarding is the differentiator. If it takes you three weeks to get a merchant live, you lose. If it takes three days, you win.\n\nThe real play is packaging the entire sales operation as a service. ISOs already pay to play for lead gen. Package it: $5K a month, full A-to-Z -- scrape the leads, enrich them, cold outreach, close, onboard. Split 50/50 on the revenue.\n\nWould someone buy that? Absolutely. ISOs do this already but they're doing it with humans and it's expensive and slow. Automate the front end with AI, keep humans only on the close, and you've got a scalable distribution machine.\n\nEvery agent you recruit is a node in the network. Every node generates recurring revenue. Stack the nodes, build the book, sell at 32-44x. That's the flywheel.";
+  return "Give me something specific. A merchant type, a deal size, a competitive situation, a vertical question. The more specific you are, the more useful I am. I've been doing this for 25 years -- I've seen every variation of every problem in payments. But I need to know which problem you're actually solving right now.";
+}
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function formatResponse(s) { return escHtml(s).replace(/\n/g, '<br>'); }
+
+// ========== DEAL EVALUATOR ==========
+function evaluateDeal() {
+  const name = document.getElementById('dealName').value || 'Unknown';
+  const type = document.getElementById('dealType').value || 'Unknown';
+  const volume = parseInt(document.getElementById('dealVolume').value) || 0;
+  const ticket = parseInt(document.getElementById('dealTicket').value) || 0;
+  const processor = document.getElementById('dealProcessor').value || 'Unknown';
+  const method = document.getElementById('dealMethod').value;
+  const delivery = document.getElementById('dealDelivery').value;
+  const age = document.getElementById('dealAge').value;
+  const risks = document.getElementById('dealRisk').value;
+
+  // Scoring
+  let scores = {};
+  scores.volume = volume >= 500000 ? 95 : volume >= 200000 ? 85 : volume >= 100000 ? 75 : volume >= 50000 ? 60 : 40;
+  scores.risk = (method === 'inperson' && delivery === 'immediate' && !risks) ? 95 : (method === 'online' || delivery === 'future') ? 50 : 70;
+  scores.retention = age === 'established' ? 90 : age === 'growing' ? 75 : age === 'new' ? 50 : 30;
+  scores.margin = volume >= 100000 ? 85 : volume >= 50000 ? 70 : 55;
+  scores.portfolio = (method === 'inperson' && age !== 'startup') ? 85 : 55;
+  if (risks) { scores.risk = Math.max(20, scores.risk - 25); }
+
+  const avg = Math.round(Object.values(scores).reduce((a,b) => a+b, 0) / 5);
+  const monthlyRev = Math.round(volume * 0.015);
+  const annualRev = monthlyRev * 12;
+  const exitLow = monthlyRev * 32;
+  const exitHigh = monthlyRev * 44;
+
+  let verdictClass, verdictText;
+  if (avg >= 75) { verdictClass = 'go'; verdictText = `This is a go. ${name} at $${volume.toLocaleString()}/month is solid volume. ${method === 'inperson' ? 'Card-present with immediate delivery is low risk -- auto-approve territory.' : 'Online/MOTO adds risk but the volume justifies the review.'} Monthly revenue estimate: $${monthlyRev.toLocaleString()}. At scale, this account alone is worth $${exitLow.toLocaleString()} to $${exitHigh.toLocaleString()} in a portfolio sale. ${processor !== 'Unknown' ? `Displacing ${processor}: lead with interchange comparison in dollars, not percentages. Then hit them with the surcharge profit center flip.` : ''} Move fast. Get the application in today.`; }
+  else if (avg >= 55) { verdictClass = 'caution'; verdictText = `Proceed with eyes open. ${name} has upside but there are flags. ${age === 'new' || age === 'startup' ? 'New business means unproven volume -- get personal guarantees and monitor the first 90 days.' : ''} ${risks ? 'The risk factors you flagged will likely trigger underwriter review. Prepare documentation upfront to avoid delays.' : ''} ${delivery === 'future' ? 'Future delivery is a chargeback magnet. Build reserve requirements into the deal structure.' : ''} Revenue potential: $${monthlyRev.toLocaleString()}/month. Worth pursuing but don't skip steps on underwriting.`; }
+  else { verdictClass = 'stop'; verdictText = `Pump the brakes. ${name} doesn't clear the bar right now. ${volume < 50000 ? 'Volume is too low to justify the acquisition cost. ' : ''}${age === 'startup' ? 'Pre-revenue startups are a gamble -- you win for two months and lose in four. ' : ''}${risks ? 'The risk factors make this a restricted or prohibited candidate. Bank approval required at every tier. ' : ''}If you're going to pursue this, you need to de-risk it first. Get documentation, verify volume claims, and run it by the underwriting matrix before investing any more time.`; }
+
+  const scoreItems = [
+    { label: 'Volume Score', val: scores.volume, color: scores.volume >= 75 ? 'var(--green)' : scores.volume >= 55 ? 'var(--orange)' : 'var(--red)' },
+    { label: 'Risk Profile', val: scores.risk, color: scores.risk >= 75 ? 'var(--green)' : scores.risk >= 55 ? 'var(--orange)' : 'var(--red)' },
+    { label: 'Retention Likelihood', val: scores.retention, color: scores.retention >= 75 ? 'var(--green)' : scores.retention >= 55 ? 'var(--orange)' : 'var(--red)' },
+    { label: 'Margin Potential', val: scores.margin, color: scores.margin >= 75 ? 'var(--green)' : scores.margin >= 55 ? 'var(--orange)' : 'var(--red)' },
+    { label: 'Portfolio Value', val: scores.portfolio, color: scores.portfolio >= 75 ? 'var(--green)' : scores.portfolio >= 55 ? 'var(--orange)' : 'var(--red)' },
+  ];
+
+  document.getElementById('dealResult').innerHTML = `
+    <div class="eval-result">
+      <h3>Adam's Evaluation: ${name}</h3>
+      <div style="font-size:36px;font-weight:700;margin:12px 0;color:${avg >= 75 ? 'var(--green)' : avg >= 55 ? 'var(--orange)' : 'var(--red)'}">${avg}/100</div>
+      ${scoreItems.map(s => `<div class="score-row"><span class="score-label">${s.label}</span><div class="score-bar"><div class="score-bar-fill" style="width:${s.val}%;background:${s.color}"></div></div><span class="score-val" style="color:${s.color}">${s.val}</span></div>`).join('')}
+      <div class="verdict ${verdictClass}">${verdictText}</div>
+    </div>`;
+}
+
+// ========== PORTFOLIO CALCULATOR ==========
+function calcPortfolio() {
+  const count = parseInt(document.getElementById('portCount').value) || 0;
+  const rev = parseInt(document.getElementById('portRevenue').value) || 0;
+  const vert = document.getElementById('portVertical').value;
+  const multipliers = { clean: 44, mixed_low: 38, general: 32, high_risk: 24 };
+  const mult = multipliers[vert];
+  const monthly = count * rev;
+  const annual = monthly * 12;
+  const valuation = monthly * mult;
+  const yr1 = Math.round(valuation * 0.70);
+  const yr2 = Math.round(valuation * 0.15);
+  const yr3 = Math.round(valuation * 0.15);
+
+  document.getElementById('portResults').innerHTML = `
+    <div class="calc-card"><div class="label">Monthly Recurring</div><div class="value" style="color:var(--cyan)">$${monthly.toLocaleString()}</div><div class="sub">${count.toLocaleString()} merchants x $${rev.toLocaleString()}/mo</div></div>
+    <div class="calc-card"><div class="label">Annual Revenue</div><div class="value" style="color:var(--green)">$${annual.toLocaleString()}</div><div class="sub">12 months recurring</div></div>
+    <div class="calc-card highlight"><div class="label">Portfolio Valuation (${mult}x)</div><div class="value" style="color:var(--accent2)">$${valuation.toLocaleString()}</div><div class="sub">${mult}x monthly recurring</div></div>`;
+
+  const maxBar = valuation;
+  document.getElementById('portTimeline').innerHTML = `
+    <h3>Payout Timeline</h3>
+    <div class="timeline-row"><span class="timeline-year">Close</span><div class="timeline-bar"><div class="timeline-fill" style="width:${(yr1/maxBar*100)}%;background:var(--green)">70%</div></div><span class="timeline-amount" style="color:var(--green)">$${yr1.toLocaleString()}</span></div>
+    <div class="timeline-row"><span class="timeline-year">Year 2</span><div class="timeline-bar"><div class="timeline-fill" style="width:${(yr2/maxBar*100)}%;background:var(--cyan)">15%</div></div><span class="timeline-amount" style="color:var(--cyan)">$${yr2.toLocaleString()}</span></div>
+    <div class="timeline-row"><span class="timeline-year">Year 3</span><div class="timeline-bar"><div class="timeline-fill" style="width:${(yr3/maxBar*100)}%;background:var(--text2)">15%</div></div><span class="timeline-amount" style="color:var(--text2)">$${yr3.toLocaleString()}</span></div>
+    <p style="font-size:12px;color:var(--text2);margin-top:12px;font-style:italic">"Most buyers never make it to year three because they spend. You're banking 85% within 24 months." -- Adam</p>`;
+}
+calcPortfolio();
+
+// ========== RISK CLASSIFIER ==========
+const riskData = {
+  restaurant:{tier:'low',label:'LOW RISK',approval:'Auto-approve up to $1MM/month',notes:'Card-present, immediate consumption and delivery. This is the bread and butter. Fast board, long retention. POS upsell on every account. Surcharge pitch turns their processing cost to zero. New restaurants that are cash-strapped = C2C cross-sell angle.'},
+  retail:{tier:'low',label:'LOW RISK',approval:'Auto-approve up to $1MM/month',notes:'Storefront, immediate delivery. Classic low-risk profile. Stack these for volume. Clean vertical portfolios of retail sell at top multiples.'},
+  salon:{tier:'low',label:'LOW RISK',approval:'Auto-approve up to $1MM/month',notes:'Service-based, card-present, low tickets. Simple boarding. Volume per merchant is small but retention is high -- they don\'t switch processors.'},
+  auto_repair:{tier:'low',label:'LOW RISK',approval:'Auto-approve up to $500K/month',notes:'Storefront, in-person, higher tickets. Watch for ticket size anomalies that could trigger fraud alerts. Good steady vertical.'},
+  medical:{tier:'low',label:'LOW RISK',approval:'Auto-approve up to $500K/month',notes:'Professional services, card-present. HIPAA considerations on data handling but from a processing risk standpoint, this is clean. Premium vertical -- doctors don\'t switch processors often.'},
+  dental:{tier:'low',label:'LOW RISK',approval:'Auto-approve up to $500K/month',notes:'Same profile as medical. Higher average tickets. Good retention. The play here is volume -- stack dental offices in a geography and sell the book.'},
+  gas_station:{tier:'low',label:'LOW RISK',approval:'Auto-approve up to $1MM/month',notes:'Card-present, immediate consumption. Pay-at-pump infrastructure. This is a volume monster -- every gas station processes significant volume. Clean single-vertical portfolio of gas stations sells at 44x. Adam\'s own example: 1,000 gas stations at $7K/month residuals = $224M-$308M exit.'},
+  grocery:{tier:'low',label:'LOW RISK',approval:'Auto-approve up to $1MM/month',notes:'Immediate consumption, card-present. High transaction count, low ticket. Razor thin margins for the merchant which means they care about every basis point. Lead with interchange optimization.'},
+  hotel:{tier:'low',label:'LOW RISK',approval:'Auto-approve up to $500K/month',notes:'Card-present at check-in but charges settle after stay. Technically has a delivery delay component. Still low risk for established properties. Watch for online booking volume -- that shifts the risk profile.'},
+  gym:{tier:'low',label:'LOW RISK',approval:'Auto-approve up to $250K/month',notes:'Recurring billing model. Card-on-file. This is subscription processing -- high retention but watch for chargeback patterns from cancellation disputes. Strong vertical for portfolio building.'},
+  consulting:{tier:'high',label:'HIGH RISK',approval:'Auto-approve up to $250K/month. Bank review above.',notes:'Service-based, no physical product, potential for disputes. The risk is in the intangibility -- client says they didn\'t get value, chargebacks follow. Keep volume under $250K to stay in auto-approve territory. Above that, bank needs to look at it.'},
+  ecommerce_startup:{tier:'high',label:'HIGH RISK',approval:'Auto-approve up to $250K/month. Bank review above.',notes:'E-commerce startup = unproven volume, no history, future delivery. This is where you win for two months and lose in four. If you take these, get personal guarantees, monitor first 90 days, and build reserve requirements into the deal. The volume claims will be optimistic.'},
+  used_cars:{tier:'high',label:'HIGH RISK',approval:'Auto-approve up to $250K/month. Bank review above.',notes:'High ticket, potential for disputes on vehicle condition. Title and financing complexity. Not the worst risk category but needs underwriting attention. Established dealerships with history are fine.'},
+  vitamins:{tier:'high',label:'HIGH RISK',approval:'Auto-approve up to $250K/month. Bank review above.',notes:'Supplements and vitamins are high risk because of subscription billing, continuity programs, and refund/chargeback patterns. This is a known problem vertical. If the merchant is legitimate and not running a continuity scam, it can work. But the banks are watching.'},
+  mortgage_broker:{tier:'high',label:'HIGH RISK',approval:'Auto-approve up to $250K/month. Bank review above.',notes:'Excludes banks. Non-bank mortgage brokers carry regulatory risk. Volume can be significant but inconsistent. Seasonal patterns. Not the worst category but needs review at scale.'},
+  auto_rental:{tier:'high',label:'HIGH RISK',approval:'Auto-approve up to $250K/month. Bank review above.',notes:'Pre-authorization holds, damage disputes, insurance claims. The chargeback vectors are numerous. Established rental companies with clean history are boardable. Startups in this space -- careful.'},
+  telemarketing:{tier:'high',label:'HIGH RISK',approval:'Auto-approve up to $250K/month. Bank review above.',notes:'Telemarketing is inherently high risk because the customer didn\'t initiate the purchase. Buyer\'s remorse chargebacks are the primary concern. TCPA compliance is also your problem if they\'re not clean. Proceed with caution.'},
+  subscription:{tier:'high',label:'HIGH RISK',approval:'Auto-approve up to $250K/month. Bank review above.',notes:'Recurring billing means recurring chargeback exposure. The key metric is churn rate -- if customers are canceling and disputing charges, the merchant is underwater fast. Get chargeback ratios upfront.'},
+  alcohol:{tier:'restricted',label:'RESTRICTED',approval:'Requires Risk Manager or Director approval at all volumes.',notes:'Age verification requirements. State-by-state regulatory variance. Online alcohol sales especially complicated. In-person (bar, restaurant, liquor store) is cleaner but still restricted category. Needs senior sign-off.'},
+  bail_bonds:{tier:'restricted',label:'RESTRICTED',approval:'Requires Risk Manager or Director approval at all volumes.',notes:'Regulatory complexity, high ticket, dispute-prone. Very few processors want this. If you can serve it compliantly, the margins are excellent because competition is thin. But the bank has to be comfortable.'},
+  dietary_supplements:{tier:'restricted',label:'RESTRICTED',approval:'Requires Risk Manager or Director approval at all volumes.',notes:'Overlap with vitamins but in the restricted category because of FDA regulatory exposure and aggressive marketing claims. Subscription/continuity programs make this worse. High chargeback vertical. Margin is there if you can manage the risk.'},
+  dispensary:{tier:'restricted',label:'RESTRICTED',approval:'Requires Risk Manager or Director approval at all volumes.',notes:'This is the cashless stadium play. Dispensaries are restricted but the opportunity is massive -- 3x margin versus normal processing. The terminals run on different rails. Visa and Mastercard brought the hammer on some operators but the compliant solutions survive and thrive. Expanding with every new state legalization. Build the target list and go.'},
+  gambling:{tier:'restricted',label:'RESTRICTED',approval:'Requires Risk Manager or Director approval at all volumes.',notes:'Internet gaming and gambling. Heavy regulatory framework. State licensing requirements. The volume is enormous but the compliance overhead is real. This pairs with the cashless stadium vertical.'},
+  cruise:{tier:'restricted',label:'RESTRICTED',approval:'Requires Risk Manager or Director approval at all volumes.',notes:'Future delivery, high ticket, cancellation exposure. COVID proved how badly this can go wrong. Restricted for good reason. Established cruise lines only.'},
+  ticket_broker:{tier:'restricted',label:'RESTRICTED',approval:'Requires Risk Manager or Director approval at all volumes.',notes:'Resale market. Fraud vectors everywhere -- fake tickets, price disputes, event cancellations. The chargebacks are brutal. If you\'re going to play here, build iron-clad reserve requirements.'},
+  timeshare:{tier:'restricted',label:'RESTRICTED',approval:'Requires Risk Manager or Director approval at all volumes.',notes:'High ticket, aggressive sales tactics, buyer\'s remorse. This industry has a reputation problem. The chargeback window is long and the disputes are expensive. Not worth it unless the volume is massive and the merchant has clean history.'},
+  sweepstakes:{tier:'restricted',label:'RESTRICTED',approval:'Requires Risk Manager or Director approval at all volumes.',notes:'Sweepstakes borders on gambling in many jurisdictions. Regulatory exposure is significant. This is the category that got Kailash Dhakal rejected. Do not touch without explicit bank approval and legal review.'},
+  cbd:{tier:'prohibited',label:'PROHIBITED',approval:'Requires Director + Bank Officer concurrence. Most banks decline.',notes:'CBD and hemp sales are prohibited at most banks despite federal legalization of hemp. The banks haven\'t caught up. Mastercard and Visa still flag these. If you can find a bank willing to board CBD, the margins are excellent because nobody else can serve them. But it\'s a compliance minefield.'},
+  check_cashing:{tier:'prohibited',label:'PROHIBITED',approval:'Requires Director + Bank Officer concurrence. Most banks decline.',notes:'AML/BSA risk. Money laundering concerns. This is one of the hardest categories to board. The banks do not want this exposure. Walk away unless you have a specific bank relationship that handles this vertical.'},
+  crypto:{tier:'prohibited',label:'PROHIBITED',approval:'Requires Director + Bank Officer concurrence. Most banks decline.',notes:'Virtual currency, Bitcoin, digital assets. The banks are terrified of this. Regulatory uncertainty. AML concerns. Some fintechs have figured out the banking relationships but traditional payment processing for crypto is a minefield. The opportunity is there if you can solve the compliance puzzle.'},
+  firearms:{tier:'prohibited',label:'PROHIBITED',approval:'Requires Director + Bank Officer concurrence. Most banks decline.',notes:'Firearms and ammunition. Political and reputational risk for banks. Card brands have specific monitoring programs. Some banks will do it, most won\'t. The processors that serve this vertical charge premium rates because the competition is limited.'},
+  payday:{tier:'prohibited',label:'PROHIBITED',approval:'Requires Director + Bank Officer concurrence. Most banks decline.',notes:'Payday loans. Regulatory hammer from CFPB. State-by-state restrictions. The banks have been burned here repeatedly. Almost impossible to board through traditional channels.'},
+  debt_collection:{tier:'prohibited',label:'PROHIBITED',approval:'Requires Director + Bank Officer concurrence. Most banks decline.',notes:'Specifically debt collection on sold/purchased debt. FDCPA exposure. The chargebacks are astronomical because consumers dispute debts they don\'t recognize. Banks will not touch this.'},
+  pyramid:{tier:'prohibited',label:'PROHIBITED',approval:'Hard no. Do not board.',notes:'Pyramid schemes, MLM structures. This is a hard no at every level. Don\'t waste time. If it looks like MLM, smells like MLM, walks like MLM -- decline and move on.'},
+  offshore:{tier:'prohibited',label:'PROHIBITED',approval:'Hard no. Do not board.',notes:'Offshore entities. No US presence, no US banking relationship, no deal. This is not negotiable. The compliance exposure alone makes it not worth any margin.'}
+};
+
+function classifyRisk() {
+  const type = document.getElementById('riskType').value;
+  if (!type) { document.getElementById('riskResult').innerHTML = ''; return; }
+  const volume = parseInt(document.getElementById('riskVolume').value) || 0;
+  const moto = parseInt(document.getElementById('riskMoto').value) || 0;
+  const data = riskData[type];
+  if (!data) return;
+
+  let effectiveTier = data.tier;
+  let volumeNote = '';
+  let motoNote = '';
+
+  if (moto > 75 && effectiveTier === 'low') { effectiveTier = 'high'; motoNote = '<br><br><strong>MOTO Override:</strong> >75% MOTO/online transactions bumps this from low risk to high risk. Auto-approve ceiling drops to $250K.'; }
+  if (volume > 1000000 && effectiveTier === 'low') { volumeNote = '<br><br><strong>Volume Flag:</strong> Over $1MM/month requires bank review even for low-risk categories.'; }
+  if (volume > 250000 && effectiveTier === 'high') { volumeNote = '<br><br><strong>Volume Flag:</strong> Over $250K/month on high-risk requires prior bank approval. Cannot auto-board.'; }
+
+  document.getElementById('riskResult').innerHTML = `
+    <div class="risk-result">
+      <div class="risk-tier ${effectiveTier}">${data.label}</div>
+      <p style="font-size:13px;color:var(--accent2);margin-bottom:12px">${data.approval}</p>
+      <div class="risk-detail">${data.notes}${motoNote}${volumeNote}</div>
+    </div>`;
+}
+
+// ========== VERTICAL SCANNER ==========
+const verticals = [
+  {id:'restaurants',name:'Restaurants',margin:'Medium',risk:'Low',retention:'3-5 yrs',exitMult:'44x',desc:'Sticky, POS upsell, C2C cross-sell on new restaurants',stats:{margin:65,risk:90,retention:85,exit:90},notes:'<strong>Adam\'s take:</strong> Restaurants are bread and butter. Card-present, immediate consumption, low risk. Pick a geography and own it. The POS upsell is hardware + software on top of processing margin.<br><br><strong>The play:</strong> Stack restaurants in a single metro, build a clean vertical book, sell at 44x. New restaurants that are cash-strapped are your C2C cross-sell target.<br><br><strong>Watch for:</strong> Margins are tighter than other verticals. Restaurants know their numbers and shop rates. Lead with the surcharge profit center flip, not rate savings.'},
+  {id:'gas',name:'Gas Stations',margin:'Medium',risk:'Low',retention:'3-5 yrs',exitMult:'44x',desc:'High volume per location, pay-at-pump, clean vertical',stats:{margin:70,risk:92,retention:88,exit:95},notes:'<strong>Adam\'s example:</strong> "If you\'ve got 1,000 gas stations and they made you $30,000 a month, I\'m going to get you 32 to 44 times that in one check."<br><br><strong>The math:</strong> 1,000 gas stations x $7K/month residuals = $7M/month. At 44x = $308 million portfolio valuation. This is the clearest path to a massive exit.<br><br><strong>Strategy:</strong> Gas stations process enormous volume per location. Card-present, immediate consumption. Auto-approve territory. The vertical is finite and countable. Build the list, go after every one.'},
+  {id:'cashless',name:'Cashless / Cannabis',margin:'3x Normal',risk:'Restricted',retention:'Long',exitMult:'32-38x',desc:'Dispensaries, head shops, gaming, gambling, sports betting',stats:{margin:95,risk:40,retention:75,exit:70},notes:'<strong>Adam\'s hottest vertical:</strong> "The newest, favorite, best thing is the national stadiums." Dispensaries, head shops, anything cannabis-adjacent, gaming, gambling, sports betting.<br><br><strong>The margin:</strong> 3x versus normal processing on every cashless account. The terminals run on different rails -- not visible to Visa/MC. They don\'t kill it because cards still clear.<br><br><strong>The expansion:</strong> Market grows with every state legalization -- cannabis, mushrooms, sports betting. Finite number of businesses = targetable and closeable.<br><br><strong>The risk:</strong> Visa and Mastercard "brought the hammer" on some operators. Survivors need compliant solutions. That\'s the opportunity. Restricted category -- needs director approval at every volume tier.'},
+  {id:'medical',name:'Medical / Dental',margin:'High',risk:'Low',retention:'5+ yrs',exitMult:'44x',desc:'Professional services, premium vertical, rarely switch',stats:{margin:80,risk:88,retention:95,exit:92},notes:'<strong>The play:</strong> Doctors and dentists don\'t switch processors. Once you\'re in, you\'re in for years. Premium vertical with higher average tickets.<br><br><strong>Portfolio value:</strong> A clean book of medical offices sells at top multiples because the retention is the best in the industry. Stack these by geography.<br><br><strong>Approach:</strong> These are busy professionals. They don\'t want a sales pitch. They want someone to handle it so they can focus on patients. Lead with simplicity and reliability, not rate savings.'},
+  {id:'ecommerce',name:'E-Commerce',margin:'High',risk:'High',retention:'1-2 yrs',exitMult:'24-32x',desc:'Online merchants, higher risk, Stripe displacement target',stats:{margin:82,risk:45,retention:40,exit:45},notes:'<strong>Adam\'s Stripe thesis:</strong> Nobody thinks they can compete with Stripe because nobody has the tech AND the optics. But give people the tech free, remove the optics barrier, and a one-person shop can eat Stripe\'s lunch on interchange.<br><br><strong>The reality:</strong> E-commerce is higher risk -- no card-present, future delivery, chargeback exposure. Startups are the worst: "You win for two months and lose in four."<br><br><strong>The opportunity:</strong> Established e-commerce merchants processing $200K+ on Stripe are overpaying. Pull their statements, show the interchange delta in dollars. Stripe charges 2.9% + 30c flat. We pass through interchange. The savings are immediate and provable.'},
+  {id:'subscriptions',name:'Subscription / SaaS',margin:'Medium-High',risk:'High',retention:'2-3 yrs',exitMult:'32x',desc:'Recurring billing, card-on-file, churn risk',stats:{margin:72,risk:50,retention:60,exit:60},notes:'<strong>The model:</strong> Subscription processing is recurring revenue on recurring revenue. Every month the merchant processes, you earn. Good alignment.<br><br><strong>The risk:</strong> Churn. If customers cancel and dispute charges, the merchant\'s chargeback ratio spikes and you\'re holding the bag. Get chargeback ratios upfront before boarding.<br><br><strong>The sell:</strong> SaaS companies understand unit economics. Talk in their language: CAC, LTV, churn rate. Show them how interchange optimization improves their unit economics on every transaction.'},
+];
+
+function renderVerticals() {
+  document.getElementById('vertGrid').innerHTML = verticals.map(v => `
+    <div class="vert-card" onclick="selectVertical('${v.id}')">
+      <h4>${v.name}</h4>
+      <p>${v.desc}</p>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <span style="font-size:10px;padding:2px 6px;border-radius:4px;background:${v.risk==='Low'?'rgba(34,197,94,.15)':v.risk==='Restricted'?'rgba(239,68,68,.15)':'rgba(245,158,11,.15)'};color:${v.risk==='Low'?'var(--green)':v.risk==='Restricted'?'var(--red)':'var(--orange)'}">${v.risk}</span>
+        <span style="font-size:10px;padding:2px 6px;border-radius:4px;background:var(--surface3);color:var(--text2)">${v.exitMult}</span>
+      </div>
+    </div>`).join('');
+}
+renderVerticals();
+
+function selectVertical(id) {
+  document.querySelectorAll('.vert-card').forEach(c => c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  const v = verticals.find(x => x.id === id);
+  if (!v) return;
+  const colors = { margin: 'var(--green)', risk: v.stats.risk >= 70 ? 'var(--green)' : v.stats.risk >= 50 ? 'var(--orange)' : 'var(--red)', retention: 'var(--cyan)', exit: 'var(--accent2)' };
+  document.getElementById('vertAnalysis').innerHTML = `
+    <div class="vert-analysis">
+      <h3>${v.name}</h3>
+      <div class="vert-stat-grid">
+        <div class="vert-stat"><div class="num" style="color:${colors.margin}">${v.margin}</div><div class="lbl">Margin</div></div>
+        <div class="vert-stat"><div class="num" style="color:${colors.risk}">${v.stats.risk}/100</div><div class="lbl">Risk Score</div></div>
+        <div class="vert-stat"><div class="num" style="color:${colors.retention}">${v.retention}</div><div class="lbl">Retention</div></div>
+        <div class="vert-stat"><div class="num" style="color:${colors.exit}">${v.exitMult}</div><div class="lbl">Exit Multiple</div></div>
+      </div>
+      <div class="vert-notes">${v.notes}</div>
+    </div>`;
+}
+
+// ========== COMPETITIVE INTEL ==========
+const competitors = [
+  {id:'stripe',name:'Stripe',archetype:'Microsoft / Incumbent',weaknesses:'Opaque pricing (2.9% + 30c flat bundles interchange), holds funds aggressively on flagged accounts, limited customization, no human support for SMB, treats merchants as fungible',displacement:'Pull their actual Stripe statements. Show the interchange delta in DOLLARS not percentages. Stripe bundles interchange into a flat rate -- we pass through actual interchange. On a $100K/month merchant, the savings are $500-2,000/month minimum. Then hit the surcharge flip: "I\'m not saving you money, I\'m adding a revenue line." Stripe cannot have that conversation because their model depends on opaque pricing.',adam_quote:'"Nobody thinks they can compete with Stripe because nobody has the tech AND the optics. But give people the tech free, remove the optics barrier, and a one-person shop can eat their lunch on interchange."'},
+  {id:'square',name:'Square',archetype:'Apple / Design-First',weaknesses:'Flat rate pricing (2.6% + 10c), closed ecosystem, limited to their hardware, holds funds without warning, no high-risk tolerance, poor support',displacement:'Square merchants are paying a flat rate premium for simplicity. Show them they can have the same simplicity with better rates. Square\'s biggest vulnerability is their fund holds -- merchants wake up one day with their money frozen and no one to call. Lead with reliability and a human on the phone.'},
+  {id:'toast',name:'Toast',archetype:'Vertical Specialist',weaknesses:'Restaurant-only, expensive hardware (locked in), high early termination fees, proprietary ecosystem, limited payment flexibility',displacement:'Toast locks restaurants into expensive hardware contracts. The ETF is the barrier. Calculate their remaining contract cost versus the savings over the same period. If savings exceed the ETF, it\'s a no-brainer switch. Also: Toast is a cost center. We flip it to profit center with surcharging.'},
+  {id:'clover',name:'Clover',archetype:'IBM / Corporate',weaknesses:'Fiserv-owned (legacy infrastructure), hardware-dependent, limited customization, middleman pricing layers, slow innovation',displacement:'Clover runs on Fiserv rails, which means layers of middlemen between the merchant and the bank. Every layer takes a cut. We eliminate layers. Show the merchant what they\'re actually paying versus what interchange costs. The delta is the waste built into the Clover stack.'},
+  {id:'heartland',name:'Heartland',archetype:'Microsoft / Incumbent',weaknesses:'Global Payments owned, aggressive sales tactics, complex contracts, hidden fees, long-term commitments',displacement:'Heartland merchants usually signed long contracts they didn\'t fully understand. Pull the contract, find the hidden fees (PCI fees, batch fees, statement fees, annual fees), and calculate the all-in effective rate. Then show them clean pricing with no hidden fees. The transparency alone closes deals.'},
+  {id:'worldpay',name:'Worldpay',archetype:'IBM / Corporate',weaknesses:'Legacy infrastructure, FIS-owned, enterprise-focused, poor SMB experience, slow boarding, complex pricing',displacement:'Worldpay is enterprise infrastructure. Their SMB merchants are afterthoughts getting enterprise-grade complexity and pricing they don\'t need. Lead with simplicity: faster boarding, cleaner pricing, a human who answers the phone. These merchants are used to being ignored.'},
+  {id:'paypal',name:'PayPal',archetype:'Microsoft / Incumbent',weaknesses:'2.99% + fixed fee, holds funds aggressively, limited to PayPal ecosystem, account freezes without warning, dispute resolution favors buyers',displacement:'PayPal merchants live in fear of account freezes. One chargeback dispute and their funds are frozen for weeks. Lead with stability and predictability. We don\'t freeze funds without communication. We don\'t favor the buyer in every dispute. Professional processing versus a payment app masquerading as a processor.'},
+  {id:'elavon',name:'Elavon',archetype:'IBM / Corporate',weaknesses:'US Bank subsidiary, legacy pricing, limited technology, slow innovation, complex fee structures',displacement:'Elavon is bank-owned legacy processing. The merchants on Elavon are usually there because their bank put them there, not because they chose it. These are the easiest displacement targets -- they never shopped rates and they\'re overpaying. Pull the statement, show the savings, close same day.'},
+];
+
+function renderCompetitors() {
+  document.getElementById('compGrid').innerHTML = competitors.map(c => `
+    <div class="comp-card" onclick="selectCompetitor('${c.id}')">
+      <h4>${c.name}</h4>
+      <div class="archetype">${c.archetype}</div>
+    </div>`).join('');
+}
+renderCompetitors();
+
+function selectCompetitor(id) {
+  document.querySelectorAll('.comp-card').forEach(c => c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  const c = competitors.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('compAnalysis').innerHTML = `
+    <div class="comp-analysis">
+      <h3 style="margin-bottom:4px">${c.name}</h3>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:16px">${c.archetype}</p>
+      <h4 style="font-size:13px;color:var(--red);margin-bottom:8px">Where They Break</h4>
+      <p style="font-size:13px;line-height:1.7;color:var(--text2);margin-bottom:16px">${c.weaknesses}</p>
+      <h4 style="font-size:13px;color:var(--green);margin-bottom:8px">How to Displace</h4>
+      <p style="font-size:13px;line-height:1.7;color:var(--text2);margin-bottom:16px">${c.displacement}</p>
+      ${c.adam_quote ? `<div style="padding:12px 16px;background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;font-size:13px;color:var(--text);font-style:italic">${c.adam_quote}</div>` : ''}
+    </div>`;
+}
+
+// ========== KNOWLEDGE BASE ==========
+const kbData = [
+  {title:'Portfolio Valuation & Exit Math',content:'Merchant processing portfolios sell for <strong>32-44x monthly recurring revenue</strong>. Clean single-vertical books get 44x. Mixed portfolios get 32x or less. High-risk heavy books may drop to 24x.<br><br><strong>Payout structure:</strong> ~70% of total at close. ~15% in year 2. Remainder in year 3. Most buyers never make it to year 3 because they spend. You bank 85% in 24 months.<br><br><strong>Adam\'s offer:</strong> "If you make me a portfolio of some vertical pool or niche, I will sell that for you every year." Build vertical-specific books, stack recurring, sell. Rinse and repeat. That\'s the business.'},
+  {title:'TSYS Account Tiers',content:'7 tiers of TSYS accounts at the bank level. Adam is at <strong>Tier 5</strong>. Each tier unlocks different pricing access, volume thresholds, capabilities, and bank-level access. <br><br><em>Full tier breakdown still needs to be documented from Adam.</em>'},
+  {title:'Interchange Economics',content:'Interchange is the fee paid between the acquiring bank and the issuing bank on every card transaction. The card networks (Visa, MC) set the rates. Processors mark up on top of interchange.<br><br><strong>The play:</strong> Most processors (Stripe, Square) bundle interchange into a flat rate, hiding the actual cost. We pass through actual interchange + a transparent markup. On every transaction, the merchant pays less.<br><br><strong>Surcharge flip:</strong> Surcharging passes the processing cost to the customer. The merchant\'s cost goes to zero. It\'s not saving money -- it\'s adding a revenue line. This is the single most powerful reframe in merchant processing sales.'},
+  {title:'The Restaurant Analogy',content:'"Think of it like a restaurant: you bring your recipe and plug in. You don\'t have to buy the stove, plates, or napkins."<br><br>This is how Adam thinks about the payments stack. Own the infrastructure so the merchant just shows up and runs their business. Don\'t sell processing. Sell the kitchen.'},
+  {title:'Four Competitive Archetypes',content:'In every industry, four players:<br><br><strong>1. IBM</strong> -- Corporate bloat. Legacy processors, slow banks.<br><strong>2. Windows/Microsoft</strong> -- The incumbent. Stripe, Square. Everywhere, good enough, hard to displace.<br><strong>3. Apple</strong> -- Design-first, premium, loyal base.<br><strong>4. The Disruptor</strong> -- Sees where others break and builds the fix.<br><br>After $43B in transactions, systems fracture. Knowing where = pricing power.'},
+  {title:'Issuing vs Acquiring',content:'<strong>Acquiring</strong> (merchant processing) = volume game. Need scale, thousands of merchants, thin margins that stack.<br><br><strong>Issuing</strong> (card programs, credit products) = margin game. Control the card program, control interchange. Both sides of every transaction = complete interchange control.<br><br>Adam: "The end of my career is in issuing." VITAL Card is his issuing vehicle. Beyond Normal Partnerships + SoftPoint = next-gen issuing with biometrics.'},
+  {title:'40-60% Inactive Accounts',content:'Roughly 40-60% of merchant accounts are inactive at any given time across the industry. This is a massive opportunity:<br><br>1. <strong>Reactivation</strong> -- cheaper than new acquisition. Wake up dead accounts.<br>2. <strong>Replacement</strong> -- the inactive merchant is unhappy or forgotten. Show up with a better offer.<br>3. <strong>Portfolio cleaning</strong> -- for exits, inactive accounts drag down the multiple. Clean books sell higher.'},
+  {title:'Challenger Sale Framework',content:'Adam\'s sales methodology: <strong>Teach, don\'t pitch.</strong><br><br>"It\'s always actually teaching the customer. Not being buddy buddy. Wanting to hear everything. It\'s you telling them what they don\'t know."<br><br>The silence technique: Ask the hard question, go on mute, let them think. They always come back to their senses.<br><br>If they say no: "Good luck. I hope it works out." They come back when they realize you were right.'},
+  {title:'Support Zero-Contact Target',content:'Adam\'s proven framework:<br>1. Weekly whiteboard sessions -- list every variable anyone can ask about<br>2. Build FAQ after FAQ after FAQ<br>3. Remove every variable systematically<br>4. First real call = a variable you didn\'t think of. Solve once, never again.<br>5. End state: only human contact = physical card loss overseas + identity verification<br><br>He scaled this to 400,000 people. Give merchants 2 POS options max. Never more.'},
+  {title:'C2C Shelf Life Warning',content:'Adam directly told the team: "You have an amazing brilliant idea. And it\'s going to go away in two years."<br><br>Credit-to-cash solves a current friction point. When banks change (regulatory shift, new infrastructure), that friction disappears and the opportunity closes.<br><br><strong>Implication:</strong> Move fast on C2C. Extract maximum value now. Build the infrastructure to pivot when the window closes.'},
+  {title:'Cold Outreach as a Product',content:'Adam validated packaging the outreach system as a sellable product to ISOs:<br><br>Price: $5K/month<br>Scope: Full A-to-Z (scrape, enrich, outreach, close)<br>Split: 50/50 on revenue<br><br>"Would someone buy that? ISOs already pay to play for lead gen."<br><br>This is a new revenue line on top of processing. Automate the front end with AI, keep humans only on the close.'},
+  {title:'Centennial Money & Capital',content:'<strong>Centennial Money</strong> -- family office that has backed payment companies. Warm capital path.<br><br>Additional channels: venture debt, angel investors, North American bank card relationships.<br><br>Framing for investors: "The future of money."'},
+];
+
+function renderKB() {
+  document.getElementById('kbSections').innerHTML = kbData.map((s, i) => `
+    <div class="kb-section" onclick="this.classList.toggle('open')">
+      <div class="kb-section-header">${s.title}<span class="kb-arrow">▼</span></div>
+      <div class="kb-section-body">${s.content}</div>
+    </div>`).join('');
+}
+renderKB();
+
+function filterKB() {
+  const q = document.getElementById('kbSearch').value.toLowerCase();
+  document.querySelectorAll('.kb-section').forEach((s, i) => {
+    const match = kbData[i].title.toLowerCase().includes(q) || kbData[i].content.toLowerCase().includes(q);
+    s.style.display = match ? 'block' : 'none';
+    if (q && match) s.classList.add('open'); else if (!q) s.classList.remove('open');
+  });
+}
+
+// ========== FRAMEWORKS ==========
+document.getElementById('frameworkContent').innerHTML = `
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px">
+    <h3 style="font-size:16px;margin-bottom:16px">Adam's 10-Point Evaluation Filter</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px">When Adam looks at any opportunity, merchant, vertical, or deal, he runs it through this filter in order:</p>
+    ${[
+      {n:1,q:'Where does it sit in the stack?',d:'Issuing? Acquiring? Infrastructure? Service? Hybrid?'},
+      {n:2,q:'What\'s the risk tier?',d:'Auto-approve? High risk? Restricted? Prohibited?'},
+      {n:3,q:'What\'s the retention curve?',d:'3-year sticky or 2-month churn?'},
+      {n:4,q:'What\'s the portfolio multiplier?',d:'Can this book sell at 32-44x monthly recurring?'},
+      {n:5,q:'Where does it break at scale?',d:'What fails at 10x volume? Single points of failure?'},
+      {n:6,q:'Who in the network accelerates this?',d:'Bank relationship? ISO connection? Vendor contract?'},
+      {n:7,q:'Cost center or profit center?',d:'Can we flip the framing for the merchant?'},
+      {n:8,q:'What\'s the vendor leverage?',d:'Can we plug them into existing contracts to skip minimums?'},
+      {n:9,q:'What\'s the exit timeline?',d:'Build, stack, sell -- how fast to liquidity?'},
+      {n:10,q:'Does this make everyone money?',d:'"I want everyone to live a great life."'},
+    ].map(f => `<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)"><div style="width:28px;height:28px;border-radius:6px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${f.n}</div><div><div style="font-size:13px;font-weight:600">${f.q}</div><div style="font-size:12px;color:var(--text2);margin-top:2px">${f.d}</div></div></div>`).join('')}
+  </div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px">
+    <h3 style="font-size:16px;margin-bottom:16px">The Stripe Thesis</h3>
+    <div style="font-size:13px;line-height:1.7;color:var(--text2)">
+      <p>Four archetypes in every industry. Stripe is Microsoft/Windows -- everywhere, good enough, hard to displace head-on.</p>
+      <p style="margin-top:8px">But after $43B in transactions, systems fracture. Stripe has:</p>
+      <p style="margin-top:8px"><strong>Opaque pricing</strong> -- 2.9% + 30c bundles interchange. Merchants can't see what they're actually paying.</p>
+      <p><strong>Fund holds</strong> -- Aggressive freezing on flagged accounts with no human to call.</p>
+      <p><strong>No customization</strong> -- One-size-fits-all pricing regardless of risk profile or volume.</p>
+      <p style="margin-top:8px">The displacement formula:</p>
+      <p style="margin-top:4px">1. Give the merchant the tech for free (remove the switching barrier)</p>
+      <p>2. Show interchange delta in dollars, not percentages</p>
+      <p>3. Flip processing from cost center to profit center with surcharging</p>
+      <p>4. Put a human on the phone when they need help</p>
+      <p style="margin-top:8px;color:var(--accent2);font-style:italic">"Nobody thinks they can compete with Stripe because nobody has the tech AND the optics. But give people the tech free, remove the optics barrier, and a one-person shop can eat their lunch on interchange."</p>
+    </div>
+  </div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px">
+    <h3 style="font-size:16px;margin-bottom:16px">Adam's Rules</h3>
+    <div style="font-size:13px;line-height:1.8;color:var(--text2)">
+      <p>"<strong>Less steps for more gains. Always.</strong>"</p>
+      <p>"<strong>Just take what I'm saying and build it and do it.</strong>"</p>
+      <p>"<strong>You don't have to do all of this in years. We can make this way faster.</strong>"</p>
+      <p>"<strong>Payments and banking and finance, I am one of one.</strong>"</p>
+      <p>"<strong>I'm not smart. I'm just well traveled.</strong>"</p>
+      <p>"<strong>Agentic AI is just teaching agents to do busy work.</strong>"</p>
+      <p>"<strong>I will get every single one of you rich.</strong>"</p>
+      <p>"<strong>This is the business. This is the market.</strong>"</p>
+    </div>
+  </div>`;
+</script>
+</body>
+</html>
