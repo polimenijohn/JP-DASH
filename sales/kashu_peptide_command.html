@@ -346,7 +346,10 @@
   <div class="header-inner">
     <div class="header-top">
       <div class="logo">Kashu<span>.</span></div>
-      <div class="badge">Peptide Vertical</div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button class="btn btn-primary" onclick="importFromMonday()" style="font-size:13px;">Import from Monday.com</button>
+        <div class="badge">Peptide Vertical</div>
+      </div>
     </div>
     <h1>Peptide Command Center</h1>
     <div class="subtitle">Own the supply chain. Own the vertical.</div>
@@ -1220,6 +1223,145 @@ document.querySelectorAll('.modal-overlay').forEach(el => {
     if (e.target === el) el.classList.remove('show');
   });
 });
+
+// MONDAY.COM IMPORT
+function importFromMonday() {
+  if (!confirm('Import peptide deals from Monday.com? This will add merchants that are not already in the dashboard.')) return;
+  const data = loadData();
+  const existingNames = new Set(data.merchants.map(m => m.name.toLowerCase()));
+
+  // Status mapping: Monday status -> Dashboard status
+  const statusMap = {
+    'New Lead': 'Prospect',
+    'App Submitted': 'Contacted',
+    'Need additional docs': 'Contacted',
+    'In UW': 'Onboarding',
+    'Approved': 'Live',
+    'Processing': 'Live',
+    'Not Interested': 'Stalled',
+    'Closed': 'Stalled',
+  };
+
+  // All peptide deals from Monday.com Kashu Deals board (pulled 2026-03-19)
+  const mondayDeals = [
+    {name:"Bela Chem",contact:"Saim Alam",volume:15000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Biologix Labs Research LLC",contact:"Braden Lowder",volume:25000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"CERTALAB S.R.L.",contact:"Alex Rotaru",volume:50000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Titan Peptides LLC",contact:"Ismael Carabante",volume:0,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Iron Peptides",contact:"Anson Zonar",volume:100000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"PeakForm Peptides LLC",contact:"Thomas Gubitosi",volume:15000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Peptiology Ltd",contact:"Katie Bath",volume:180000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Tegridy Research",contact:"Jessie Hawk",volume:50000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Synaptik Solutions",contact:"Roger Rico",volume:3000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Dallas Peptides",contact:"Ryan Berkeley",volume:5000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Summit Peak Biolabs LLC",contact:"Brandon Surdam",volume:25000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Vanguard Peptides Labs",contact:"Zavier Romano",volume:15000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Alpha Carbon Labs LLC",contact:"Brandon Leidel",volume:8000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Lab Rat Research LLC",contact:"Hayden Krawiec",volume:1000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Wirthman",contact:"Reed Wirthman",volume:50000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Techmed Partners / Prime Gen Labs",contact:"Yvette Timberlake",volume:10000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"FirstForm Peptides LLC",contact:"Link Abernethy",volume:50000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Grade1Research LLC",contact:"William Browning",volume:5000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Peak Research Sciences",contact:"Craig Lebeau",volume:10000,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Kingdom Peps LLC",contact:"Christy Connors",volume:20000,status:"Need additional docs",group:"New Leads",type:"Research Peptides"},
+    {name:"Aztec Performance",contact:"Joshua Huckestein",volume:0,status:"Need additional docs",group:"New Leads",type:"Research Peptides"},
+    {name:"Peak Performance Peptides",contact:"Jeffrey Deng",volume:0,status:"In UW",group:"New Leads",type:"Research Peptides"},
+    {name:"Tides For Life",contact:"Corey Laulom",volume:0,status:"App Submitted",group:"New Leads",type:"Research Peptides"},
+    {name:"Commonwealth Wellness LLC",contact:"Ross Arney",volume:50000,status:"App Submitted",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"AminoWell Labs",contact:"Davis Diley",volume:1000000,status:"In UW",group:"Tagada Crypto",type:"Wholesale/Distribution"},
+    {name:"Pharma Peptides",contact:"Layton Schwenning",volume:0,status:"New Lead",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Vireon Research LLC",contact:"Gustavo Cortes",volume:0,status:"New Lead",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"OnePeptideCo",contact:"Summer Bouchard",volume:0,status:"New Lead",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Guardian Metabolics",contact:"Garrett Guardian",volume:0,status:"New Lead",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"New Peptides",contact:"Diego Vazquez",volume:0,status:"New Lead",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Ovalo Health",contact:"Zach Cox",volume:0,status:"New Lead",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Cheaper Peptides",contact:"Sean Fitzanko",volume:20000,status:"App Submitted",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Peptive Maxa Trading LLC",contact:"Nabih Alkayali",volume:50000,status:"App Submitted",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"JTs Bio Core",contact:"Jason Thomas",volume:45000,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"PeakForm Peptides",contact:"Robert Erdt",volume:0,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"BioPoint Peptides",contact:"David Mandel",volume:50000,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Peptronic",contact:"Nicolas Miret",volume:1000,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Puratek LLC",contact:"Tony Clampitt",volume:0,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Austin Research Products LLC",contact:"Tony Wyss",volume:90000,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"GNP Peptides",contact:"Hazem Ibrahim",volume:30000,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"PeptideSupplyCo",contact:"Jordan Scott",volume:100000,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Northline Labs",contact:"Westin Argir",volume:0,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Iso Pure Peptides",contact:"Desarai Mannelly",volume:10000,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Pulse Research Expansion LLC",contact:"Nathan Simpson",volume:0,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Research 1 Peptides",contact:"Cliff McCabe",volume:0,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Modern Research Peptides",contact:"Matthew Parla",volume:0,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"TYCOON GROUP INC",contact:"Rodney Martinez",volume:0,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Vellisova",contact:"Povilas Naglis Aleksandravicius",volume:50000,status:"App Submitted",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Double R Labs",contact:"Robert Robins",volume:80000,status:"App Submitted",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Vitalguard",contact:"Franckly Desir",volume:50000,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Peptrix Labs",contact:"Muhammed Kadic",volume:15000,status:"Need additional docs",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Summit Peak BioLabs LLC",contact:"Travis Ozga",volume:20000,status:"Need additional docs",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"TPC Research LLC",contact:"Erika Enquist",volume:150000,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Infinity Power",contact:"Wyler Wytwor",volume:100000,status:"App Submitted",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Molecular Solutions",contact:"Christopher Shannon",volume:50000,status:"App Submitted",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Valor Sciences",contact:"Chris Zimmerman",volume:100000,status:"App Submitted",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Jett Labs Research LLC",contact:"Jose Sepulveda",volume:50000,status:"App Submitted",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Echelon BioLabs",contact:"James Ross",volume:0,status:"App Submitted",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Peak Lab Peptides",contact:"Jesse Kaye",volume:300000,status:"In UW",group:"Tagada Crypto",type:"Research Peptides"},
+    {name:"Apeiron Elementals LLC",contact:"Samuel Stickler",volume:0,status:"In UW",group:"Tagada MID",type:"Research Peptides"},
+    {name:"BioEdge Research Labs",contact:"Joe Marfoglio",volume:250000,status:"In UW",group:"Tagada MID",type:"Research Peptides"},
+    {name:"LifeLab Research",contact:"Dora Brandon",volume:250000,status:"In UW",group:"Tagada MID",type:"Research Peptides"},
+    {name:"Hydro Research Supply",contact:"Khaled Salem",volume:0,status:"In UW",group:"Tagada MID",type:"Research Peptides"},
+    {name:"Prime Peptides",contact:"Curt Miller",volume:700000,status:"In UW",group:"Tagada MID",type:"Research Peptides"},
+    {name:"Step One Ventures",contact:"Michael Kenny",volume:250000,status:"In UW",group:"Tagada MID",type:"Research Peptides"},
+    {name:"Purity Peptides",contact:"Charles Harrison",volume:250000,status:"Approved",group:"Tagada MID",type:"Research Peptides"},
+    {name:"Adonis Research",contact:"Khaled Salem",volume:0,status:"Approved",group:"Tagada MID",type:"Research Peptides"},
+    {name:"Optima Chemical Supply",contact:"Khaled Salem",volume:0,status:"Approved",group:"Tagada MID",type:"Research Peptides"},
+    {name:"Absolute Pep LLC",contact:"Ken Ivey",volume:40000,status:"Need additional docs",group:"Onyx/Truvo",type:"Research Peptides"},
+    {name:"NeoAminos",contact:"Asher Page",volume:10000,status:"Need additional docs",group:"Onyx/Truvo",type:"Research Peptides"},
+    {name:"Freedom Peptides LLC",contact:"Ralph Flores",volume:10000,status:"Need additional docs",group:"Onyx/Truvo",type:"Research Peptides"},
+    {name:"Global Aminos",contact:"Lyndsay Hayes",volume:50000,status:"In UW",group:"Onyx/Truvo",type:"Research Peptides"},
+    {name:"Adamie LLC",contact:"Adam Habona",volume:60000,status:"In UW",group:"Onyx/Truvo",type:"Research Peptides"},
+    {name:"Novu Peptides",contact:"Manuel Barba",volume:35000,status:"In UW",group:"Onyx/Truvo",type:"Research Peptides"},
+    {name:"Pacific Edge Labs LLC",contact:"Eldon Meacham",volume:65000,status:"In UW",group:"Onyx/Truvo",type:"Research Peptides"},
+    {name:"Shortchain Aminos",contact:"Cory Parks",volume:75000,status:"Approved",group:"Onyx/Truvo",type:"Research Peptides"},
+    {name:"Ascend X Peptides",contact:"Isaac Berry",volume:30000,status:"Approved",group:"Onyx/Truvo",type:"Research Peptides"},
+    {name:"Mahoney World",contact:"David O'Mahoney",volume:250000,status:"Processing",group:"Onyx/Truvo",type:"Research Peptides"},
+    {name:"The Optimized Human LLC",contact:"Amy Soileau",volume:0,status:"App Submitted",group:"Bryce Leads",type:"Research Peptides"},
+    {name:"Zenith Bioscience",contact:"James Doyle",volume:0,status:"In UW",group:"Bryce Leads",type:"Research Peptides"},
+    {name:"Red Dirt Research LLC",contact:"Dustin Kemp",volume:0,status:"In UW",group:"Bryce Leads",type:"Research Peptides"},
+    {name:"Rhema Research Labs LLC",contact:"John Petri",volume:0,status:"In UW",group:"Bryce Leads",type:"Research Peptides"},
+    {name:"Medrco",contact:"Jana Blake",volume:0,status:"In UW",group:"Bryce Leads",type:"Research Peptides"},
+    {name:"Soma Alchemy",contact:"Joseph Palmeri",volume:0,status:"In UW",group:"Bryce Leads",type:"Research Peptides"},
+    {name:"Crownwell Research",contact:"Marsha Henderson",volume:0,status:"App Submitted",group:"Bryce Leads",type:"Research Peptides"},
+    {name:"Nuviquue",contact:"Yafet Paulos",volume:50000,status:"Not Interested",group:"Not Interested",type:"Research Peptides"},
+    {name:"Flawless Compounds",contact:"Robert Fylypowycz",volume:1200000,status:"Not Interested",group:"Not Interested",type:"Research Peptides"},
+    {name:"Full Scale Peptides",contact:"Niko Cintrin",volume:2500,status:"Not Interested",group:"Not Interested",type:"Research Peptides"},
+    {name:"Prosperity Peptides",contact:"Jeffrey Meeker",volume:50000,status:"Not Interested",group:"Not Interested",type:"Research Peptides"},
+    {name:"Ascension Laboratories",contact:"Devon Ransom",volume:60000,status:"Not Interested",group:"Not Interested",type:"Research Peptides"},
+    {name:"Atlas Lab Solutions LLC",contact:"Hugo Bogrand",volume:5000,status:"Not Interested",group:"Not Interested",type:"Research Peptides"},
+  ];
+
+  let imported = 0;
+  const now = new Date().toISOString();
+  mondayDeals.forEach(deal => {
+    if (existingNames.has(deal.name.toLowerCase())) return;
+    data.merchants.push({
+      id: genId(),
+      name: deal.name,
+      contact: deal.contact,
+      type: deal.type,
+      volume: deal.volume || 0,
+      status: statusMap[deal.status] || 'Prospect',
+      referred: deal.group,
+      suppliers: [],
+      notes: 'Imported from Monday.com (' + deal.group + ') - Status: ' + deal.status,
+      updated: now,
+      created: now,
+    });
+    imported++;
+  });
+
+  addActivity(data, 'Imported ' + imported + ' peptide merchants from Monday.com');
+  saveData(data);
+  renderAll();
+  alert('Imported ' + imported + ' merchants. ' + (mondayDeals.length - imported) + ' were already in the dashboard.');
+}
 
 // INIT
 renderAll();
