@@ -6,109 +6,451 @@
 <title>KASHU COMMAND CENTER</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0a0a;--card:#141414;--card-hover:#1a1a1a;--border:#222;--green:#00C853;--green-dim:#00C85333;--white:#f0f0f0;--gray:#888;--font:-apple-system,system-ui,'Inter','Segoe UI',sans-serif}
-body{background:var(--bg);color:var(--white);font-family:var(--font);min-height:100vh}
+:root{--bg:#050508;--card:rgba(255,255,255,.03);--card-hover:rgba(255,255,255,.06);--border:rgba(255,255,255,.06);--border-hover:rgba(0,200,83,.4);--green:#00C853;--green-glow:rgba(0,200,83,.15);--green-soft:rgba(0,200,83,.08);--white:#f0f0f0;--gray:#666;--gray-light:#999;--font:'Inter',-apple-system,system-ui,'Segoe UI',sans-serif}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+body{background:var(--bg);color:var(--white);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:
+  radial-gradient(ellipse 80% 60% at 50% -20%, rgba(0,200,83,.07) 0%, transparent 70%),
+  radial-gradient(ellipse 60% 40% at 80% 100%, rgba(0,200,83,.04) 0%, transparent 60%);
+  pointer-events:none;z-index:0}
 a{color:inherit;text-decoration:none}
 
+/* GRID PATTERN */
+.grid-bg{position:fixed;inset:0;background-image:
+  linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0}
+
+.container{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 32px}
+
 /* HEADER */
-.header{padding:28px 32px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-.header h1{font-size:28px;font-weight:800;letter-spacing:4px;color:var(--white)}
-.header h1 span{color:var(--green)}
-.clock{font-size:14px;color:var(--gray);font-variant-numeric:tabular-nums;letter-spacing:1px}
+.header{padding:40px 0 0;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px}
+.brand{display:flex;flex-direction:column;gap:4px}
+.brand-tag{font-size:10px;text-transform:uppercase;letter-spacing:4px;color:var(--gray);font-weight:500}
+.brand h1{font-size:32px;font-weight:800;letter-spacing:3px;background:linear-gradient(135deg, var(--green) 0%, #69F0AE 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+.brand h1 .white{-webkit-text-fill-color:var(--white);opacity:.9}
+.header-right{display:flex;align-items:center;gap:20px}
+.clock{font-size:13px;color:var(--gray);font-variant-numeric:tabular-nums;letter-spacing:1px;font-weight:400}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 12px var(--green)}50%{opacity:.5;box-shadow:0 0 4px var(--green)}}
+
+/* DIVIDER */
+.divider{height:1px;background:linear-gradient(90deg, transparent, var(--border), rgba(0,200,83,.15), var(--border), transparent);margin:24px 0}
 
 /* STAT BAR */
-.stat-bar{display:flex;gap:12px;padding:16px 32px;flex-wrap:wrap}
-.stat-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 20px;flex:1;min-width:160px;cursor:pointer;transition:border-color .2s}
-.stat-box:hover{border-color:var(--green)}
-.stat-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gray);margin-bottom:4px}
-.stat-value{font-size:24px;font-weight:700;color:var(--green);outline:none}
-.stat-value:empty::before{content:attr(data-placeholder);color:#444}
+.stat-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:8px}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;cursor:pointer;transition:all .3s ease;position:relative;overflow:hidden}
+.stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg, transparent, rgba(0,200,83,.3), transparent);opacity:0;transition:opacity .3s}
+.stat-box:hover{border-color:var(--border-hover);background:var(--card-hover)}
+.stat-box:hover::before{opacity:1}
+.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gray);margin-bottom:8px;font-weight:500}
+.stat-value{font-size:28px;font-weight:700;color:var(--white);outline:none;font-variant-numeric:tabular-nums}
+.stat-value .highlight{color:var(--green)}
 
 /* TABS */
-.tabs{display:flex;gap:0;padding:8px 32px 0;border-bottom:1px solid var(--border)}
-.tab{padding:10px 24px;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;user-select:none}
+.tabs{display:flex;gap:4px;margin:8px 0 4px;background:rgba(255,255,255,.02);border-radius:10px;padding:4px;width:fit-content}
+.tab{padding:10px 28px;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);cursor:pointer;border-radius:8px;transition:all .25s ease;user-select:none;position:relative}
 .tab:hover{color:var(--white)}
-.tab.active{color:var(--green);border-bottom-color:var(--green)}
+.tab.active{color:var(--white);background:rgba(0,200,83,.1);box-shadow:0 0 20px rgba(0,200,83,.05)}
+.tab.active::after{content:'';position:absolute;bottom:-1px;left:30%;right:30%;height:2px;background:var(--green);border-radius:2px}
 
 /* LANES */
-.lanes{padding:20px 32px}
-.lane{display:none;gap:16px;flex-wrap:wrap}
-.lane.active{display:flex}
+.lanes{padding:20px 0}
+.lane{display:none;grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));gap:14px;animation:fadeIn .3s ease}
+.lane.active{display:grid}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* CARDS */
-.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px 24px;width:calc(33.333% - 12px);min-width:260px;transition:all .2s;position:relative;overflow:hidden}
-.card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--green);opacity:0;transition:opacity .2s}
-.card:hover{border-color:var(--green);background:var(--card-hover);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,200,83,.06)}
-.card:hover::before{opacity:1}
-.card-name{font-size:16px;font-weight:700;margin-bottom:6px}
-.card-desc{font-size:13px;color:var(--gray);line-height:1.4}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px 28px;transition:all .3s ease;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:10px}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);transition:background .3s}
+.card::after{content:'';position:absolute;inset:0;border-radius:14px;background:radial-gradient(ellipse at 50% 0%, rgba(0,200,83,.04) 0%, transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none}
+.card:hover{border-color:var(--border-hover);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.3), 0 0 0 1px rgba(0,200,83,.1)}
+.card:hover::before{background:linear-gradient(90deg, transparent, rgba(0,200,83,.3), transparent)}
+.card:hover::after{opacity:1}
+.card-icon{width:36px;height:36px;border-radius:10px;background:var(--green-soft);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.card-content{flex:1}
+.card-name{font-size:15px;font-weight:700;letter-spacing:.3px;margin-bottom:4px}
+.card-desc{font-size:12px;color:var(--gray-light);line-height:1.5;font-weight:400}
+.card-arrow{position:absolute;top:24px;right:24px;font-size:14px;color:var(--gray);transition:all .3s;opacity:0}
+.card:hover .card-arrow{opacity:1;color:var(--green);transform:translateX(3px)}
+
+/* SECTION LABEL */
+.section-label{font-size:10px;text-transform:uppercase;letter-spacing:3px;color:var(--gray);font-weight:500;margin-bottom:16px;margin-top:8px}
 
 /* QUICK ACTIONS */
-.quick-section{padding:24px 32px 12px}
-.quick-section h3{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--gray);margin-bottom:14px}
-.quick-row{display:flex;gap:12px;flex-wrap:wrap}
-.quick-btn{background:var(--green);color:#000;font-weight:700;font-size:14px;padding:14px 28px;border-radius:8px;border:none;cursor:pointer;transition:all .15s;font-family:var(--font);letter-spacing:.5px;text-decoration:none;display:inline-block}
-.quick-btn:hover{background:#00e65c;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,200,83,.3)}
+.quick-section{margin:8px 0 0}
+.quick-row{display:flex;gap:10px;flex-wrap:wrap}
+.quick-btn{background:transparent;color:var(--green);font-weight:600;font-size:13px;padding:14px 28px;border-radius:10px;border:1px solid rgba(0,200,83,.25);cursor:pointer;transition:all .25s ease;font-family:var(--font);letter-spacing:.5px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;position:relative;overflow:hidden}
+.quick-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg, rgba(0,200,83,.08), transparent);opacity:0;transition:opacity .25s}
+.quick-btn:hover{border-color:var(--green);background:rgba(0,200,83,.06);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,200,83,.1)}
+.quick-btn:hover::before{opacity:1}
 .quick-btn:active{transform:translateY(0)}
+.quick-btn .btn-icon{font-size:15px}
+.quick-btn.primary{background:var(--green);color:#000;border-color:var(--green);font-weight:700}
+.quick-btn.primary:hover{background:#00e65c;box-shadow:0 8px 32px rgba(0,200,83,.25)}
+.quick-btn.primary::before{display:none}
 
 /* FOOTER */
-.footer{padding:32px 32px 24px;text-align:center;font-size:12px;color:#444;letter-spacing:1px}
+.footer{padding:40px 0 28px;display:flex;justify-content:space-between;align-items:center}
+.footer-left{font-size:11px;color:#333;letter-spacing:1px;font-weight:400}
+.footer-right{font-size:11px;color:#333;letter-spacing:1px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:#111;border:1px solid var(--border);border-radius:16px;padding:32px;width:340px;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.modal label{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:10px;font-weight:500}
+.modal input{width:100%;padding:14px 16px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--white);font-size:20px;font-weight:700;font-family:var(--font);margin-bottom:20px;outline:none;transition:border-color .2s}
+.modal input:focus{border-color:var(--green)}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end}
+.modal-btns button{padding:10px 24px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-family:var(--font);font-size:13px;transition:all .2s}
+.modal-save{background:var(--green);color:#000}
+.modal-save:hover{background:#00e65c}
+.modal-cancel{background:rgba(255,255,255,.06);color:var(--white)}
+.modal-cancel:hover{background:rgba(255,255,255,.1)}
 
 /* RESPONSIVE */
 @media(max-width:900px){
-  .card{width:calc(50% - 8px);min-width:0}
-  .header{padding:20px 16px 0}
-  .stat-bar,.lanes,.quick-section,.tabs{padding-left:16px;padding-right:16px}
-  .footer{padding-left:16px;padding-right:16px}
+  .container{padding:0 16px}
+  .stat-bar{grid-template-columns:repeat(2,1fr)}
+  .header h1{font-size:24px}
+  .lane{grid-template-columns:1fr 1fr}
 }
 @media(max-width:600px){
-  .card{width:100%}
-  .tab{padding:8px 14px;font-size:11px}
-  .header h1{font-size:20px;letter-spacing:2px}
-  .stat-box{min-width:120px}
-  .quick-btn{width:100%;text-align:center}
+  .stat-bar{grid-template-columns:1fr 1fr}
+  .lane{grid-template-columns:1fr}
+  .tab{padding:8px 16px;font-size:10px;letter-spacing:1px}
+  .header h1{font-size:20px;letter-spacing:1px}
+  .stat-value{font-size:22px}
+  .quick-btn{width:100%;justify-content:center}
+  .footer{flex-direction:column;gap:8px;text-align:center}
 }
-
-/* EDIT MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center}
-.modal-overlay.show{display:flex}
-.modal{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;width:320px}
-.modal label{font-size:12px;color:var(--gray);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px}
-.modal input{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--white);font-size:18px;font-weight:700;font-family:var(--font);margin-bottom:16px;outline:none}
-.modal input:focus{border-color:var(--green)}
-.modal-btns{display:flex;gap:10px;justify-content:flex-end}
-.modal-btns button{padding:8px 20px;border-radius:6px;border:none;cursor:pointer;font-weight:600;font-family:var(--font);font-size:13px}
-.modal-save{background:var(--green);color:#000}
-.modal-cancel{background:#333;color:var(--white)}
 </style>
 </head>
 <body>
+<div class="grid-bg"></div>
+
+<div class="container">
 
 <!-- HEADER -->
 <div class="header">
-  <h1><span>KASHU</span> COMMAND CENTER</h1>
-  <div class="clock" id="clock"></div>
+  <div class="brand">
+    <div class="brand-tag">Revenue Operations</div>
+    <h1>KASHU <span class="white">COMMAND CENTER</span></h1>
+  </div>
+  <div class="header-right">
+    <div class="pulse"></div>
+    <div class="clock" id="clock"></div>
+  </div>
 </div>
+
+<div class="divider"></div>
 
 <!-- STAT BAR -->
 <div class="stat-bar">
   <div class="stat-box" onclick="editStat('merchants')">
     <div class="stat-label">Merchants Live</div>
-    <div class="stat-value" id="stat-merchants" data-placeholder="--">0</div>
+    <div class="stat-value" id="stat-merchants">0</div>
   </div>
   <div class="stat-box" onclick="editStat('pipeline')">
     <div class="stat-label">Pipeline Value</div>
-    <div class="stat-value" id="stat-pipeline" data-placeholder="--">$0</div>
+    <div class="stat-value" id="stat-pipeline"><span class="highlight">$</span>0</div>
   </div>
   <div class="stat-box" onclick="editStat('mrps')">
     <div class="stat-label">MRPs Active</div>
-    <div class="stat-value" id="stat-mrps" data-placeholder="--">0</div>
+    <div class="stat-value" id="stat-mrps">0</div>
   </div>
   <div class="stat-box" onclick="editStat('volume')">
     <div class="stat-label">Monthly Volume</div>
-    <div class="stat-value" id="stat-volume" data-placeholder="--">$0</div>
+    <div class="stat-value" id="stat-volume"><span class="highlight">$</span>0</div>
   </div>
 </div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('close',this)">Close</div>
+  <div class="tab" onclick="switchTab('pipeline',this)">Pipeline</div>
+  <div class="tab" onclick="switchTab('partners',this)">Partners</div>
+  <div class="tab" onclick="switchTab('strategy',this)">Strategy</div>
+</div>
+
+<div class="divider" style="margin:12px 0 4px"></div>
+
+<!-- LANE 1: CLOSE -->
+<div class="lanes">
+  <div class="lane active" id="lane-close">
+    <a class="card" href="kashu_revenue_switch.html" target="_blank">
+      <div class="card-icon">&#9889;</div>
+      <div class="card-content">
+        <div class="card-name">Revenue Switch</div>
+        <div class="card-desc">Offer stack, close script, live calculator, competitor kill shots, bonus arsenal</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="sales/kashu_statement_analyzer.html" target="_blank">
+      <div class="card-icon">&#128200;</div>
+      <div class="card-content">
+        <div class="card-name">Statement Analyzer</div>
+        <div class="card-desc">Upload PDF, auto-parse rates, generate savings pitch</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="sales/kashu_competitor_tool.html" target="_blank">
+      <div class="card-icon">&#9876;</div>
+      <div class="card-content">
+        <div class="card-name">Competitor Intel</div>
+        <div class="card-desc">8-processor displacement with live savings comparison</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="sales/kashu_objection_handler.html" target="_blank">
+      <div class="card-icon">&#128172;</div>
+      <div class="card-content">
+        <div class="card-name">Objection Handler</div>
+        <div class="card-desc">Merchant, MRP, PE objections with instant reframes</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="sales/kashu_onepager_generator.html" target="_blank">
+      <div class="card-icon">&#128196;</div>
+      <div class="card-content">
+        <div class="card-name">One-Pager Generator</div>
+        <div class="card-desc">Niche-specific one-pagers with pitch emails</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="sales/kashu_roi_calculator.html" target="_blank">
+      <div class="card-icon">&#128178;</div>
+      <div class="card-content">
+        <div class="card-name">ROI Calculator</div>
+        <div class="card-desc">Merchant-facing savings calc with lead capture</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="sales/kashu_merchant_intake.html" target="_blank">
+      <div class="card-icon">&#128203;</div>
+      <div class="card-content">
+        <div class="card-name">Merchant Intake</div>
+        <div class="card-desc">Savings estimator, lead capture, GHL webhook, MRP attribution</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- LANE 2: PIPELINE -->
+  <div class="lane" id="lane-pipeline">
+    <a class="card" href="ops/kashu_deal_velocity.html" target="_blank">
+      <div class="card-icon">&#128640;</div>
+      <div class="card-content">
+        <div class="card-name">Deal Velocity</div>
+        <div class="card-desc">Pipeline tracker with stall alerts at 7 and 14 days</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="sales/kashu_dream100.html" target="_blank">
+      <div class="card-icon">&#127919;</div>
+      <div class="card-content">
+        <div class="card-name">Dream 100</div>
+        <div class="card-desc">Top prospect tracker with touch logging and overdue alerts</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="sales/kashu_daily_100.html" target="_blank">
+      <div class="card-icon">&#128231;</div>
+      <div class="card-content">
+        <div class="card-name">Daily 100</div>
+        <div class="card-desc">Batch outreach engine with send tracking</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="sales/kashu_multitouch_generator.html" target="_blank">
+      <div class="card-icon">&#128140;</div>
+      <div class="card-content">
+        <div class="card-name">Multi-Touch Generator</div>
+        <div class="card-desc">5-touch merchant sequences with auto savings math</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="sales/kashu_vertical_attack.html" target="_blank">
+      <div class="card-icon">&#127793;</div>
+      <div class="card-content">
+        <div class="card-name">Vertical Attack</div>
+        <div class="card-desc">Vertical-specific outreach and positioning builder</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="sales/kashu_peptide_command.html" target="_blank">
+      <div class="card-icon">&#129514;</div>
+      <div class="card-content">
+        <div class="card-name">Peptide Command</div>
+        <div class="card-desc">Peptide vertical command center with deal tracker</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- LANE 3: PARTNERS -->
+  <div class="lane" id="lane-partners">
+    <a class="card" href="partners/kashu_mrp_grand_slam.html" target="_blank">
+      <div class="card-icon">&#127942;</div>
+      <div class="card-content">
+        <div class="card-name">MRP Grand Slam Offer</div>
+        <div class="card-desc">Full recruiting offer stack, close script, income calc</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="partners/kashu_mrp_recruiting.html" target="_blank">
+      <div class="card-icon">&#128172;</div>
+      <div class="card-content">
+        <div class="card-name">MRP Recruiting Sequences</div>
+        <div class="card-desc">5-touch sequences for 9 partner personas</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="partners/kashu_mrp_blitz.html" target="_blank">
+      <div class="card-icon">&#9889;</div>
+      <div class="card-content">
+        <div class="card-name">MRP Blitz</div>
+        <div class="card-desc">Rapid MRP recruitment sequence generator</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="ops/kashu_partner_scorecard.html" target="_blank">
+      <div class="card-icon">&#128202;</div>
+      <div class="card-content">
+        <div class="card-name">Partner Scorecard</div>
+        <div class="card-desc">MRP performance, residual projections, reactivation queue</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="partners/kashu_residual_calculator.html" target="_blank">
+      <div class="card-icon">&#128178;</div>
+      <div class="card-content">
+        <div class="card-name">Residual Calculator</div>
+        <div class="card-desc">MRP income calc with T1/T2 tiers and downline override</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="partners/kashu_partner_opportunity.html" target="_blank">
+      <div class="card-icon">&#128161;</div>
+      <div class="card-content">
+        <div class="card-name">Partner Opportunity Page</div>
+        <div class="card-desc">MRP/PE/Agency opportunity landing page</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="partners/kashu_expandi_kit.html" target="_blank">
+      <div class="card-icon">&#128101;</div>
+      <div class="card-content">
+        <div class="card-name">Expandi Kit</div>
+        <div class="card-desc">LinkedIn automation sequences for MRP recruiting</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="partners/kashu_mrp_merchant_mapping.html" target="_blank">
+      <div class="card-icon">&#128506;</div>
+      <div class="card-content">
+        <div class="card-name">MRP-Merchant Mapping</div>
+        <div class="card-desc">Which MRP types match which merchant verticals</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- LANE 4: STRATEGY -->
+  <div class="lane" id="lane-strategy">
+    <a class="card" href="sales/kashu_cro_playbook.html" target="_blank">
+      <div class="card-icon">&#128218;</div>
+      <div class="card-content">
+        <div class="card-name">CRO Playbook</div>
+        <div class="card-desc">Challenger framework, psychology, mental models, scripts</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="strategy/kashu_pe_pitch.html" target="_blank">
+      <div class="card-icon">&#127970;</div>
+      <div class="card-content">
+        <div class="card-name">PE Pitch Deck</div>
+        <div class="card-desc">PE partnership deck with ROI calc and objection handler</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="strategy/kashu_2k_growth_map.html" target="_blank">
+      <div class="card-icon">&#128200;</div>
+      <div class="card-content">
+        <div class="card-name">2K Growth Map</div>
+        <div class="card-desc">Visual path to 2,000 merchant target</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="ops/kashu_ghl_workflow_guide.html" target="_blank">
+      <div class="card-icon">&#9881;</div>
+      <div class="card-content">
+        <div class="card-name">GHL Workflow Guide</div>
+        <div class="card-desc">Step-by-step GoHighLevel automation builds</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="c2c/kashu_c2c_onepager.html" target="_blank">
+      <div class="card-icon">&#128179;</div>
+      <div class="card-content">
+        <div class="card-name">C2C One-Pager</div>
+        <div class="card-desc">Credit to Cash one-pager generator for 11 verticals</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="c2c/kashu_affiliate_toolkit.html" target="_blank">
+      <div class="card-icon">&#129309;</div>
+      <div class="card-content">
+        <div class="card-name">Affiliate Toolkit</div>
+        <div class="card-desc">C2C affiliate income calculator and recruiting channels</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+    <a class="card" href="ops/kashu_cro_dashboard.html" target="_blank">
+      <div class="card-icon">&#128202;</div>
+      <div class="card-content">
+        <div class="card-name">CRO Dashboard</div>
+        <div class="card-desc">Daily operations dashboard with KPIs and focus</div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- QUICK ACTIONS -->
+<div class="quick-section">
+  <div class="section-label">Quick Actions</div>
+  <div class="quick-row">
+    <a class="quick-btn primary" href="kashu_revenue_switch.html" target="_blank">
+      <span class="btn-icon">&#9889;</span> New Merchant Call
+    </a>
+    <a class="quick-btn" href="sales/kashu_statement_analyzer.html" target="_blank">
+      <span class="btn-icon">&#128200;</span> Analyze Statement
+    </a>
+    <a class="quick-btn" href="partners/kashu_mrp_grand_slam.html" target="_blank">
+      <span class="btn-icon">&#127942;</span> Recruit MRP
+    </a>
+    <a class="quick-btn" href="ops/kashu_deal_velocity.html" target="_blank">
+      <span class="btn-icon">&#128640;</span> Check Pipeline
+    </a>
+    <a class="quick-btn" href="strategy/kashu_pe_pitch.html" target="_blank">
+      <span class="btn-icon">&#127970;</span> PE Meeting
+    </a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-left">kashupay.com</div>
+  <div class="footer-right">Built for speed.</div>
+</div>
+
+</div><!-- /container -->
 
 <!-- EDIT MODAL -->
 <div class="modal-overlay" id="modal">
@@ -122,187 +464,37 @@ a{color:inherit;text-decoration:none}
   </div>
 </div>
 
-<!-- TABS -->
-<div class="tabs">
-  <div class="tab active" onclick="switchTab('close')">Close</div>
-  <div class="tab" onclick="switchTab('pipeline')">Pipeline</div>
-  <div class="tab" onclick="switchTab('partners')">Partners</div>
-  <div class="tab" onclick="switchTab('strategy')">Strategy</div>
-</div>
-
-<!-- LANE 1: CLOSE -->
-<div class="lanes">
-  <div class="lane active" id="lane-close">
-    <a class="card" href="kashu_revenue_switch.html" target="_blank">
-      <div class="card-name">Revenue Switch</div>
-      <div class="card-desc">Offer stack + close script + live calc</div>
-    </a>
-    <a class="card" href="sales/kashu_statement_analyzer.html" target="_blank">
-      <div class="card-name">Statement Analyzer</div>
-      <div class="card-desc">Upload statement, auto-parse rates, generate pitch</div>
-    </a>
-    <a class="card" href="sales/kashu_competitor_tool.html" target="_blank">
-      <div class="card-name">Competitor Intel</div>
-      <div class="card-desc">8-processor displacement tool + savings calc</div>
-    </a>
-    <a class="card" href="sales/kashu_objection_handler.html" target="_blank">
-      <div class="card-name">Objection Handler</div>
-      <div class="card-desc">Merchant, MRP, PE objections with reframes</div>
-    </a>
-    <a class="card" href="sales/kashu_onepager_generator.html" target="_blank">
-      <div class="card-name">One-Pager Generator</div>
-      <div class="card-desc">Niche one-pagers + pitch emails</div>
-    </a>
-    <a class="card" href="sales/kashu_roi_calculator.html" target="_blank">
-      <div class="card-name">ROI Calculator</div>
-      <div class="card-desc">Merchant-facing savings calc + lead capture</div>
-    </a>
-    <a class="card" href="sales/kashu_merchant_intake.html" target="_blank">
-      <div class="card-name">Merchant Intake</div>
-      <div class="card-desc">Savings estimator + lead capture + GHL webhook</div>
-    </a>
-  </div>
-
-  <!-- LANE 2: PIPELINE -->
-  <div class="lane" id="lane-pipeline">
-    <a class="card" href="ops/kashu_deal_velocity.html" target="_blank">
-      <div class="card-name">Deal Velocity</div>
-      <div class="card-desc">Pipeline tracker with stall alerts (7d/14d)</div>
-    </a>
-    <a class="card" href="sales/kashu_dream100.html" target="_blank">
-      <div class="card-name">Dream 100</div>
-      <div class="card-desc">Top prospect tracker with touch logging</div>
-    </a>
-    <a class="card" href="sales/kashu_daily_100.html" target="_blank">
-      <div class="card-name">Daily 100</div>
-      <div class="card-desc">Daily outreach engine, 100 messages</div>
-    </a>
-    <a class="card" href="sales/kashu_multitouch_generator.html" target="_blank">
-      <div class="card-name">Multi-Touch Generator</div>
-      <div class="card-desc">5-touch merchant sequences</div>
-    </a>
-    <a class="card" href="sales/kashu_vertical_attack.html" target="_blank">
-      <div class="card-name">Vertical Attack</div>
-      <div class="card-desc">Vertical-specific outreach builder</div>
-    </a>
-    <a class="card" href="sales/kashu_peptide_command.html" target="_blank">
-      <div class="card-name">Peptide Command</div>
-      <div class="card-desc">Peptide vertical command center</div>
-    </a>
-  </div>
-
-  <!-- LANE 3: PARTNERS -->
-  <div class="lane" id="lane-partners">
-    <a class="card" href="partners/kashu_mrp_grand_slam.html" target="_blank">
-      <div class="card-name">MRP Grand Slam Offer</div>
-      <div class="card-desc">Full MRP recruiting offer stack + close</div>
-    </a>
-    <a class="card" href="partners/kashu_mrp_recruiting.html" target="_blank">
-      <div class="card-name">MRP Recruiting Sequences</div>
-      <div class="card-desc">5-touch sequences for 9 personas</div>
-    </a>
-    <a class="card" href="partners/kashu_mrp_blitz.html" target="_blank">
-      <div class="card-name">MRP Blitz</div>
-      <div class="card-desc">Rapid MRP recruitment generator</div>
-    </a>
-    <a class="card" href="ops/kashu_partner_scorecard.html" target="_blank">
-      <div class="card-name">Partner Scorecard</div>
-      <div class="card-desc">MRP performance tracker + reactivation queue</div>
-    </a>
-    <a class="card" href="partners/kashu_residual_calculator.html" target="_blank">
-      <div class="card-name">Residual Calculator</div>
-      <div class="card-desc">MRP income calculator (T1/T2/downline)</div>
-    </a>
-    <a class="card" href="partners/kashu_partner_opportunity.html" target="_blank">
-      <div class="card-name">Partner Opportunity</div>
-      <div class="card-desc">MRP/PE/Agency opportunity page</div>
-    </a>
-    <a class="card" href="partners/kashu_expandi_kit.html" target="_blank">
-      <div class="card-name">Expandi Kit</div>
-      <div class="card-desc">LinkedIn automation sequences</div>
-    </a>
-    <a class="card" href="partners/kashu_mrp_merchant_mapping.html" target="_blank">
-      <div class="card-name">MRP-Merchant Mapping</div>
-      <div class="card-desc">Vertical to MRP type reference</div>
-    </a>
-  </div>
-
-  <!-- LANE 4: STRATEGY -->
-  <div class="lane" id="lane-strategy">
-    <a class="card" href="sales/kashu_cro_playbook.html" target="_blank">
-      <div class="card-name">CRO Playbook</div>
-      <div class="card-desc">Challenger framework + psychology + scripts</div>
-    </a>
-    <a class="card" href="strategy/kashu_pe_pitch.html" target="_blank">
-      <div class="card-name">PE Pitch Deck</div>
-      <div class="card-desc">PE partnership deck + ROI calc + objections</div>
-    </a>
-    <a class="card" href="strategy/kashu_2k_growth_map.html" target="_blank">
-      <div class="card-name">2K Growth Map</div>
-      <div class="card-desc">Path to 2,000 merchants visual</div>
-    </a>
-    <a class="card" href="ops/kashu_ghl_workflow_guide.html" target="_blank">
-      <div class="card-name">GHL Workflow Guide</div>
-      <div class="card-desc">Step-by-step GHL automation builds</div>
-    </a>
-    <a class="card" href="c2c/kashu_c2c_onepager.html" target="_blank">
-      <div class="card-name">C2C One-Pager</div>
-      <div class="card-desc">Credit to Cash one-pager generator</div>
-    </a>
-    <a class="card" href="c2c/kashu_affiliate_toolkit.html" target="_blank">
-      <div class="card-name">Affiliate Toolkit</div>
-      <div class="card-desc">C2C affiliate income calc + recruiting</div>
-    </a>
-    <a class="card" href="ops/kashu_cro_dashboard.html" target="_blank">
-      <div class="card-name">CRO Dashboard</div>
-      <div class="card-desc">Daily operations dashboard</div>
-    </a>
-  </div>
-</div>
-
-<!-- QUICK ACTIONS -->
-<div class="quick-section">
-  <h3>Quick Actions</h3>
-  <div class="quick-row">
-    <a class="quick-btn" href="kashu_revenue_switch.html" target="_blank">New Merchant Call</a>
-    <a class="quick-btn" href="sales/kashu_statement_analyzer.html" target="_blank">Analyze Statement</a>
-    <a class="quick-btn" href="partners/kashu_mrp_grand_slam.html" target="_blank">Recruit MRP</a>
-    <a class="quick-btn" href="ops/kashu_deal_velocity.html" target="_blank">Check Pipeline</a>
-    <a class="quick-btn" href="strategy/kashu_pe_pitch.html" target="_blank">PE Meeting</a>
-  </div>
-</div>
-
-<!-- FOOTER -->
-<div class="footer">kashupay.com | Built for speed.</div>
-
 <script>
 // Clock
 function updateClock(){
   const now=new Date();
-  const h=now.getHours(),m=now.getMinutes(),s=now.getSeconds();
+  const h=now.getHours(),m=now.getMinutes();
   const ampm=h>=12?'PM':'AM';
   const h12=h%12||12;
+  const days=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const months=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
   document.getElementById('clock').textContent=
-    String(h12).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+' '+ampm;
+    days[now.getDay()]+' '+months[now.getMonth()]+' '+now.getDate()+' '+
+    String(h12).padStart(2,'0')+':'+String(m).padStart(2,'0')+' '+ampm;
 }
-updateClock();setInterval(updateClock,1000);
+updateClock();setInterval(updateClock,30000);
 
 // Tabs
-function switchTab(name){
+function switchTab(name,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.lane').forEach(l=>l.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+  el.classList.add('active');
   document.getElementById('lane-'+name).classList.add('active');
 }
 
-// Stats localStorage
+// Stats
 const statKeys=['merchants','pipeline','mrps','volume'];
 const statLabels={merchants:'Merchants Live',pipeline:'Pipeline Value',mrps:'MRPs Active',volume:'Monthly Volume'};
 
 function loadStats(){
   statKeys.forEach(k=>{
     const v=localStorage.getItem('kashu_stat_'+k);
-    if(v!==null)document.getElementById('stat-'+k).textContent=v;
+    if(v!==null)document.getElementById('stat-'+k).innerHTML=v;
   });
 }
 loadStats();
@@ -313,7 +505,10 @@ function editStat(key){
   document.getElementById('modal-label').textContent=statLabels[key];
   document.getElementById('modal-input').value=document.getElementById('stat-'+key).textContent;
   document.getElementById('modal').classList.add('show');
-  setTimeout(()=>document.getElementById('modal-input').focus(),50);
+  setTimeout(()=>{
+    const inp=document.getElementById('modal-input');
+    inp.focus();inp.select();
+  },50);
 }
 function closeModal(){
   document.getElementById('modal').classList.remove('show');
