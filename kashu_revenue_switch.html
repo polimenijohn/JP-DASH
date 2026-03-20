@@ -668,6 +668,173 @@ body {
   }
 }
 
+/* PROCESSOR KILL SHOTS */
+.killshots-section { display: none; max-width: 1000px; margin: 0 auto; padding: 60px 32px 100px; }
+.killshots-section.visible { display: block; }
+
+.ks-header { text-align: center; margin-bottom: 48px; }
+.ks-header h2 { font-size: 36px; font-weight: 800; margin-bottom: 8px; }
+.ks-header .ks-sub { font-size: 16px; color: var(--gray); }
+
+.processor-tabs {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 32px;
+}
+.proc-tab {
+  padding: 10px 20px; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--gray); cursor: pointer; font-family: inherit;
+  font-size: 14px; font-weight: 600; transition: all 0.2s;
+}
+.proc-tab:hover { border-color: var(--green); color: var(--white); }
+.proc-tab.active { background: var(--green); color: var(--bg); border-color: var(--green); }
+
+.proc-panel { display: none; animation: fadeUp 0.4s ease-out; }
+.proc-panel.active { display: block; }
+
+.proc-panel h3 { font-size: 24px; font-weight: 800; margin-bottom: 24px; text-align: center; }
+
+.weak-points { display: grid; gap: 12px; margin-bottom: 24px; }
+.weak-point {
+  background: var(--card); border: 1px solid var(--border); border-left: 3px solid #ff6b6b;
+  border-radius: 0 10px 10px 0; padding: 16px 20px; font-size: 15px; color: var(--light); line-height: 1.6;
+}
+
+.proc-talk-track {
+  background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--green);
+  border-radius: 0 12px 12px 0; padding: 24px; position: relative;
+}
+.proc-talk-track .say-label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--green); font-weight: 700; margin-bottom: 10px; }
+.proc-talk-track p { font-size: 15px; color: var(--light); line-height: 1.7; }
+
+/* BACK-POCKET BONUSES */
+.bonuses-section { display: none; max-width: 1000px; margin: 0 auto; padding: 60px 32px 100px; }
+.bonuses-section.visible { display: block; }
+
+.bp-header { text-align: center; margin-bottom: 48px; }
+.bp-header h2 { font-size: 36px; font-weight: 800; margin-bottom: 8px; }
+.bp-header .bp-sub { font-size: 16px; color: var(--gray); max-width: 600px; margin: 0 auto; }
+
+.bp-cards { display: grid; gap: 20px; }
+.bp-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 28px; transition: all 0.3s; position: relative;
+}
+.bp-card:hover { border-color: var(--green); transform: translateY(-2px); box-shadow: var(--shadow); }
+
+.bp-trigger {
+  display: inline-block; background: rgba(255,107,107,0.12); border: 1px solid rgba(255,107,107,0.3);
+  color: #ff6b6b; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 6px; margin-bottom: 12px;
+}
+.bp-bonus-name { font-size: 20px; font-weight: 700; margin-bottom: 6px; color: var(--green); }
+.bp-bonus-label {
+  display: inline-block; background: var(--green-dim); color: var(--green);
+  font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 4px; margin-bottom: 12px;
+}
+.bp-say {
+  background: var(--bg2); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0;
+  padding: 20px; position: relative; margin-top: 8px;
+}
+.bp-say .say-label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--green); font-weight: 700; margin-bottom: 10px; }
+.bp-say p { font-size: 15px; color: var(--light); line-height: 1.7; }
+
+/* SOCIAL PROOF */
+.proof-section { display: none; max-width: 1000px; margin: 0 auto; padding: 60px 32px 100px; }
+.proof-section.visible { display: block; }
+
+.proof-header { text-align: center; margin-bottom: 48px; }
+.proof-header h2 { font-size: 36px; font-weight: 800; margin-bottom: 8px; }
+.proof-header .proof-sub { font-size: 16px; color: var(--gray); }
+
+.proof-add-btn {
+  display: inline-block; background: var(--green); color: var(--bg); border: none;
+  padding: 12px 28px; border-radius: 8px; font-family: inherit; font-size: 14px;
+  font-weight: 700; cursor: pointer; margin-bottom: 32px; transition: all 0.2s;
+}
+.proof-add-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px var(--green-glow); }
+
+.proof-form-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  z-index: 200; justify-content: center; align-items: center;
+}
+.proof-form-overlay.open { display: flex; }
+
+.proof-form {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 16px;
+  padding: 32px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+}
+.proof-form h3 { font-size: 22px; font-weight: 700; margin-bottom: 20px; }
+
+.proof-field { margin-bottom: 16px; }
+.proof-field label {
+  display: block; font-size: 12px; color: var(--gray); text-transform: uppercase;
+  letter-spacing: 1px; font-weight: 600; margin-bottom: 6px;
+}
+.proof-field input, .proof-field select {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+  padding: 10px 14px; color: var(--white); font-family: inherit; font-size: 14px;
+}
+.proof-field input:focus, .proof-field select:focus { outline: none; border-color: var(--green); }
+.proof-field select option { background: var(--bg3); color: var(--white); }
+
+.proof-form-actions { display: flex; gap: 12px; margin-top: 24px; }
+.proof-save-btn {
+  flex: 1; background: var(--green); color: var(--bg); border: none; padding: 12px;
+  border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
+}
+.proof-cancel-btn {
+  flex: 1; background: var(--bg3); color: var(--gray); border: 1px solid var(--border);
+  padding: 12px; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+
+.proof-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.proof-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 24px; position: relative; transition: all 0.3s;
+}
+.proof-card:hover { border-color: var(--green); }
+
+.proof-vertical {
+  display: inline-block; background: var(--green-dim); color: var(--green);
+  font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 4px; margin-bottom: 12px;
+}
+.proof-prev-proc { font-size: 13px; color: var(--gray); margin-bottom: 16px; }
+.proof-prev-proc strong { color: #ff6b6b; }
+
+.proof-numbers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.proof-stat { text-align: center; }
+.proof-stat-label { font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.proof-stat-val { font-size: 18px; font-weight: 700; }
+.proof-stat-val.red { color: #ff6b6b; }
+.proof-stat-val.green { color: var(--green); }
+
+.proof-results { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.proof-result {
+  background: var(--green-dim); border: 1px solid rgba(0,200,83,0.2); border-radius: 8px;
+  padding: 12px; text-align: center;
+}
+.proof-result-label { font-size: 10px; color: var(--green); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.proof-result-val { font-size: 20px; font-weight: 800; color: var(--green); }
+
+.proof-quote {
+  margin-top: 16px; font-size: 14px; color: var(--light); font-style: italic;
+  border-top: 1px solid var(--border); padding-top: 12px;
+}
+.proof-date { font-size: 11px; color: var(--gray); margin-top: 8px; }
+
+.proof-delete {
+  position: absolute; top: 12px; right: 12px; background: none; border: none;
+  color: var(--gray); font-size: 16px; cursor: pointer; padding: 4px 8px;
+  border-radius: 4px; transition: all 0.2s;
+}
+.proof-delete:hover { color: #ff6b6b; background: rgba(255,107,107,0.1); }
+
+.proof-empty {
+  text-align: center; color: var(--gray); font-size: 16px; padding: 60px 20px;
+  grid-column: 1 / -1;
+}
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .hero h1 { font-size: 32px; }
@@ -682,6 +849,9 @@ body {
   .script-section { padding: 40px 16px 80px; }
   .top-bar { padding: 10px 16px; flex-wrap: wrap; gap: 10px; }
   .calc-note { display: none; }
+  .proof-cards { grid-template-columns: 1fr; }
+  .processor-tabs { gap: 6px; }
+  .proc-tab { padding: 8px 14px; font-size: 12px; }
 }
 
 @media (max-width: 480px) {
@@ -691,6 +861,8 @@ body {
   .bonus-card { padding: 20px; }
   .total-value { padding: 28px; }
   .guarantee { padding: 28px; }
+  .proof-numbers { grid-template-columns: 1fr; }
+  .proof-results { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -707,6 +879,9 @@ body {
   <div class="view-toggle">
     <button class="view-btn active" onclick="setView('screen-share')">Screen Share</button>
     <button class="view-btn" onclick="setView('full')">Full View</button>
+    <button class="view-btn" onclick="setView('killshots')">Know Your Enemy</button>
+    <button class="view-btn" onclick="setView('bonuses')">Bonus Arsenal</button>
+    <button class="view-btn" onclick="setView('proof')">Proof</button>
   </div>
 </div>
 
@@ -1108,6 +1283,267 @@ body {
 
 </div>
 
+<!-- SECTION A: PROCESSOR-SPECIFIC KILL SHOTS -->
+<div class="killshots-section" id="killshotsSection">
+  <div class="ks-header">
+    <h2>KNOW YOUR ENEMY</h2>
+    <p class="ks-sub">Pick their processor. Hit the weak points. Close the deal.</p>
+  </div>
+
+  <div class="processor-tabs" id="processorTabs">
+    <button class="proc-tab active" onclick="showProcessor('square', this)">Square</button>
+    <button class="proc-tab" onclick="showProcessor('stripe', this)">Stripe</button>
+    <button class="proc-tab" onclick="showProcessor('toast', this)">Toast</button>
+    <button class="proc-tab" onclick="showProcessor('clover', this)">Clover</button>
+    <button class="proc-tab" onclick="showProcessor('heartland', this)">Heartland</button>
+    <button class="proc-tab" onclick="showProcessor('worldpay', this)">Worldpay</button>
+    <button class="proc-tab" onclick="showProcessor('paypal', this)">PayPal</button>
+    <button class="proc-tab" onclick="showProcessor('elavon', this)">Elavon</button>
+  </div>
+
+  <!-- SQUARE -->
+  <div class="proc-panel active" id="panel-square">
+    <h3>Square</h3>
+    <div class="weak-points">
+      <div class="weak-point">Flat rate 2.6% + $0.10 means they're massively overpaying on debit and small tickets</div>
+      <div class="weak-point">No dedicated support -- try calling Square when something breaks</div>
+      <div class="weak-point">Account holds and freezes with zero warning -- Square is notorious for holding funds</div>
+    </div>
+    <div class="proc-talk-track">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="say-label">Talk Track</div>
+      <p>"Square is built for the farmer's market, not a real business doing your volume. You're paying the same rate whether someone swipes a debit card or an Amex Black. On your volume that's costing you <span class="m-square-overpay">[$X/month]</span> more than it should."</p>
+    </div>
+  </div>
+
+  <!-- STRIPE -->
+  <div class="proc-panel" id="panel-stripe">
+    <h3>Stripe</h3>
+    <div class="weak-points">
+      <div class="weak-point">2.9% + $0.30 online is one of the highest in the industry</div>
+      <div class="weak-point">Built for developers, not business owners -- you shouldn't need an engineer to manage payments</div>
+      <div class="weak-point">No in-person processing solution worth using</div>
+    </div>
+    <div class="proc-talk-track">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="say-label">Talk Track</div>
+      <p>"Stripe is incredible technology wrapped in the worst pricing in the industry. At your volume, you're paying a premium for features you don't use. And if you ever need to talk to a human? Good luck."</p>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="proc-panel" id="panel-toast">
+    <h3>Toast</h3>
+    <div class="weak-points">
+      <div class="weak-point">Locked into Toast hardware -- proprietary equipment you can't take with you</div>
+      <div class="weak-point">Processing rates are buried in the contract and typically 2.49% + $0.15 or higher</div>
+      <div class="weak-point">Monthly software fees on top of processing fees ($0-$165+/month per terminal)</div>
+    </div>
+    <div class="proc-talk-track">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="say-label">Talk Track</div>
+      <p>"Toast is a software company that happens to process payments. You're paying for their POS system AND overpaying on processing. Those are two separate decisions and they've bundled them so you can't see what you're actually paying per transaction."</p>
+    </div>
+  </div>
+
+  <!-- CLOVER -->
+  <div class="proc-panel" id="panel-clover">
+    <h3>Clover</h3>
+    <div class="weak-points">
+      <div class="weak-point">Owned by Fiserv (one of the biggest processors) -- you're paying middleman markup</div>
+      <div class="weak-point">Equipment is expensive ($600-$1,800 per terminal) and proprietary</div>
+      <div class="weak-point">Rates vary wildly because it's sold through resellers, most merchants don't know their real rate</div>
+    </div>
+    <div class="proc-talk-track">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="say-label">Talk Track</div>
+      <p>"Clover looks modern but it's Fiserv underneath -- one of the biggest processors in the world marking up your rate through a middleman. Let me show you what you're actually paying vs. what you could be paying."</p>
+    </div>
+  </div>
+
+  <!-- HEARTLAND -->
+  <div class="proc-panel" id="panel-heartland">
+    <h3>Heartland</h3>
+    <div class="weak-points">
+      <div class="weak-point">Acquired by Global Payments -- massive corporate processor, you're a number</div>
+      <div class="weak-point">Known for long-term contracts with early termination fees</div>
+      <div class="weak-point">Sales reps promise low rates then fees creep up after 6 months</div>
+    </div>
+    <div class="proc-talk-track">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="say-label">Talk Track</div>
+      <p>"Heartland was a great processor 10 years ago. Then Global Payments bought them and turned it into a contract machine. Let me guess -- your rate looked great when you signed but your last few statements tell a different story?"</p>
+    </div>
+  </div>
+
+  <!-- WORLDPAY -->
+  <div class="proc-panel" id="panel-worldpay">
+    <h3>Worldpay</h3>
+    <div class="weak-points">
+      <div class="weak-point">One of the largest processors in the world -- zero personalization</div>
+      <div class="weak-point">Complex pricing tiers (interchange-plus with hidden markups)</div>
+      <div class="weak-point">Notoriously difficult to cancel -- long contracts, ETFs up to $500</div>
+    </div>
+    <div class="proc-talk-track">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="say-label">Talk Track</div>
+      <p>"Worldpay processes for millions of merchants. You'll never talk to the same person twice. And if you try to leave, they'll hit you with a cancellation fee. We handle your cancellation for you -- that's included."</p>
+    </div>
+  </div>
+
+  <!-- PAYPAL -->
+  <div class="proc-panel" id="panel-paypal">
+    <h3>PayPal</h3>
+    <div class="weak-points">
+      <div class="weak-point">2.99% + $0.49 per transaction is highway robbery</div>
+      <div class="weak-point">Account limitations and holds are common -- they can freeze your money for 180 days</div>
+      <div class="weak-point">Not a real merchant processor -- it's a payment facilitator with consumer-grade support</div>
+    </div>
+    <div class="proc-talk-track">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="say-label">Talk Track</div>
+      <p>"PayPal is not a processor. It's a digital wallet that lets you accept payments as a side feature. At your volume, you're leaving <span class="m-paypal-overpay">[$X/month]</span> on the table and one algorithmic flag from having your funds frozen for 6 months."</p>
+    </div>
+  </div>
+
+  <!-- ELAVON -->
+  <div class="proc-panel" id="panel-elavon">
+    <h3>Elavon</h3>
+    <div class="weak-points">
+      <div class="weak-point">Owned by US Bank -- big bank processor with big bank problems</div>
+      <div class="weak-point">Hidden fees (PCI non-compliance fees, statement fees, batch fees)</div>
+      <div class="weak-point">Pricing is opaque -- most merchants can't read their own statement</div>
+    </div>
+    <div class="proc-talk-track">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="say-label">Talk Track</div>
+      <p>"Elavon buries fees in places you'd never think to look. PCI compliance fees, batch fees, statement fees -- it adds up to hundreds per month that aren't in your 'rate.' That's why I do the Statement Autopsy -- let me show you what's hiding in your statement."</p>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION B: BACK-POCKET BONUSES -->
+<div class="bonuses-section" id="bonusesSection">
+  <div class="bp-header">
+    <h2>BONUS ARSENAL</h2>
+    <p class="bp-sub">When they don't close on the first ask, match their objection with a bonus and ask again.</p>
+  </div>
+
+  <div class="bp-cards">
+    <!-- BONUS 1 -->
+    <div class="bp-card">
+      <div class="bp-trigger">"I'm worried customers will push back on surcharge"</div>
+      <div class="bp-bonus-label">Bonus: Customer Communication Kit</div>
+      <div class="bp-say">
+        <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+        <div class="say-label">Say This</div>
+        <p>"Tell you what -- I'll include our Customer Communication Kit. Signage for your counter, receipt language, and a word-for-word script for your front desk staff. We've tested this across hundreds of merchants. Customer complaints drop to near zero. Fair enough?"</p>
+      </div>
+    </div>
+
+    <!-- BONUS 2 -->
+    <div class="bp-card">
+      <div class="bp-trigger">"I need to talk to my partner/spouse/accountant"</div>
+      <div class="bp-bonus-label">Bonus: Financial Impact Report</div>
+      <div class="bp-say">
+        <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+        <div class="say-label">Say This</div>
+        <p>"Totally get it. Let me put together a Financial Impact Report you can hand them -- your current cost, what you'd pay with us, the surcharge revenue line, all on one page. That way when you sit down with them you have the full picture. I'll have it in your inbox in 20 minutes. Can we schedule a follow-up for tomorrow so I can answer any questions they have?"</p>
+      </div>
+    </div>
+
+    <!-- BONUS 3 -->
+    <div class="bp-card">
+      <div class="bp-trigger">"I just signed a new contract with my current processor"</div>
+      <div class="bp-bonus-label">Bonus: Contract Buyout Analysis</div>
+      <div class="bp-say">
+        <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+        <div class="say-label">Say This</div>
+        <p>"What's your early termination fee? Because here's the math -- if your ETF is [$X] and you're overpaying [$Y/month], you break even in [Z] months and then you're saving every month after that. Plus the surcharge revenue line covers the ETF in the first [N] weeks. I'll run the exact numbers for you right now."</p>
+      </div>
+    </div>
+
+    <!-- BONUS 4 -->
+    <div class="bp-card">
+      <div class="bp-trigger">"I've been burned by processors before"</div>
+      <div class="bp-bonus-label">Bonus: Rate Lock Certificate + 90-Day Audit</div>
+      <div class="bp-say">
+        <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+        <div class="say-label">Say This</div>
+        <p>"I hear that a lot, and honestly that's why I do this differently. Your rate goes in writing before you sign. And I'll personally audit your first 3 statements at 30, 60, and 90 days to make sure every line matches what we agreed to. If anything is off by even a penny, I fix it that day. That's not a policy -- that's my personal commitment."</p>
+      </div>
+    </div>
+
+    <!-- BONUS 5 -->
+    <div class="bp-card">
+      <div class="bp-trigger">"The timing isn't right / I'm too busy right now"</div>
+      <div class="bp-bonus-label">Bonus: White Glove Onboarding</div>
+      <div class="bp-say">
+        <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+        <div class="say-label">Say This</div>
+        <p>"That's exactly why we do what we call White Glove Onboarding. You literally do nothing except sign the application -- takes 10 minutes. We handle equipment, programming, shipping, staff training, even calling your current processor. You don't lift a finger. The whole point is that it takes zero time away from running your business."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION C: SOCIAL PROOF WALL -->
+<div class="proof-section" id="proofSection">
+  <div class="proof-header">
+    <h2>PROOF</h2>
+    <p class="proof-sub">Real merchants. Real numbers.</p>
+  </div>
+  <div style="text-align:center;">
+    <button class="proof-add-btn" onclick="openProofForm()">+ Add Proof</button>
+  </div>
+  <div class="proof-cards" id="proofCards"></div>
+</div>
+
+<!-- PROOF FORM OVERLAY -->
+<div class="proof-form-overlay" id="proofFormOverlay">
+  <div class="proof-form">
+    <h3>Add Social Proof</h3>
+    <div class="proof-field">
+      <label>Merchant Vertical</label>
+      <select id="proofVertical">
+        <option value="Restaurant">Restaurant</option>
+        <option value="Retail">Retail</option>
+        <option value="E-commerce">E-commerce</option>
+        <option value="Professional Services">Professional Services</option>
+        <option value="Health/Wellness">Health/Wellness</option>
+        <option value="Peptides">Peptides</option>
+        <option value="Auto">Auto</option>
+        <option value="Construction">Construction</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="proof-field">
+      <label>Previous Processor</label>
+      <input type="text" id="proofPrevProcessor" placeholder="e.g. Square, Stripe, Toast">
+    </div>
+    <div class="proof-field">
+      <label>Previous Effective Rate (%)</label>
+      <input type="text" id="proofPrevRate" placeholder="3.2">
+    </div>
+    <div class="proof-field">
+      <label>Kashu Effective Rate (%)</label>
+      <input type="text" id="proofKashuRate" placeholder="2.2">
+    </div>
+    <div class="proof-field">
+      <label>Monthly Processing Volume ($)</label>
+      <input type="text" id="proofVolume" placeholder="50000">
+    </div>
+    <div class="proof-field">
+      <label>One-Line Quote (optional)</label>
+      <input type="text" id="proofQuote" placeholder="&quot;Wish I'd switched sooner.&quot;">
+    </div>
+    <div class="proof-form-actions">
+      <button class="proof-save-btn" onclick="saveProof()">Save</button>
+      <button class="proof-cancel-btn" onclick="closeProofForm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // VIEW TOGGLE
 function setView(mode) {
@@ -1115,10 +1551,24 @@ function setView(mode) {
   event.target.classList.add('active');
 
   const scriptSection = document.getElementById('scriptSection');
+  const killshotsSection = document.getElementById('killshotsSection');
+  const bonusesSection = document.getElementById('bonusesSection');
+  const proofSection = document.getElementById('proofSection');
+
+  scriptSection.classList.add('hidden');
+  killshotsSection.classList.remove('visible');
+  bonusesSection.classList.remove('visible');
+  proofSection.classList.remove('visible');
+
   if (mode === 'full') {
     scriptSection.classList.remove('hidden');
-  } else {
-    scriptSection.classList.add('hidden');
+  } else if (mode === 'killshots') {
+    killshotsSection.classList.add('visible');
+  } else if (mode === 'bonuses') {
+    bonusesSection.classList.add('visible');
+  } else if (mode === 'proof') {
+    proofSection.classList.add('visible');
+    renderProofCards();
   }
 }
 
@@ -1217,7 +1667,144 @@ function updateAll() {
   } else {
     preview.style.display = 'none';
   }
+
+  // Update processor-specific overpay calcs
+  // Square: diff between 2.6% flat and Kashu 2.2%
+  const squareOverpay = volume * ((2.6 - 2.2) / 100);
+  document.querySelectorAll('.m-square-overpay').forEach(el => {
+    el.textContent = volume ? formatCurrency(squareOverpay) + '/month' : '[$X/month]';
+  });
+  // PayPal: diff between 2.99% and Kashu 2.2%
+  const paypalOverpay = volume * ((2.99 - 2.2) / 100);
+  document.querySelectorAll('.m-paypal-overpay').forEach(el => {
+    el.textContent = volume ? formatCurrency(paypalOverpay) + '/month' : '[$X/month]';
+  });
 }
+
+// PROCESSOR KILL SHOTS
+function showProcessor(proc, btn) {
+  document.querySelectorAll('.proc-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.proc-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + proc).classList.add('active');
+}
+
+// SOCIAL PROOF - localStorage
+function getProofEntries() {
+  try { return JSON.parse(localStorage.getItem('kashu_proof') || '[]'); } catch(e) { return []; }
+}
+
+function saveProofEntries(entries) {
+  localStorage.setItem('kashu_proof', JSON.stringify(entries));
+}
+
+function openProofForm() {
+  document.getElementById('proofFormOverlay').classList.add('open');
+}
+
+function closeProofForm() {
+  document.getElementById('proofFormOverlay').classList.remove('open');
+  // Clear form
+  document.getElementById('proofPrevProcessor').value = '';
+  document.getElementById('proofPrevRate').value = '';
+  document.getElementById('proofKashuRate').value = '';
+  document.getElementById('proofVolume').value = '';
+  document.getElementById('proofQuote').value = '';
+}
+
+function saveProof() {
+  const vertical = document.getElementById('proofVertical').value;
+  const prevProcessor = document.getElementById('proofPrevProcessor').value.trim();
+  const prevRate = parseFloat(document.getElementById('proofPrevRate').value) || 0;
+  const kashuRate = parseFloat(document.getElementById('proofKashuRate').value) || 0;
+  const vol = parseCurrency(document.getElementById('proofVolume').value);
+  const quote = document.getElementById('proofQuote').value.trim();
+
+  if (!prevProcessor || !prevRate || !vol) {
+    alert('Please fill in at least the processor, previous rate, and volume.');
+    return;
+  }
+
+  const monthlySavings = vol * ((prevRate - kashuRate) / 100);
+  const surchRevenue = vol * (kashuRate / 100);
+
+  const entry = {
+    id: Date.now(),
+    vertical,
+    prevProcessor,
+    prevRate,
+    kashuRate,
+    volume: vol,
+    monthlySavings: Math.round(monthlySavings),
+    surchargeRevenue: Math.round(surchRevenue),
+    quote,
+    date: new Date().toISOString().split('T')[0]
+  };
+
+  const entries = getProofEntries();
+  entries.unshift(entry);
+  saveProofEntries(entries);
+  closeProofForm();
+  renderProofCards();
+}
+
+function deleteProof(id) {
+  let entries = getProofEntries();
+  entries = entries.filter(e => e.id !== id);
+  saveProofEntries(entries);
+  renderProofCards();
+}
+
+function renderProofCards() {
+  const container = document.getElementById('proofCards');
+  const entries = getProofEntries();
+
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="proof-empty">No proof entries yet. Add your first case study above.</div>';
+    return;
+  }
+
+  container.innerHTML = entries.map(e => `
+    <div class="proof-card">
+      <button class="proof-delete" onclick="deleteProof(${e.id})" title="Delete">x</button>
+      <div class="proof-vertical">${e.vertical}</div>
+      <div class="proof-prev-proc">Switched from <strong>${e.prevProcessor}</strong></div>
+      <div class="proof-numbers">
+        <div class="proof-stat">
+          <div class="proof-stat-label">Before</div>
+          <div class="proof-stat-val red">${e.prevRate}%</div>
+        </div>
+        <div class="proof-stat">
+          <div class="proof-stat-label">After</div>
+          <div class="proof-stat-val green">${e.kashuRate}%</div>
+        </div>
+        <div class="proof-stat">
+          <div class="proof-stat-label">Volume</div>
+          <div class="proof-stat-val">${formatCurrency(e.volume)}/mo</div>
+        </div>
+        <div class="proof-stat">
+          <div class="proof-stat-label">Rate Drop</div>
+          <div class="proof-stat-val green">${(e.prevRate - e.kashuRate).toFixed(1)}%</div>
+        </div>
+      </div>
+      <div class="proof-results">
+        <div class="proof-result">
+          <div class="proof-result-label">Monthly Savings</div>
+          <div class="proof-result-val">${formatCurrency(e.monthlySavings)}</div>
+        </div>
+        <div class="proof-result">
+          <div class="proof-result-label">Surcharge Revenue</div>
+          <div class="proof-result-val">${formatCurrency(e.surchargeRevenue)}</div>
+        </div>
+      </div>
+      ${e.quote ? `<div class="proof-quote">"${e.quote}"</div>` : ''}
+      <div class="proof-date">Added ${e.date}</div>
+    </div>
+  `).join('');
+}
+
+// Init proof on load
+renderProofCards();
 </script>
 
 </body>
