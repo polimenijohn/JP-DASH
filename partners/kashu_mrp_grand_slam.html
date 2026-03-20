@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu - MRP Grand Slam Offer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a0a;
+  --bg2: #141414;
+  --bg3: #1a1a1a;
+  --card: #1e1e1e;
+  --card-hover: #252525;
+  --border: #2a2a2a;
+  --green: #00C853;
+  --green-dim: rgba(0,200,83,0.15);
+  --green-glow: rgba(0,200,83,0.3);
+  --white: #ffffff;
+  --gray: #999999;
+  --light: #cccccc;
+  --gold: #FFD700;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.6);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.watermark {
+  position: fixed;
+  bottom: 16px;
+  right: 20px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.12);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* HEADER */
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-mark {
+  width: 36px;
+  height: 36px;
+  background: var(--green);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 18px;
+  color: var(--bg);
+}
+
+.logo-text {
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.view-toggle {
+  display: flex;
+  background: var(--bg3);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.view-btn {
+  padding: 8px 20px;
+  background: none;
+  border: none;
+  color: var(--gray);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.view-btn.active {
+  background: var(--green);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+.view-btn:hover:not(.active) {
+  color: var(--white);
+}
+
+/* INPUT BAR */
+.input-bar {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 12px;
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.input-group input {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 14px;
+  color: var(--white);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  width: 160px;
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--green);
+}
+
+.input-group input[type="text"] {
+  width: 180px;
+}
+
+/* MAIN CONTENT */
+.main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 32px 120px;
+}
+
+/* HERO */
+.hero {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.hero-label {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--green);
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding: 6px 16px;
+  background: var(--green-dim);
+  border-radius: 20px;
+}
+
+.hero h1 {
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+}
+
+.hero h1 span { color: var(--green); }
+
+.hero-sub {
+  font-size: 18px;
+  color: var(--light);
+  max-width: 640px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* DREAM OUTCOME */
+.dream-box {
+  background: linear-gradient(135deg, rgba(0,200,83,0.08), rgba(0,200,83,0.02));
+  border: 1px solid rgba(0,200,83,0.2);
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 48px;
+  text-align: center;
+}
+
+.dream-box h3 {
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 12px;
+}
+
+.dream-box p {
+  font-size: 17px;
+  color: var(--light);
+  line-height: 1.8;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* MATH CARD */
+.math-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 36px;
+  margin-bottom: 48px;
+  box-shadow: var(--shadow-lg);
+}
+
+.math-card h2 {
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.math-formula {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.math-formula .val { color: var(--green); font-weight: 700; }
+
+.math-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.math-cell {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+
+.math-cell .num {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--green);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.math-cell .lbl {
+  font-size: 12px;
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* SECTION */
+.section {
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* OFFER CARD */
+.offer-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+
+.offer-card:hover {
+  border-color: rgba(0,200,83,0.3);
+}
+
+.offer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.offer-name {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.offer-value {
+  font-size: 14px;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.offer-points {
+  list-style: none;
+  padding: 0;
+}
+
+.offer-points li {
+  padding: 6px 0;
+  color: var(--light);
+  font-size: 15px;
+  line-height: 1.6;
+  position: relative;
+  padding-left: 20px;
+}
+
+.offer-points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 13px;
+  width: 8px;
+  height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+}
+
+.offer-quote {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--bg3);
+  border-left: 3px solid var(--green);
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: var(--light);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* TOTAL CARD */
+.total-card {
+  background: linear-gradient(135deg, rgba(0,200,83,0.12), rgba(0,200,83,0.04));
+  border: 2px solid var(--green);
+  border-radius: 12px;
+  padding: 36px;
+  text-align: center;
+  margin-bottom: 40px;
+  box-shadow: 0 0 40px rgba(0,200,83,0.1);
+}
+
+.total-card .total-line {
+  font-size: 16px;
+  color: var(--gray);
+  margin-bottom: 4px;
+  text-decoration: line-through;
+}
+
+.total-card .total-big {
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+.total-card .total-sub {
+  font-size: 16px;
+  color: var(--light);
+}
+
+/* GUARANTEE / SCARCITY / URGENCY */
+.accent-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+}
+
+.accent-box h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.accent-box h3 .icon { margin-right: 8px; }
+
+.accent-box p {
+  color: var(--light);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.guarantee-box {
+  border-color: var(--green);
+  border-width: 2px;
+}
+
+/* COMPARE CARD */
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.compare-item {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.compare-item.highlight {
+  border-color: var(--green);
+  background: var(--green-dim);
+}
+
+.compare-item h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.compare-item p {
+  font-size: 13px;
+  color: var(--gray);
+  line-height: 1.5;
+}
+
+.compare-item.highlight p {
+  color: var(--light);
+}
+
+/* SCRIPT SECTIONS (Full View only) */
+.script-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.script-section .step-badge {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--green);
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.script-section h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.script-block {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 12px;
+  font-size: 15px;
+  color: var(--light);
+  line-height: 1.8;
+  position: relative;
+}
+
+.script-block p {
+  margin-bottom: 12px;
+}
+
+.script-block p:last-child {
+  margin-bottom: 0;
+}
+
+.script-note {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: var(--green-dim);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--green);
+  font-style: italic;
+}
+
+.objection-block {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+}
+
+.objection-block .obj-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.objection-block p {
+  font-size: 14px;
+  color: var(--light);
+  line-height: 1.7;
+}
+
+/* COPY BUTTON */
+.copy-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--gray);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 5;
+}
+
+.copy-btn:hover {
+  background: var(--green);
+  color: var(--bg);
+  border-color: var(--green);
+}
+
+.copy-btn.copied {
+  background: var(--green);
+  color: var(--bg);
+  border-color: var(--green);
+}
+
+/* HIDDEN */
+.full-only { display: none; }
+body.full-view .full-only { display: block; }
+
+/* RESPONSIVE */
+@media (max-width: 700px) {
+  .top-bar { padding: 12px 16px; flex-wrap: wrap; }
+  .input-bar { padding: 16px; gap: 12px; }
+  .input-group input { width: 120px; }
+  .main { padding: 24px 16px 80px; }
+  .hero h1 { font-size: 28px; }
+  .math-grid { grid-template-columns: 1fr; }
+  .compare-grid { grid-template-columns: 1fr; }
+  .math-formula { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="watermark">KASHU</div>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="logo-area">
+    <div class="logo-mark">K</div>
+    <div class="logo-text">KASHU</div>
+  </div>
+  <div class="view-toggle">
+    <button class="view-btn active" onclick="setView('screen')">Screen Share</button>
+    <button class="view-btn" onclick="setView('full')">Full View</button>
+  </div>
+</div>
+
+<!-- INPUT BAR -->
+<div class="input-bar">
+  <div class="input-group">
+    <label>Partner Name</label>
+    <input type="text" id="partnerName" value="" placeholder="Partner name">
+  </div>
+  <div class="input-group">
+    <label>Monthly Referrals</label>
+    <input type="number" id="monthlyReferrals" value="3" min="1">
+  </div>
+  <div class="input-group">
+    <label>Avg Merchant Volume</label>
+    <input type="text" id="avgVolume" value="$60,000">
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-label">The Grand Slam Offer</div>
+    <h1>THE KASHU <span>PARTNER PROGRAM</span></h1>
+    <p class="hero-sub">Refer merchants. Earn residuals. Build wealth while you sleep.</p>
+  </div>
+
+  <!-- DREAM OUTCOME -->
+  <div class="dream-box">
+    <h3>The Dream Outcome</h3>
+    <p>Build a passive income stream that pays you every month for merchants you refer once. No sales calls. No closing. No expertise required. You make the introduction -- we handle everything else.</p>
+  </div>
+
+  <!-- THE MATH -->
+  <div class="math-card">
+    <h2>The Math</h2>
+    <div class="math-formula">
+      <span class="val" id="mathReferrals">3</span> referrals/month &times;
+      <span class="val" id="mathVolume">$60,000</span> avg volume &times;
+      2.2% processing
+    </div>
+    <div class="math-grid">
+      <div class="math-cell">
+        <span class="num" id="t2Monthly">$990</span>
+        <span class="lbl">Monthly Residuals (T2 25%)</span>
+      </div>
+      <div class="math-cell">
+        <span class="num" id="t1Monthly">$1,980</span>
+        <span class="lbl">Monthly Residuals (T1 50%)</span>
+      </div>
+      <div class="math-cell">
+        <span class="num" id="annualT2">$11,880</span>
+        <span class="lbl">12-Month Projection (T2)</span>
+      </div>
+      <div class="math-cell">
+        <span class="num" id="overrideMonthly">$495</span>
+        <span class="lbl">+5 Downline MRPs Override/mo</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CORE OFFER -->
+  <div class="section">
+    <div class="section-title">Core Offer: Kashu MRP Partnership</div>
+    <div class="offer-card">
+      <div class="offer-header">
+        <span class="offer-name">Lifetime Residuals</span>
+      </div>
+      <ul class="offer-points">
+        <li>Lifetime residuals on every merchant you refer</li>
+        <li>Two tiers: 25% of net residuals (under $5M portfolio) to 50% ($5M+)</li>
+        <li>10% override on anyone you recruit as an MRP</li>
+        <li>Minimum payout: $500/month, paid ~45 days in arrears</li>
+        <li>You refer. John closes. BNP underwrites. Merchant processes. You get paid.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- BONUS 1 -->
+  <div class="section">
+    <div class="section-title">Bonus 1</div>
+    <div class="offer-card">
+      <div class="offer-header">
+        <span class="offer-name">The Done-For-You Close</span>
+        <span class="offer-value">$2,000 Value</span>
+      </div>
+      <ul class="offer-points">
+        <li>You never have to sell, pitch, or close anyone</li>
+        <li>John personally handles every merchant call at a 70% close rate</li>
+        <li>Your job is one warm introduction -- "Hey, you should talk to John about your processing"</li>
+      </ul>
+      <div class="offer-quote">"Most partner programs expect you to be a salesperson. We don't. You're the connector. John is the closer."</div>
+    </div>
+  </div>
+
+  <!-- BONUS 2 -->
+  <div class="section">
+    <div class="section-title">Bonus 2</div>
+    <div class="offer-card">
+      <div class="offer-header">
+        <span class="offer-name">The MRP Launch Kit</span>
+        <span class="offer-value">$500 Value</span>
+      </div>
+      <ul class="offer-points">
+        <li>Pre-built one-pager customized to your network's vertical</li>
+        <li>Word-for-word intro text you can copy/paste to merchants</li>
+        <li>3-touch follow-up sequence for merchants who don't respond immediately</li>
+        <li>ROI calculator link you can send prospects to see their own savings</li>
+      </ul>
+      <div class="offer-quote">"Everything you need to start referring in the first 24 hours. No learning curve."</div>
+    </div>
+  </div>
+
+  <!-- BONUS 3 -->
+  <div class="section">
+    <div class="section-title">Bonus 3</div>
+    <div class="offer-card">
+      <div class="offer-header">
+        <span class="offer-name">The Residual Dashboard</span>
+        <span class="offer-value">$300 Value</span>
+      </div>
+      <ul class="offer-points">
+        <li>Real-time visibility into your portfolio</li>
+        <li>See which merchants are processing, what volume they're doing, what you're earning</li>
+        <li>Month-over-month growth tracking</li>
+      </ul>
+      <div class="offer-quote">"You'll always know exactly what you're earning and why."</div>
+    </div>
+  </div>
+
+  <!-- BONUS 4 -->
+  <div class="section">
+    <div class="section-title">Bonus 4</div>
+    <div class="offer-card">
+      <div class="offer-header">
+        <span class="offer-name">The Downline Builder</span>
+        <span class="offer-value">$1,000 Value</span>
+      </div>
+      <ul class="offer-points">
+        <li>Recruit other MRPs under you and earn 10% override on their entire portfolio</li>
+        <li>We provide recruiting templates and scripts for your downline</li>
+        <li>Your own referral code for tracking</li>
+      </ul>
+      <div class="offer-quote">"This is how you go from side income to serious wealth. One merchant at a time, or recruit 5 partners and multiply everything."</div>
+    </div>
+  </div>
+
+  <!-- BONUS 5 -->
+  <div class="section">
+    <div class="section-title">Bonus 5</div>
+    <div class="offer-card">
+      <div class="offer-header">
+        <span class="offer-name">Priority Processing</span>
+        <span class="offer-value">$500 Value</span>
+      </div>
+      <ul class="offer-points">
+        <li>Your referred merchants get fast-tracked through underwriting</li>
+        <li>Dedicated onboarding coordinator for every referral</li>
+        <li>You get a direct line to John -- not a support queue</li>
+      </ul>
+      <div class="offer-quote">"Your merchants are our priority. When you send someone, they get the VIP treatment. That reflects on you."</div>
+    </div>
+  </div>
+
+  <!-- TOTAL -->
+  <div class="total-card">
+    <div class="total-line">Total Value: $4,300+</div>
+    <div class="total-big">$0 to Join</div>
+    <div class="total-sub">Free to join. You earn from day one.</div>
+  </div>
+
+  <!-- GUARANTEE -->
+  <div class="accent-box guarantee-box">
+    <h3><span class="icon" style="color:var(--green)">&#10003;</span> The First-Deal Guarantee</h3>
+    <p>Refer your first merchant. If they don't get approved within 14 days of submitting a complete application, I'll personally find and close a merchant in your network for you -- on the house. You'll still earn the residual. I'm that confident in our underwriting speed and approval rate.</p>
+  </div>
+
+  <!-- SCARCITY -->
+  <div class="accent-box">
+    <h3>Limited Partner Spots</h3>
+    <p>We're onboarding a limited number of new MRPs this quarter. We keep our partner network intentionally small -- too many partners in one vertical cannibalize each other's territory. Once we hit capacity in your space, the next window opens in 90 days.</p>
+  </div>
+
+  <!-- URGENCY -->
+  <div class="accent-box">
+    <h3>The Cost of Waiting</h3>
+    <p>Every month you're not referring is a month of residuals you don't get back. If you referred just <span class="urgency-referrals">3</span> merchants this month and they each process <span class="urgency-volume">$60,000</span>/month, that's <span class="urgency-residual" style="color:var(--green);font-weight:700">$990</span> per month hitting your account 45 days from now. And it keeps hitting every month after that. The only cost is not starting.</p>
+  </div>
+
+  <!-- COMPARE CARD -->
+  <div class="section">
+    <div class="section-title">Compare: Side Hustle vs MRP</div>
+    <div class="compare-grid">
+      <div class="compare-item">
+        <h4>Real Estate License</h4>
+        <p>$2-5K upfront. Months of study. Variable income. Feast or famine cycles.</p>
+      </div>
+      <div class="compare-item">
+        <h4>Insurance Sales</h4>
+        <p>Quota pressure. Cold calling. High burnout rate. Income resets each quarter.</p>
+      </div>
+      <div class="compare-item">
+        <h4>Consulting</h4>
+        <p>Trading time for money. No leverage. Feast or famine. You stop, income stops.</p>
+      </div>
+      <div class="compare-item highlight">
+        <h4 style="color:var(--green)">Kashu MRP</h4>
+        <p>$0 to start. No expertise needed. Passive recurring income. Compounds monthly. You refer once, get paid forever.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================= -->
+  <!-- SECTION 2: CLOSE SCRIPT (Full View Only)      -->
+  <!-- ============================================= -->
+  <div class="full-only">
+
+    <div style="margin-top:64px;margin-bottom:40px;text-align:center;">
+      <div class="hero-label">MRP Recruiting Close Script</div>
+      <h1 style="font-size:32px;font-weight:800;letter-spacing:-0.5px;margin-top:16px;">The 8-Step Close</h1>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="script-section" id="step1">
+      <button class="copy-btn" onclick="copySection('step1')">Copy</button>
+      <div class="step-badge">Step 1</div>
+      <h3>The Opener</h3>
+      <div class="script-block">
+        <p>"Hey <span class="pn">[Partner]</span>, appreciate you hopping on. Quick context -- I'm the CRO at Kashu, we're a payment processing platform. I'm reaching out because [reason -- their network, their industry, mutual connection]. I want to show you something that could put money in your pocket every month without you doing any real work. If it makes sense we'll talk next steps, if not no hard feelings. Cool?"</p>
+      </div>
+      <div class="script-note">Why it works: Pattern interrupt. Most MRP recruiting pitches sound like MLM. This is direct and low-pressure.</div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="script-section" id="step2">
+      <button class="copy-btn" onclick="copySection('step2')">Copy</button>
+      <div class="step-badge">Step 2</div>
+      <h3>The Problem (Teach)</h3>
+      <div class="script-block">
+        <p>"Here's what most people don't realize about payment processing. Every business in America processes credit cards. The average business does $60K/month. Their processor takes 2.5-3.5% of every transaction. That's $1,500 to $2,100 per month going to some faceless processor. Most of those businesses are overpaying and don't know it. And here's the thing -- nobody is telling them. Their processor sure isn't going to volunteer that information."</p>
+        <p>"You know [X number] of business owners personally. How many of them do you think have actually looked at their processing statement in the last year? Almost none. That's the gap."</p>
+      </div>
+      <div class="script-note">Why it works: Establishes the market opportunity without pitching. Creates awareness of a problem their network has.</div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="script-section" id="step3">
+      <button class="copy-btn" onclick="copySection('step3')">Copy</button>
+      <div class="step-badge">Step 3</div>
+      <h3>The Offer</h3>
+      <div class="script-block">
+        <p>"What we do at Kashu is simple. We help businesses lower their processing costs -- usually dramatically. We can do surcharge programs where the merchant pays literally zero in processing fees and actually adds a revenue line. The switch takes days, not weeks, and the merchant doesn't miss a single transaction."</p>
+        <p>"Now here's where you come in. You know business owners. You have relationships I'll never have. All I need from you is a warm introduction -- a text, an email, a 'hey you should talk to John.' That's it. I handle the call, I handle the close, I handle the onboarding. You just connect us."</p>
+        <p>"For every merchant you refer that goes live, you earn residual income. Every month. For as long as they process. It's not a one-time referral fee -- it's recurring income that compounds."</p>
+      </div>
+      <div class="script-note">Why it works: Simple value prop. Emphasizes that the MRP doesn't need to sell or know anything about processing. The "warm introduction" bar is intentionally low.</div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="script-section" id="step4">
+      <button class="copy-btn" onclick="copySection('step4')">Copy</button>
+      <div class="step-badge">Step 4</div>
+      <h3>The Math</h3>
+      <div class="script-block">
+        <p>"Let me show you what this actually looks like."</p>
+        <p>[Pull up the calculator with their inputs]</p>
+        <p>"Say you refer <span class="s4-refs">3</span> merchants this month. Average volume <span class="s4-vol">$60,000</span> each. At our T2 tier, that's <span class="s4-t2">$990</span> per month in residuals. Do that for 6 months and you've got <span class="s4-6mo">$5,940</span> per month coming in passively. Get to $5M in portfolio volume and you jump to T1 -- 50% of net residuals. That's <span class="s4-t1">$1,980</span> per month."</p>
+        <p>"And here's the part most people miss -- you can recruit other MRPs under you. For everyone you bring in, you earn a 10% override on their entire portfolio. So if you recruit 5 partners and they each refer a few merchants, you're earning on all of it without doing any additional work."</p>
+        <p>[Pause. Let the numbers sink in.]</p>
+      </div>
+      <div class="script-note">Why it works: Concrete math personalized to their situation. The downline override is the wealth-building hook.</div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="script-section" id="step5">
+      <button class="copy-btn" onclick="copySection('step5')">Copy</button>
+      <div class="step-badge">Step 5</div>
+      <h3>The Stack</h3>
+      <div class="script-block">
+        <p>"So here's everything you get when you join."</p>
+        <p>[Screen share the offer stack]</p>
+        <p>Walk through each bonus:</p>
+        <p>Done-For-You Close -- you never sell</p>
+        <p>MRP Launch Kit -- everything to start in 24 hours</p>
+        <p>Residual Dashboard -- see your earnings in real time</p>
+        <p>Downline Builder -- recruit partners, earn overrides</p>
+        <p>Priority Processing -- your referrals get VIP treatment</p>
+        <p>"All of this is free to join. No fees, no buy-in, no minimums to start. You earn from your first referral."</p>
+      </div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="script-section" id="step6">
+      <button class="copy-btn" onclick="copySection('step6')">Copy</button>
+      <div class="step-badge">Step 6</div>
+      <h3>The Guarantee</h3>
+      <div class="script-block">
+        <p>"And here's my personal guarantee. Refer your first merchant. If they don't get approved within 14 days of a complete application, I'll personally find and close a merchant in your network for you -- you still earn the residual. I'm that confident in our process."</p>
+      </div>
+    </div>
+
+    <!-- STEP 7 -->
+    <div class="script-section" id="step7">
+      <button class="copy-btn" onclick="copySection('step7')">Copy</button>
+      <div class="step-badge">Step 7</div>
+      <h3>Scarcity + Urgency</h3>
+      <div class="script-block">
+        <p>"I'll be straight with you -- we keep our partner network small on purpose. Too many partners in one vertical and you're competing with each other. We're onboarding a limited number of partners in [their vertical/area] this quarter. Once those spots are filled, the next window is 90 days out."</p>
+        <p>"And the math is simple -- every month you're not referring is a month of residuals that don't exist. <span class="s7-refs">Three</span> referrals this month means <span class="s7-residual" style="color:var(--green);font-weight:600">$990</span> per month starting 45 days from now. That compounds every single month."</p>
+      </div>
+    </div>
+
+    <!-- STEP 8 -->
+    <div class="script-section" id="step8">
+      <button class="copy-btn" onclick="copySection('step8')">Copy</button>
+      <div class="step-badge">Step 8</div>
+      <h3>The Close</h3>
+      <div class="script-block">
+        <p>"So let me lay it out. You make warm introductions to business owners you already know. I handle every call and close at 70%. You earn residual income every month for as long as those merchants process. You can build a downline and earn overrides. It costs you nothing to join and you can start today."</p>
+        <p>[Pause]</p>
+        <p>"What questions do you have?"</p>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="script-block">
+          <p><strong>If ready:</strong> "Cool. I'll send you the partner agreement right now. Takes 5 minutes. And I'll have your Launch Kit -- one-pager, intro text, follow-up sequence -- in your inbox within an hour."</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBJECTION HANDLING -->
+    <div class="script-section" id="objections">
+      <button class="copy-btn" onclick="copySection('objections')">Copy</button>
+      <div class="step-badge">Objection Handling</div>
+      <h3>Common Pushbacks</h3>
+
+      <div class="objection-block">
+        <div class="obj-label">"Sounds like MLM"</div>
+        <p>"I get that. Here's the difference -- there's no buy-in, no inventory, no recruiting requirement. You're not selling anything. You're introducing business owners to a better processing deal and earning a cut of the revenue. It's a referral partnership, same model every major processor in the country uses. We just pay better."</p>
+      </div>
+
+      <div class="objection-block">
+        <div class="obj-label">"I don't know enough about processing"</div>
+        <p>"That's the whole point. You don't need to. Your job is the introduction. 'Hey, you should talk to John about what you're paying on processing.' That's the entire pitch. I take it from there. If the merchant has questions you can't answer, you loop me in. That's literally what I'm here for."</p>
+      </div>
+
+      <div class="objection-block">
+        <div class="obj-label">"Let me think about it"</div>
+        <p>"Totally fair. What specifically are you thinking about? Because if it's the time commitment -- it's one text or email per referral. If it's whether it's legit -- I'll send you our current partner roster and you can talk to anyone on it. If it's the money -- I just showed you the math. So what's the actual thing?"</p>
+      </div>
+    </div>
+
+    <!-- POST-CALL FOLLOW-UP -->
+    <div class="script-section" id="followup">
+      <button class="copy-btn" onclick="copySection('followup')">Copy</button>
+      <div class="step-badge">Post-Call</div>
+      <h3>Follow-Up Text</h3>
+      <div class="script-block">
+        <p>"Hey <span class="pn">[Partner]</span>, good talking today. Here's the quick version: refer merchants you already know, I handle the close, you earn monthly residuals. Zero cost to join. Your partner link is [link]. First step is sending me one merchant name and I'll show you how the whole thing works in real time. Let's get your first one in this week."</p>
+      </div>
+    </div>
+
+  </div><!-- end full-only -->
+
+</div><!-- end main -->
+
+<script>
+const nameInput = document.getElementById('partnerName');
+const refsInput = document.getElementById('monthlyReferrals');
+const volInput = document.getElementById('avgVolume');
+
+function parseNum(str) {
+  return parseFloat(String(str).replace(/[^0-9.]/g, '')) || 0;
+}
+
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+
+function numWord(n) {
+  const words = ['zero','one','two','three','four','five','six','seven','eight','nine','ten'];
+  return n <= 10 ? words[n] : String(n);
+}
+
+function recalc() {
+  const refs = parseInt(refsInput.value) || 3;
+  const vol = parseNum(volInput.value) || 60000;
+  const name = nameInput.value.trim() || '[Partner]';
+  const rate = 0.022;
+
+  // Net residuals per month per merchant (gross processing revenue * rate)
+  const grossPerMerchant = vol * rate;
+  const t2Residual = grossPerMerchant * refs * 0.25;
+  const t1Residual = grossPerMerchant * refs * 0.50;
+  const annualT2 = t2Residual * 12;
+  // Override: 5 downline MRPs each doing same refs at T2, upline gets 10%
+  const overridePerDownline = grossPerMerchant * refs * 0.25 * 0.10;
+  const overrideTotal = overridePerDownline * 5;
+
+  // 6 months cumulative portfolio residual (6 months of refs compounding)
+  const sixMoT2 = grossPerMerchant * (refs * 6) * 0.25;
+
+  // Update math card
+  document.getElementById('mathReferrals').textContent = refs;
+  document.getElementById('mathVolume').textContent = fmt(vol);
+  document.getElementById('t2Monthly').textContent = fmt(t2Residual);
+  document.getElementById('t1Monthly').textContent = fmt(t1Residual);
+  document.getElementById('annualT2').textContent = fmt(annualT2);
+  document.getElementById('overrideMonthly').textContent = fmt(overrideTotal);
+
+  // Urgency section
+  document.querySelectorAll('.urgency-referrals').forEach(el => el.textContent = refs);
+  document.querySelectorAll('.urgency-volume').forEach(el => el.textContent = fmt(vol));
+  document.querySelectorAll('.urgency-residual').forEach(el => el.textContent = fmt(t2Residual));
+
+  // Script Step 4
+  document.querySelectorAll('.s4-refs').forEach(el => el.textContent = refs);
+  document.querySelectorAll('.s4-vol').forEach(el => el.textContent = fmt(vol));
+  document.querySelectorAll('.s4-t2').forEach(el => el.textContent = fmt(t2Residual));
+  document.querySelectorAll('.s4-6mo').forEach(el => el.textContent = fmt(sixMoT2));
+  document.querySelectorAll('.s4-t1').forEach(el => el.textContent = fmt(t1Residual));
+
+  // Step 7
+  document.querySelectorAll('.s7-refs').forEach(el => el.textContent = numWord(refs).charAt(0).toUpperCase() + numWord(refs).slice(1));
+  document.querySelectorAll('.s7-residual').forEach(el => el.textContent = fmt(t2Residual));
+
+  // Partner name
+  document.querySelectorAll('.pn').forEach(el => el.textContent = name);
+}
+
+// Format volume input on blur
+volInput.addEventListener('blur', function() {
+  const v = parseNum(this.value);
+  if (v > 0) this.value = fmt(v);
+});
+
+volInput.addEventListener('focus', function() {
+  this.value = String(parseNum(this.value));
+});
+
+[nameInput, refsInput, volInput].forEach(el => el.addEventListener('input', recalc));
+
+// View toggle
+function setView(mode) {
+  const btns = document.querySelectorAll('.view-btn');
+  btns.forEach(b => b.classList.remove('active'));
+  if (mode === 'full') {
+    document.body.classList.add('full-view');
+    btns[1].classList.add('active');
+  } else {
+    document.body.classList.remove('full-view');
+    btns[0].classList.add('active');
+  }
+}
+
+// Copy
+function copySection(id) {
+  const section = document.getElementById(id);
+  const blocks = section.querySelectorAll('.script-block, .objection-block');
+  let text = '';
+  blocks.forEach(b => {
+    text += b.innerText.trim() + '\n\n';
+  });
+  if (!text) text = section.innerText;
+  navigator.clipboard.writeText(text.trim()).then(() => {
+    const btn = section.querySelector('.copy-btn');
+    btn.textContent = 'Copied';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// Init
+recalc();
+</script>
+</body>
+</html>
