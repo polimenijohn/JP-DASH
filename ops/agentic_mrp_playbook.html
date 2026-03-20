@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu Agentic MRP System — Playbook</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0f; color: #e0e0e0; line-height: 1.6; }
+
+.header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #0d1b2a 100%);
+    border-bottom: 2px solid #00d4aa;
+    padding: 40px 0;
+    text-align: center;
+}
+.header h1 { font-size: 2.2rem; color: #fff; letter-spacing: 1px; }
+.header .subtitle { color: #00d4aa; font-size: 1.1rem; margin-top: 8px; }
+.header .date { color: #888; font-size: 0.9rem; margin-top: 4px; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+
+.section {
+    background: #12121a;
+    border: 1px solid #1e1e30;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 24px;
+}
+.section h2 {
+    color: #00d4aa;
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1e1e30;
+}
+.section h3 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin: 16px 0 8px;
+}
+
+.highlight-box {
+    background: #0d1b2a;
+    border-left: 4px solid #00d4aa;
+    padding: 20px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+}
+.highlight-box.red {
+    border-left-color: #ff4757;
+}
+.highlight-box.yellow {
+    border-left-color: #ffa502;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+}
+.stat-card {
+    background: #0d1b2a;
+    border: 1px solid #1e1e30;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+.stat-card .number { font-size: 2rem; color: #00d4aa; font-weight: 700; }
+.stat-card .label { color: #888; font-size: 0.85rem; margin-top: 4px; }
+
+.timeline {
+    position: relative;
+    padding-left: 30px;
+    margin: 16px 0;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #1e1e30;
+}
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: #0d1b2a;
+    border-radius: 8px;
+}
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -26px;
+    top: 20px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #00d4aa;
+}
+.timeline-item .week { color: #00d4aa; font-weight: 600; font-size: 0.9rem; }
+.timeline-item .desc { color: #ccc; margin-top: 4px; }
+
+.vertical-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+}
+.vertical-card {
+    background: #0d1b2a;
+    border: 1px solid #1e1e30;
+    border-radius: 8px;
+    padding: 20px;
+}
+.vertical-card .name { color: #fff; font-weight: 600; font-size: 1.05rem; }
+.vertical-card .detail { color: #aaa; font-size: 0.9rem; margin-top: 4px; }
+.vertical-card .domain { color: #00d4aa; font-size: 0.85rem; margin-top: 8px; }
+
+.checklist { list-style: none; margin: 12px 0; }
+.checklist li {
+    padding: 10px 12px;
+    border-bottom: 1px solid #1a1a2a;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+.checklist li::before {
+    content: '';
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border: 2px solid #333;
+    border-radius: 4px;
+    margin-top: 2px;
+}
+.checklist li.done::before {
+    background: #00d4aa;
+    border-color: #00d4aa;
+}
+
+.flow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+    padding: 20px;
+    background: #0d1b2a;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+.flow-step {
+    background: #1a1a2e;
+    border: 1px solid #2a2a40;
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align: center;
+    min-width: 120px;
+}
+.flow-step .step-title { color: #00d4aa; font-size: 0.75rem; text-transform: uppercase; }
+.flow-step .step-desc { color: #fff; font-size: 0.9rem; margin-top: 4px; }
+.flow-arrow { color: #00d4aa; font-size: 1.5rem; }
+
+.domain-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+}
+.domain-table th {
+    background: #0d1b2a;
+    color: #00d4aa;
+    padding: 12px;
+    text-align: left;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+.domain-table td {
+    padding: 12px;
+    border-bottom: 1px solid #1a1a2a;
+    color: #ccc;
+}
+.domain-table tr:hover { background: #0d1b2a; }
+
+.tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.tag.green { background: rgba(0,212,170,0.15); color: #00d4aa; }
+.tag.yellow { background: rgba(255,165,2,0.15); color: #ffa502; }
+.tag.red { background: rgba(255,71,87,0.15); color: #ff4757; }
+
+p { margin: 8px 0; color: #ccc; }
+strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>KASHU AGENTIC MRP SYSTEM</h1>
+    <div class="subtitle">Autonomous Merchant Prospecting at Scale</div>
+    <div class="date">Playbook for Growth Team — March 2026</div>
+</div>
+
+<div class="container">
+
+<!-- WHAT IS THIS -->
+<div class="section">
+    <h2>What This Is</h2>
+    <p>We built 10 autonomous AI agents. Each one owns a merchant vertical. Each one prospects, outreaches, qualifies, and books calls on John's calendar without any human involvement. They run every day, never stop, never need motivation, and cost nothing in commissions.</p>
+    <p>Think of each agent as a tireless MRP that does the work every single day. No recruiting. No training. No residual split. Just merchants flowing into the pipeline.</p>
+
+    <div class="highlight-box">
+        <strong>The goal:</strong> 2,000 active merchants in 6 months. These agents are the compounding layer that runs underneath the MRP network and direct outreach. They don't replace those channels. They add autonomous volume on top.
+    </div>
+</div>
+
+<!-- THE MATH -->
+<div class="section">
+    <h2>The Math</h2>
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="number">10</div>
+            <div class="label">Vertical Agents</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">400</div>
+            <div class="label">Emails / Day</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">2-5</div>
+            <div class="label">Calls Booked / Day</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">1-3</div>
+            <div class="label">Closes / Day</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">20-60</div>
+            <div class="label">Merchants / Month</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">$0</div>
+            <div class="label">Commission Cost</div>
+        </div>
+    </div>
+    <p>Conservative assumptions: 1-2% reply rate on cold email, 30% of replies book a call, 35-70% close rate depending on lead temperature. At 400 emails/day across 10 verticals, the math produces 20-60 additional merchant activations per month. This compounds as the prospect database grows and sequences continue running on existing leads.</p>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section">
+    <h2>How It Works — The Flow</h2>
+    <div class="flow-diagram">
+        <div class="flow-step">
+            <div class="step-title">Step 1</div>
+            <div class="step-desc">Agent finds merchants via Google Maps API</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-title">Step 2</div>
+            <div class="step-desc">Scrapes email from business website</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-title">Step 3</div>
+            <div class="step-desc">Qualifies against underwriting matrix</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-title">Step 4</div>
+            <div class="step-desc">Sends personalized email (vertical-specific)</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-title">Step 5</div>
+            <div class="step-desc">5-touch sequence over 21 days</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-title">Step 6</div>
+            <div class="step-desc">Interested replies → GHL + Telegram alert</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-title">Step 7</div>
+            <div class="step-desc">Prospect books on John's calendar</div>
+        </div>
+    </div>
+
+    <h3>What each email looks like</h3>
+    <p>Every sequence is 5 touches over 21 days. Each one is written in John's voice — casual, confident, specific to the vertical, not something any other processor rep would send. No templates. No "Dear Business Owner." Every email references the specific vertical's pain point, estimated volume, and a real savings number.</p>
+
+    <h3>What happens when someone replies</h3>
+    <p>Hot lead replies trigger an instant Telegram notification to John. The prospect is created in GHL with full context (vertical, estimated volume, likely current processor, which touch they replied to). John takes the call from there.</p>
+</div>
+
+<!-- THE 10 VERTICALS -->
+<div class="section">
+    <h2>The 10 Vertical Agents</h2>
+    <div class="vertical-grid">
+        <div class="vertical-card">
+            <div class="name">Med Spas & Aesthetics</div>
+            <div class="detail">Avg volume: $100K/mo. High-ticket treatments, paying 3%+ on Square/Stripe. Surcharge model is perfect — $400+ tickets.</div>
+            <div class="domain">Sending Domain: kashupartners.com</div>
+        </div>
+        <div class="vertical-card">
+            <div class="name">Dental Practices</div>
+            <div class="detail">Avg volume: $80K/mo. Copays, cosmetic procedures, payment plans. Worldpay/Heartland are overcharging and never calling.</div>
+            <div class="domain">Sending Domain: kashupartners.com</div>
+        </div>
+        <div class="vertical-card">
+            <div class="name">Auto Repair & Body Shops</div>
+            <div class="detail">Avg volume: $60K/mo. Growing card volume on high-ticket repairs. Customers already see surcharges at gas stations.</div>
+            <div class="domain">Sending Domain: getkashu.com</div>
+        </div>
+        <div class="vertical-card">
+            <div class="name">Restaurants & Fast Casual</div>
+            <div class="detail">Avg volume: $70K/mo. Massive density. Tight margins. Surcharging is already normalized in food service.</div>
+            <div class="domain">Sending Domain: getkashu.com</div>
+        </div>
+        <div class="vertical-card">
+            <div class="name">Salons & Barbershops</div>
+            <div class="detail">Avg volume: $40K/mo. Almost all on Square. Easy displacement. High-frequency small transactions add up fast.</div>
+            <div class="domain">Sending Domain: kashumerchants.com</div>
+        </div>
+        <div class="vertical-card">
+            <div class="name">Fitness & Gyms</div>
+            <div class="detail">Avg volume: $50K/mo. Recurring memberships = recurring savings every month. Nobody cancels over $1.25/mo.</div>
+            <div class="domain">Sending Domain: kashumerchants.com</div>
+        </div>
+        <div class="vertical-card">
+            <div class="name">Home Services (HVAC/Plumbing)</div>
+            <div class="detail">Avg volume: $60K/mo. High tickets, growing card acceptance. Customers expect convenience fees.</div>
+            <div class="domain">Sending Domain: kashupayments.com</div>
+        </div>
+        <div class="vertical-card">
+            <div class="name">Veterinary Clinics</div>
+            <div class="detail">Avg volume: $80K/mo. Emotional buyers, high tickets. Nobody argues a surcharge when their dog needs care.</div>
+            <div class="domain">Sending Domain: kashupayments.com</div>
+        </div>
+        <div class="vertical-card">
+            <div class="name">E-Commerce & DTC</div>
+            <div class="detail">Avg volume: $100K/mo. Stripe at 2.9% → Kashu at 2.5%. Pure rate savings, no surcharge needed.</div>
+            <div class="domain">Sending Domain: kashubiz.com</div>
+        </div>
+        <div class="vertical-card">
+            <div class="name">Professional Services</div>
+            <div class="detail">Avg volume: $50K/mo. Law firms, CPAs. High-ticket invoices. Surcharging is standard in professional billing.</div>
+            <div class="domain">Sending Domain: kashubiz.com</div>
+        </div>
+    </div>
+</div>
+
+<!-- WHAT GROWTH NEEDS TO DO -->
+<div class="section">
+    <h2>What Growth Needs to Do</h2>
+
+    <div class="highlight-box red">
+        <strong>This is the blocker.</strong> The entire system is built and ready to go. The agents, the sequences, the database, the automation — all done. The only thing that needs to happen before we go live is the sending infrastructure. Without warmed domains, these agents have no way to reach merchants.
+    </div>
+
+    <h3>The Checklist</h3>
+    <ul class="checklist">
+        <li>Purchase 5 sending domains (suggestions below)</li>
+        <li>Set up Google Workspace or email hosting on each domain</li>
+        <li>Configure DNS records: SPF, DKIM, and DMARC on every domain</li>
+        <li>Create a sending email on each domain (e.g. jp@kashupartners.com)</li>
+        <li>Generate App Password for each (Google Account → Security → App Passwords)</li>
+        <li>Start warmup: send 5-10 real emails/day per domain for first week, ramp to 20-30 in week 2</li>
+        <li>After 2 weeks of warmup, hand John the credentials (email + app password for each)</li>
+        <li>John plugs credentials into config, flips "warmed: True" — agents go live</li>
+    </ul>
+
+    <h3>Suggested Domains</h3>
+    <table class="domain-table">
+        <thead>
+            <tr>
+                <th>Domain</th>
+                <th>Verticals</th>
+                <th>Daily Volume</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>kashupartners.com</td>
+                <td>Med Spas, Dental</td>
+                <td>~80 emails/day</td>
+                <td><span class="tag red">Not purchased</span></td>
+            </tr>
+            <tr>
+                <td>getkashu.com</td>
+                <td>Auto Repair, Restaurants</td>
+                <td>~80 emails/day</td>
+                <td><span class="tag red">Not purchased</span></td>
+            </tr>
+            <tr>
+                <td>kashumerchants.com</td>
+                <td>Salons, Fitness</td>
+                <td>~80 emails/day</td>
+                <td><span class="tag red">Not purchased</span></td>
+            </tr>
+            <tr>
+                <td>kashupayments.com</td>
+                <td>Home Services, Veterinary</td>
+                <td>~80 emails/day</td>
+                <td><span class="tag red">Not purchased</span></td>
+            </tr>
+            <tr>
+                <td>kashubiz.com</td>
+                <td>E-Commerce, Professional Services</td>
+                <td>~80 emails/day</td>
+                <td><span class="tag red">Not purchased</span></td>
+            </tr>
+        </tbody>
+    </table>
+    <p>Domain names are suggestions. Any variation works as long as it looks professional and isn't the primary kashupay.com domain. Never send outbound from the main domain.</p>
+
+    <h3>Why 5 Domains?</h3>
+    <p>Spreading volume across multiple domains protects sender reputation. If one domain gets flagged, the other 8 verticals keep running. Each domain handles ~80 emails/day (40 per vertical), well within safe limits for warmed domains. This is industry standard for outbound at scale.</p>
+</div>
+
+<!-- DNS SETUP GUIDE -->
+<div class="section">
+    <h2>DNS Setup — Exact Steps</h2>
+
+    <p>For each of the 5 domains, the following DNS records need to be configured at the domain registrar (GoDaddy, Namecheap, Cloudflare, etc.).</p>
+
+    <h3>SPF Record</h3>
+    <div class="highlight-box">
+        <strong>Type:</strong> TXT<br>
+        <strong>Host:</strong> @<br>
+        <strong>Value:</strong> v=spf1 include:_spf.google.com ~all<br>
+        <strong>TTL:</strong> 3600
+    </div>
+
+    <h3>DKIM Record</h3>
+    <p>Generated automatically when you set up Google Workspace. Go to Admin Console → Apps → Google Workspace → Gmail → Authenticate Email. Google gives you a TXT record to add to DNS.</p>
+
+    <h3>DMARC Record</h3>
+    <div class="highlight-box">
+        <strong>Type:</strong> TXT<br>
+        <strong>Host:</strong> _dmarc<br>
+        <strong>Value:</strong> v=DMARC1; p=none; rua=mailto:dmarc@kashupay.com<br>
+        <strong>TTL:</strong> 3600
+    </div>
+
+    <p>Start with p=none (monitoring only). After 2-4 weeks of clean sending, move to p=quarantine, then p=reject.</p>
+</div>
+
+<!-- WARMUP PROTOCOL -->
+<div class="section">
+    <h2>Domain Warmup Protocol</h2>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="week">Days 1-3</div>
+            <div class="desc">Send 5 real emails/day per domain to known contacts (team members, friends, existing partners). Get replies. This builds initial sender reputation.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="week">Days 4-7</div>
+            <div class="desc">Ramp to 10-15 emails/day. Mix of known contacts and low-risk outreach. Continue getting replies — reply rate is the #1 signal ISPs use.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="week">Week 2</div>
+            <div class="desc">Ramp to 20-30 emails/day. Start sending to prospect-like addresses. Monitor bounce rate (must stay under 2%) and spam complaints (must stay under 0.1%).</div>
+        </div>
+        <div class="timeline-item">
+            <div class="week">Week 3</div>
+            <div class="desc">Domains are warm. Hand credentials to John. Agents go live at 40 emails/day per domain. System self-manages from here.</div>
+        </div>
+    </div>
+
+    <div class="highlight-box yellow">
+        <strong>Critical rule:</strong> Never blast a cold domain. Sending 100 emails on day 1 from a new domain will get it blacklisted instantly. The warmup takes 2-3 weeks but it's the difference between emails landing in inboxes and emails going straight to spam.
+    </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="section">
+    <h2>Full Timeline to Live</h2>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="week">This Week — Growth</div>
+            <div class="desc">Purchase 5 domains. Set up Google Workspace on each. Configure SPF/DKIM/DMARC. Begin warmup.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="week">Week 2 — Growth</div>
+            <div class="desc">Continue warmup ramp. Monitor deliverability. No issues → continue. Bounces/complaints → slow down and investigate.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="week">Week 3 — Handoff</div>
+            <div class="desc">Domains warm. Growth hands John the 5 email/password combos. John plugs them into the system config. Agents go live.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="week">Week 4+ — Autonomous</div>
+            <div class="desc">System runs daily. 400 emails/day across 10 verticals. Prospects rotate through metro areas. Sequences advance automatically. Hot leads ping John via Telegram. Booked calls appear on calendar.</div>
+        </div>
+    </div>
+</div>
+
+<!-- WHAT JOHN HANDLES -->
+<div class="section">
+    <h2>What John Handles</h2>
+    <p>Once domains are warm and credentials are plugged in, John's only involvement is:</p>
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="number" style="font-size:1.2rem;">Take booked calls</div>
+            <div class="label">Prospects book via get.kashupay.com/jp</div>
+        </div>
+        <div class="stat-card">
+            <div class="number" style="font-size:1.2rem;">Check Telegram</div>
+            <div class="label">Hot lead alerts come through HERM bot</div>
+        </div>
+        <div class="stat-card">
+            <div class="number" style="font-size:1.2rem;">Daily report</div>
+            <div class="label">Auto-sent summary of sends, replies, bookings</div>
+        </div>
+    </div>
+    <p>Everything else is autonomous. Prospecting, sequencing, follow-ups, GHL contact creation — all handled by the agents.</p>
+</div>
+
+<!-- SAFETY -->
+<div class="section">
+    <h2>Safety & Compliance</h2>
+    <p>Built-in protections:</p>
+    <div class="highlight-box">
+        <strong>Rate limiting:</strong> 40 emails per vertical per day, 60-180 second delays between sends. Well within safe outbound limits.<br><br>
+        <strong>CAN-SPAM compliant:</strong> Real sender name, real business address, clear opt-out mechanism in every email.<br><br>
+        <strong>Sending hours:</strong> 8am-5pm local time only. No weekend sends.<br><br>
+        <strong>Bounce protection:</strong> If bounce rate exceeds 2% on any domain, that agent pauses automatically.<br><br>
+        <strong>Domain isolation:</strong> Each domain handles only 2 verticals. If one domain gets flagged, 80% of the system keeps running.<br><br>
+        <strong>Opt-out handling:</strong> Any unsubscribe request is immediately honored and the prospect is permanently excluded.
+    </div>
+</div>
+
+<!-- COST -->
+<div class="section">
+    <h2>Cost to Run</h2>
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="number">~$60</div>
+            <div class="label">5 domains / year</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">~$30</div>
+            <div class="label">Google Workspace / domain / month (or $6/mo Workspace Starter)</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">~$50</div>
+            <div class="label">Google Maps API / month (est.)</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">$0</div>
+            <div class="label">Commission / residual cost</div>
+        </div>
+    </div>
+    <p>Total estimated monthly cost: $100-200/month for a system that produces 20-60 merchant activations per month. Each merchant activation generates revenue on processing volume for the life of the account. ROI is functionally infinite.</p>
+</div>
+
+<!-- TL;DR -->
+<div class="section">
+    <h2>TL;DR for Cory</h2>
+    <div class="highlight-box">
+        <p><strong>The system is built.</strong> 10 autonomous agents, 10 verticals, 50 email sequences, full automation. The only thing blocking go-live is 5 warmed sending domains.</p>
+        <p style="margin-top: 12px;"><strong>What I need from you:</strong></p>
+        <p>1. Buy 5 domains (kashupartners.com, getkashu.com, kashumerchants.com, kashupayments.com, kashubiz.com — or equivalents)</p>
+        <p>2. Set up Google Workspace + DNS (SPF/DKIM/DMARC) on each</p>
+        <p>3. Warm them for 2 weeks (start at 5 emails/day, ramp to 30)</p>
+        <p>4. Hand me the 5 email + app password combos</p>
+        <p style="margin-top: 12px;"><strong>Timeline:</strong> If domains are purchased this week, agents go live in 3 weeks. From there, it's 400 emails/day on autopilot producing 2-5 booked calls/day.</p>
+        <p style="margin-top: 12px;"><strong>Cost:</strong> ~$150/month. <strong>Output:</strong> 20-60 merchants/month. <strong>Commission:</strong> $0.</p>
+    </div>
+</div>
+
+</div>
+
+<div style="text-align:center; padding: 30px; color: #555; font-size: 0.85rem;">
+    Kashu Agentic MRP System — Built March 2026
+</div>
+
+</body>
+</html>
