@@ -5,64 +5,88 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kashu Intelligence</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+:root {
+  --primary: #0b5147;
+  --primary-light: #397168;
+  --tertiary: #93adaa;
+  --neutral: #c0cccc;
+  --accent: #01de8f;
+  --accent-light: #8de6c6;
+  --accent-lighter: #bde9da;
+  --pale: #d5eae3;
+  --pale-light: #e0ebe7;
+  --lime: #e1fea1;
+  --white: #ffffff;
+  --bg: #f6f9f8;
+  --card-bg: #ffffff;
+  --border: #e0ebe7;
+  --text-dark: #0b5147;
+  --text-mid: #397168;
+  --text-light: #93adaa;
+  --red: #e53e3e;
+  --red-bg: #fff5f5;
+  --yellow: #d69e2e;
+  --yellow-bg: #fffff0;
+  --green: #0b5147;
+  --green-accent: #01de8f;
+}
 * { margin:0; padding:0; box-sizing:border-box; }
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-height:100vh; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text-dark); min-height:100vh; }
 
 /* TOP BAR */
-.topbar { display:flex; align-items:center; justify-content:space-between; padding:12px 24px; background:#0f1420; border-bottom:1px solid #1e293b; position:sticky; top:0; z-index:100; }
-.topbar-logo { display:flex; align-items:center; gap:10px; }
-.topbar-logo span { font-size:20px; font-weight:700; letter-spacing:1px; }
-.topbar-logo .k-mark { color:#6366f1; }
-.topbar-logo .k-text { color:#e2e8f0; }
-.topbar-logo .k-sub { font-size:11px; color:#64748b; font-weight:400; letter-spacing:2px; text-transform:uppercase; margin-left:8px; }
-.topbar-right { display:flex; align-items:center; gap:16px; }
-.topbar-time { font-size:12px; color:#64748b; font-variant-numeric:tabular-nums; }
-.topbar-status { display:flex; align-items:center; gap:6px; font-size:11px; color:#22c55e; }
-.topbar-status .dot { width:6px; height:6px; border-radius:50%; background:#22c55e; animation:pulse 2s infinite; }
-@keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:.4; } }
+.topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 28px; background:var(--primary); position:sticky; top:0; z-index:100; }
+.topbar-logo { display:flex; align-items:center; gap:12px; }
+.topbar-logo .k-mark { font-size:22px; font-weight:800; color:var(--accent); }
+.topbar-logo .k-text { font-size:20px; font-weight:700; color:var(--white); letter-spacing:1.5px; }
+.topbar-logo .k-sub { font-size:11px; color:var(--accent-light); font-weight:500; letter-spacing:2px; text-transform:uppercase; margin-left:8px; opacity:.85; }
+.topbar-right { display:flex; align-items:center; gap:18px; }
+.topbar-time { font-size:12px; color:var(--accent-lighter); font-variant-numeric:tabular-nums; }
+.topbar-status { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--accent); font-weight:600; }
+.topbar-status .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:.3; } }
 
 /* LAYER TABS */
-.layer-tabs { display:flex; background:#0f1420; border-bottom:1px solid #1e293b; padding:0 24px; }
-.layer-tab { padding:14px 24px; font-size:13px; font-weight:600; color:#64748b; cursor:pointer; border-bottom:2px solid transparent; transition:all .2s; letter-spacing:.5px; text-transform:uppercase; }
-.layer-tab:hover { color:#94a3b8; }
-.layer-tab.active { color:#6366f1; border-bottom-color:#6366f1; }
+.layer-tabs { display:flex; background:var(--white); border-bottom:2px solid var(--border); padding:0 28px; }
+.layer-tab { padding:14px 24px; font-size:13px; font-weight:600; color:var(--text-light); cursor:pointer; border-bottom:3px solid transparent; transition:all .2s; letter-spacing:.5px; text-transform:uppercase; margin-bottom:-2px; }
+.layer-tab:hover { color:var(--primary-light); }
+.layer-tab.active { color:var(--primary); border-bottom-color:var(--accent); }
 
 /* MAIN CONTENT */
-.layer-content { display:none; padding:20px 24px; }
+.layer-content { display:none; padding:24px 28px; }
 .layer-content.active { display:block; }
 
 /* GRID SYSTEM */
-.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
-.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px; }
-.grid-4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:16px; margin-bottom:16px; }
-.grid-2-1 { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:16px; }
-.grid-1-2 { display:grid; grid-template-columns:1fr 2fr; gap:16px; margin-bottom:16px; }
-.full-width { margin-bottom:16px; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; margin-bottom:18px; }
+.grid-4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:18px; margin-bottom:18px; }
+.grid-2-1 { display:grid; grid-template-columns:2fr 1fr; gap:18px; margin-bottom:18px; }
+.grid-1-2 { display:grid; grid-template-columns:1fr 2fr; gap:18px; margin-bottom:18px; }
+.full-width { margin-bottom:18px; }
 
 /* CARDS */
-.card { background:#111827; border:1px solid #1e293b; border-radius:10px; padding:20px; }
+.card { background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:22px; box-shadow:0 1px 3px rgba(11,81,71,.04); }
 .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
-.card-title { font-size:12px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:1px; }
-.card-badge { font-size:10px; padding:3px 8px; border-radius:4px; font-weight:600; }
-.badge-green { background:rgba(34,197,94,.15); color:#22c55e; }
-.badge-yellow { background:rgba(234,179,8,.15); color:#eab308; }
-.badge-red { background:rgba(239,68,68,.15); color:#ef4444; }
-.badge-blue { background:rgba(99,102,241,.15); color:#6366f1; }
-.badge-purple { background:rgba(168,85,247,.15); color:#a855f7; }
+.card-title { font-size:12px; font-weight:700; color:var(--text-light); text-transform:uppercase; letter-spacing:1px; }
+.card-badge { font-size:10px; padding:4px 10px; border-radius:20px; font-weight:600; }
+.badge-green { background:var(--pale); color:var(--primary); }
+.badge-yellow { background:var(--yellow-bg); color:var(--yellow); border:1px solid #fefcbf; }
+.badge-red { background:var(--red-bg); color:var(--red); border:1px solid #fed7d7; }
+.badge-blue { background:var(--pale-light); color:var(--primary); }
+.badge-purple { background:#f0fdf4; color:var(--primary-light); border:1px solid var(--accent-lighter); }
 
 /* METRIC CARDS */
-.metric { text-align:center; }
-.metric-value { font-size:28px; font-weight:700; color:#f8fafc; margin:8px 0 4px; font-variant-numeric:tabular-nums; }
-.metric-value.green { color:#22c55e; }
-.metric-value.red { color:#ef4444; }
-.metric-value.yellow { color:#eab308; }
-.metric-value.blue { color:#6366f1; }
-.metric-value.purple { color:#a855f7; }
-.metric-change { font-size:11px; color:#64748b; }
-.metric-change .up { color:#22c55e; }
-.metric-change .down { color:#ef4444; }
+.metric { text-align:center; padding:24px 20px; }
+.metric-value { font-size:30px; font-weight:800; color:var(--primary); margin:10px 0 6px; font-variant-numeric:tabular-nums; }
+.metric-value.green { color:var(--primary); }
+.metric-value.red { color:var(--red); }
+.metric-value.yellow { color:var(--yellow); }
+.metric-value.blue { color:var(--primary); }
+.metric-value.purple { color:var(--primary-light); }
+.metric-change { font-size:12px; color:var(--text-light); }
+.metric-change .up { color:var(--primary); font-weight:600; }
+.metric-change .down { color:var(--red); font-weight:600; }
 
 /* CHART CONTAINERS */
 .chart-wrap { position:relative; height:220px; margin-top:8px; }
@@ -70,76 +94,58 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
 
 /* TABLES */
 .data-table { width:100%; border-collapse:collapse; margin-top:8px; }
-.data-table th { text-align:left; font-size:10px; font-weight:600; color:#475569; text-transform:uppercase; letter-spacing:.5px; padding:8px 12px; border-bottom:1px solid #1e293b; }
-.data-table td { font-size:13px; padding:10px 12px; border-bottom:1px solid rgba(30,41,59,.5); color:#cbd5e1; }
-.data-table tr:hover td { background:rgba(99,102,241,.03); }
+.data-table th { text-align:left; font-size:10px; font-weight:700; color:var(--text-light); text-transform:uppercase; letter-spacing:.5px; padding:10px 14px; border-bottom:2px solid var(--border); }
+.data-table td { font-size:13px; padding:12px 14px; border-bottom:1px solid var(--pale-light); color:var(--text-dark); }
+.data-table tr:hover td { background:var(--pale-light); }
 
 /* HEALTH INDICATORS */
-.health-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; }
-.health-green { background:#22c55e; }
-.health-yellow { background:#eab308; }
-.health-red { background:#ef4444; }
+.health-dot { width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:8px; }
+.health-green { background:var(--accent); }
+.health-yellow { background:var(--yellow); }
+.health-red { background:var(--red); }
 
 /* ALERT ITEMS */
-.alert-item { display:flex; align-items:flex-start; gap:12px; padding:12px; border-radius:8px; margin-bottom:8px; }
-.alert-item.critical { background:rgba(239,68,68,.08); border-left:3px solid #ef4444; }
-.alert-item.warning { background:rgba(234,179,8,.08); border-left:3px solid #eab308; }
-.alert-item.info { background:rgba(99,102,241,.08); border-left:3px solid #6366f1; }
-.alert-item.success { background:rgba(34,197,94,.08); border-left:3px solid #22c55e; }
-.alert-icon { font-size:16px; flex-shrink:0; margin-top:2px; }
-.alert-text { font-size:12px; line-height:1.5; color:#cbd5e1; }
-.alert-text strong { color:#f1f5f9; }
-.alert-time { font-size:10px; color:#475569; margin-top:4px; }
+.alert-item { display:flex; align-items:flex-start; gap:12px; padding:14px; border-radius:10px; margin-bottom:10px; }
+.alert-item.critical { background:var(--red-bg); border-left:3px solid var(--red); }
+.alert-item.warning { background:var(--yellow-bg); border-left:3px solid var(--yellow); }
+.alert-item.info { background:var(--pale-light); border-left:3px solid var(--primary-light); }
+.alert-item.success { background:#f0fdf4; border-left:3px solid var(--accent); }
+.alert-icon { font-size:14px; flex-shrink:0; margin-top:2px; font-weight:800; color:var(--primary); }
+.alert-text { font-size:13px; line-height:1.6; color:var(--text-mid); }
+.alert-text strong { color:var(--text-dark); }
+.alert-time { font-size:11px; color:var(--text-light); margin-top:4px; }
 
 /* C2C BRIDGE CARD */
-.c2c-bridge { background:linear-gradient(135deg, rgba(99,102,241,.12), rgba(168,85,247,.12)); border:1px solid rgba(99,102,241,.3); border-radius:10px; padding:20px; }
-.c2c-bridge .bridge-amount { font-size:32px; font-weight:800; background:linear-gradient(135deg,#6366f1,#a855f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.c2c-cta { display:inline-block; margin-top:12px; padding:10px 20px; background:linear-gradient(135deg,#6366f1,#a855f7); color:#fff; border:none; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; letter-spacing:.5px; }
+.c2c-bridge { background:linear-gradient(135deg, var(--pale-light), var(--pale)); border:1px solid var(--accent-lighter); border-radius:12px; padding:24px; }
+.c2c-bridge .bridge-amount { font-size:36px; font-weight:800; color:var(--primary); }
+.c2c-cta { display:inline-block; margin-top:14px; padding:12px 24px; background:var(--primary); color:var(--white); border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; letter-spacing:.5px; font-family:'DM Sans',sans-serif; transition:background .2s; }
+.c2c-cta:hover { background:var(--primary-light); }
 
 /* SCORE BAR */
-.score-bar { height:6px; background:#1e293b; border-radius:3px; overflow:hidden; margin-top:6px; }
-.score-fill { height:100%; border-radius:3px; transition:width .6s ease; }
-.score-fill.green { background:linear-gradient(90deg,#22c55e,#16a34a); }
-.score-fill.yellow { background:linear-gradient(90deg,#eab308,#ca8a04); }
-.score-fill.red { background:linear-gradient(90deg,#ef4444,#dc2626); }
-.score-fill.blue { background:linear-gradient(90deg,#6366f1,#4f46e5); }
+.score-bar { height:8px; background:var(--pale-light); border-radius:4px; overflow:hidden; margin-top:6px; }
+.score-fill { height:100%; border-radius:4px; transition:width .6s ease; }
+.score-fill.green { background:linear-gradient(90deg,var(--accent),var(--primary)); }
+.score-fill.yellow { background:linear-gradient(90deg,#fbd38d,var(--yellow)); }
+.score-fill.red { background:linear-gradient(90deg,#fc8181,var(--red)); }
+.score-fill.blue { background:linear-gradient(90deg,var(--accent-light),var(--primary)); }
 
 /* PIPELINE STAGES */
-.pipeline-stage { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(30,41,59,.5); }
+.pipeline-stage { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--pale-light); }
 .pipeline-stage:last-child { border-bottom:none; }
-.pipeline-label { font-size:12px; color:#94a3b8; width:120px; flex-shrink:0; }
-.pipeline-bar-wrap { flex:1; height:24px; background:#1e293b; border-radius:4px; position:relative; overflow:hidden; }
-.pipeline-bar { height:100%; border-radius:4px; display:flex; align-items:center; padding-left:8px; font-size:10px; font-weight:600; color:#fff; transition:width .8s ease; }
-.pipeline-count { font-size:12px; color:#94a3b8; width:60px; text-align:right; flex-shrink:0; }
+.pipeline-label { font-size:13px; color:var(--text-mid); width:130px; flex-shrink:0; font-weight:500; }
+.pipeline-bar-wrap { flex:1; height:28px; background:var(--pale-light); border-radius:6px; position:relative; overflow:hidden; }
+.pipeline-bar { height:100%; border-radius:6px; display:flex; align-items:center; padding-left:10px; font-size:11px; font-weight:700; color:var(--white); transition:width .8s ease; }
+.pipeline-count { font-size:13px; color:var(--text-mid); width:70px; text-align:right; flex-shrink:0; font-weight:600; }
 
 /* SETTLEMENT CALENDAR */
-.settlement-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-top:8px; }
-.settlement-day { text-align:center; padding:8px 4px; border-radius:6px; font-size:10px; }
-.settlement-day .day-label { color:#475569; font-weight:600; margin-bottom:4px; }
-.settlement-day .day-amount { font-weight:700; font-size:12px; }
-.settlement-day.has-settlement { background:rgba(34,197,94,.08); }
-.settlement-day.has-settlement .day-amount { color:#22c55e; }
-.settlement-day.today { border:1px solid #6366f1; }
-.settlement-day.empty .day-amount { color:#1e293b; }
-
-/* SECTION HEADERS */
-.section-header { font-size:11px; font-weight:600; color:#475569; text-transform:uppercase; letter-spacing:1.5px; margin:24px 0 12px; padding-bottom:8px; border-bottom:1px solid #1e293b; }
-.section-header:first-child { margin-top:0; }
-
-/* LEADERBOARD */
-.leader-item { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(30,41,59,.4); }
-.leader-item:last-child { border-bottom:none; }
-.leader-rank { font-size:14px; font-weight:700; color:#475569; width:24px; text-align:center; }
-.leader-info { flex:1; }
-.leader-name { font-size:13px; font-weight:600; color:#e2e8f0; }
-.leader-detail { font-size:11px; color:#64748b; margin-top:2px; }
-.leader-value { font-size:14px; font-weight:700; color:#22c55e; font-variant-numeric:tabular-nums; }
-
-/* GAUGE */
-.gauge-wrap { text-align:center; padding:16px 0; }
-.gauge-circle { width:140px; height:140px; border-radius:50%; margin:0 auto; position:relative; display:flex; align-items:center; justify-content:center; }
-.gauge-inner { font-size:28px; font-weight:800; }
-.gauge-label { font-size:11px; color:#64748b; margin-top:8px; }
+.settlement-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-top:10px; }
+.settlement-day { text-align:center; padding:10px 4px; border-radius:8px; font-size:11px; }
+.settlement-day .day-label { color:var(--text-light); font-weight:700; margin-bottom:6px; }
+.settlement-day .day-amount { font-weight:700; font-size:13px; color:var(--text-dark); }
+.settlement-day.has-settlement { background:var(--pale-light); }
+.settlement-day.has-settlement .day-amount { color:var(--primary); }
+.settlement-day.today { border:2px solid var(--accent); background:rgba(1,222,143,.08); }
+.settlement-day.empty .day-amount { color:var(--neutral); }
 
 /* RESPONSIVE */
 @media(max-width:1200px) {
@@ -149,6 +155,8 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
 @media(max-width:768px) {
   .grid-2,.grid-3,.grid-4,.grid-2-1,.grid-1-2 { grid-template-columns:1fr; }
   .layer-tab { padding:10px 14px; font-size:11px; }
+  .topbar { padding:12px 16px; }
+  .layer-content { padding:16px; }
 }
 </style>
 </head>
@@ -162,7 +170,7 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
     <span class="k-sub">Intelligence</span>
   </div>
   <div class="topbar-right">
-    <div class="topbar-status"><span class="dot"></span> LIVE DATA</div>
+    <div class="topbar-status"><span class="dot"></span> LIVE</div>
     <div class="topbar-time" id="liveTime"></div>
   </div>
 </div>
@@ -177,7 +185,6 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
 <!-- ==================== LAYER 1: MERCHANT INTELLIGENCE ==================== -->
 <div class="layer-content active" id="layer-merchant">
 
-  <!-- KPI ROW -->
   <div class="grid-4">
     <div class="card metric">
       <div class="card-title">Monthly Volume</div>
@@ -201,7 +208,6 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
     </div>
   </div>
 
-  <!-- CASH FLOW FORECAST + ALERTS -->
   <div class="grid-2-1">
     <div class="card">
       <div class="card-header">
@@ -241,14 +247,13 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
       <div class="alert-item success">
         <div class="alert-icon">+</div>
         <div>
-          <div class="alert-text"><strong>Volume milestone.</strong> You've crossed $450K in monthly processing for the first time. You're now in the top 15% of merchants in your vertical.</div>
+          <div class="alert-text"><strong>Volume milestone.</strong> You've crossed $450K in monthly processing for the first time. Top 15% of merchants in your vertical.</div>
           <div class="alert-time">3 days ago</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SETTLEMENT CALENDAR + BENCHMARKS -->
   <div class="grid-2">
     <div class="card">
       <div class="card-header">
@@ -285,14 +290,14 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
           <div class="day-amount">$19,340</div>
         </div>
       </div>
-      <div style="margin-top:16px; padding-top:12px; border-top:1px solid #1e293b;">
-        <div style="display:flex; justify-content:space-between; font-size:12px;">
-          <span style="color:#64748b;">7-Day Total</span>
-          <span style="color:#22c55e; font-weight:700;">$106,480</span>
+      <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--border);">
+        <div style="display:flex; justify-content:space-between; font-size:13px;">
+          <span style="color:var(--text-light);">7-Day Total</span>
+          <span style="color:var(--primary); font-weight:700;">$106,480</span>
         </div>
-        <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:6px;">
-          <span style="color:#64748b;">30-Day Projection</span>
-          <span style="color:#e2e8f0; font-weight:700;">$487,230</span>
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-top:6px;">
+          <span style="color:var(--text-light);">30-Day Projection</span>
+          <span style="color:var(--text-dark); font-weight:700;">$487,230</span>
         </div>
       </div>
     </div>
@@ -302,45 +307,45 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
         <div class="card-badge badge-purple">Health & Wellness</div>
       </div>
       <div style="margin-top:8px;">
-        <div style="margin-bottom:16px;">
-          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
-            <span style="color:#94a3b8;">Effective Rate</span>
-            <span style="color:#22c55e; font-weight:600;">You: 1.87% | Avg: 2.41%</span>
+        <div style="margin-bottom:18px;">
+          <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+            <span style="color:var(--text-mid);">Effective Rate</span>
+            <span style="color:var(--primary); font-weight:600;">You: 1.87% | Avg: 2.41%</span>
           </div>
           <div class="score-bar"><div class="score-fill green" style="width:78%"></div></div>
-          <div style="font-size:10px; color:#475569; margin-top:4px;">Better than 78% of peers</div>
+          <div style="font-size:11px; color:var(--text-light); margin-top:4px;">Better than 78% of peers</div>
         </div>
-        <div style="margin-bottom:16px;">
-          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
-            <span style="color:#94a3b8;">Monthly Volume</span>
-            <span style="color:#6366f1; font-weight:600;">You: $487K | Avg: $312K</span>
+        <div style="margin-bottom:18px;">
+          <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+            <span style="color:var(--text-mid);">Monthly Volume</span>
+            <span style="color:var(--primary); font-weight:600;">You: $487K | Avg: $312K</span>
           </div>
           <div class="score-bar"><div class="score-fill blue" style="width:85%"></div></div>
-          <div style="font-size:10px; color:#475569; margin-top:4px;">Top 15% in vertical</div>
+          <div style="font-size:11px; color:var(--text-light); margin-top:4px;">Top 15% in vertical</div>
         </div>
-        <div style="margin-bottom:16px;">
-          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
-            <span style="color:#94a3b8;">Chargeback Rate</span>
-            <span style="color:#22c55e; font-weight:600;">You: 0.31% | Avg: 0.58%</span>
+        <div style="margin-bottom:18px;">
+          <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+            <span style="color:var(--text-mid);">Chargeback Rate</span>
+            <span style="color:var(--primary); font-weight:600;">You: 0.31% | Avg: 0.58%</span>
           </div>
           <div class="score-bar"><div class="score-fill green" style="width:72%"></div></div>
-          <div style="font-size:10px; color:#475569; margin-top:4px;">Better than 72% of peers</div>
+          <div style="font-size:11px; color:var(--text-light); margin-top:4px;">Better than 72% of peers</div>
         </div>
-        <div style="margin-bottom:16px;">
-          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
-            <span style="color:#94a3b8;">Avg Ticket Size</span>
-            <span style="color:#eab308; font-weight:600;">You: $127 | Avg: $156</span>
+        <div style="margin-bottom:18px;">
+          <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+            <span style="color:var(--text-mid);">Avg Ticket Size</span>
+            <span style="color:var(--yellow); font-weight:600;">You: $127 | Avg: $156</span>
           </div>
           <div class="score-bar"><div class="score-fill yellow" style="width:42%"></div></div>
-          <div style="font-size:10px; color:#475569; margin-top:4px;">Below average -- opportunity to optimize</div>
+          <div style="font-size:11px; color:var(--text-light); margin-top:4px;">Below average -- opportunity to optimize</div>
         </div>
         <div>
-          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
-            <span style="color:#94a3b8;">Refund Rate</span>
-            <span style="color:#22c55e; font-weight:600;">You: 1.2% | Avg: 2.8%</span>
+          <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+            <span style="color:var(--text-mid);">Refund Rate</span>
+            <span style="color:var(--primary); font-weight:600;">You: 1.2% | Avg: 2.8%</span>
           </div>
           <div class="score-bar"><div class="score-fill green" style="width:88%"></div></div>
-          <div style="font-size:10px; color:#475569; margin-top:4px;">Better than 88% of peers</div>
+          <div style="font-size:11px; color:var(--text-light); margin-top:4px;">Better than 88% of peers</div>
         </div>
       </div>
     </div>
@@ -350,28 +355,27 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
   <div class="full-width">
     <div class="c2c-bridge">
       <div class="card-header">
-        <div class="card-title" style="color:#a78bfa;">Credit to Cash Bridge -- AI Recommendation</div>
+        <div class="card-title" style="color:var(--primary);">Credit to Cash Bridge -- AI Recommendation</div>
         <div class="card-badge badge-purple">Auto-Detected Gap</div>
       </div>
       <div style="display:flex; align-items:center; gap:40px; flex-wrap:wrap;">
         <div>
-          <div style="font-size:12px; color:#a78bfa; margin-bottom:4px;">Projected Cash Gap -- Week of April 14</div>
+          <div style="font-size:13px; color:var(--primary-light); margin-bottom:6px; font-weight:500;">Projected Cash Gap -- Week of April 14</div>
           <div class="bridge-amount">$23,400</div>
         </div>
         <div style="flex:1; min-width:240px;">
-          <div style="font-size:13px; color:#cbd5e1; line-height:1.6;">Based on your processing history and seasonal patterns, your operating expenses will exceed incoming settlements by $23,400 during the week of April 14. Your 6-month processing volume qualifies you for instant Credit to Cash access. Same-day push to your bank account.</div>
+          <div style="font-size:14px; color:var(--text-mid); line-height:1.7;">Based on your processing history and seasonal patterns, your operating expenses will exceed incoming settlements by $23,400 during the week of April 14. Your 6-month processing volume qualifies you for instant Credit to Cash access. Same-day push to your bank account.</div>
           <button class="c2c-cta">ACTIVATE CREDIT TO CASH</button>
         </div>
         <div style="text-align:center;">
-          <div style="font-size:10px; color:#64748b; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Confidence</div>
-          <div style="font-size:32px; font-weight:800; color:#a855f7;">87%</div>
-          <div style="font-size:10px; color:#64748b;">Based on 14 months data</div>
+          <div style="font-size:10px; color:var(--text-light); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; font-weight:700;">Confidence</div>
+          <div style="font-size:36px; font-weight:800; color:var(--primary);">87%</div>
+          <div style="font-size:11px; color:var(--text-light);">Based on 14 months data</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- TRANSACTION MIX + CHARGEBACK RISK -->
   <div class="grid-2">
     <div class="card">
       <div class="card-header">
@@ -404,7 +408,6 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
 <!-- ==================== LAYER 2: MRP COMMAND CENTER ==================== -->
 <div class="layer-content" id="layer-mrp">
 
-  <!-- MRP KPIs -->
   <div class="grid-4">
     <div class="card metric">
       <div class="card-title">Active Merchants</div>
@@ -428,28 +431,27 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
     </div>
   </div>
 
-  <!-- MERCHANT HEALTH GRID + CHURN ALERTS -->
   <div class="grid-2-1">
     <div class="card">
       <div class="card-header">
         <div class="card-title">Merchant Health Monitor</div>
-        <div style="display:flex; gap:12px;">
-          <span style="font-size:10px; color:#22c55e;"><span class="health-dot health-green"></span>38 Healthy</span>
-          <span style="font-size:10px; color:#eab308;"><span class="health-dot health-yellow"></span>6 Watch</span>
-          <span style="font-size:10px; color:#ef4444;"><span class="health-dot health-red"></span>3 At Risk</span>
+        <div style="display:flex; gap:14px;">
+          <span style="font-size:11px; color:var(--primary); font-weight:600;"><span class="health-dot health-green"></span>38 Healthy</span>
+          <span style="font-size:11px; color:var(--yellow); font-weight:600;"><span class="health-dot health-yellow"></span>6 Watch</span>
+          <span style="font-size:11px; color:var(--red); font-weight:600;"><span class="health-dot health-red"></span>3 At Risk</span>
         </div>
       </div>
       <table class="data-table">
         <thead><tr><th>Merchant</th><th>Volume</th><th>Trend</th><th>Health</th><th>Action</th></tr></thead>
         <tbody>
-          <tr><td><span class="health-dot health-red"></span>Peak Fitness Studio</td><td>$34,200</td><td style="color:#ef4444;">-42% (6wk)</td><td><span class="card-badge badge-red">CRITICAL</span></td><td style="color:#6366f1; cursor:pointer; font-size:11px;">View Script</td></tr>
-          <tr><td><span class="health-dot health-red"></span>Coastal Wellness</td><td>$18,700</td><td style="color:#ef4444;">-31% (4wk)</td><td><span class="card-badge badge-red">AT RISK</span></td><td style="color:#6366f1; cursor:pointer; font-size:11px;">View Script</td></tr>
-          <tr><td><span class="health-dot health-red"></span>Metro Dental Group</td><td>$67,400</td><td style="color:#ef4444;">-28% (3wk)</td><td><span class="card-badge badge-red">AT RISK</span></td><td style="color:#6366f1; cursor:pointer; font-size:11px;">View Script</td></tr>
-          <tr><td><span class="health-dot health-yellow"></span>Sunny Side Cafe</td><td>$22,100</td><td style="color:#eab308;">-15% (2wk)</td><td><span class="card-badge badge-yellow">WATCH</span></td><td style="color:#6366f1; cursor:pointer; font-size:11px;">View Script</td></tr>
-          <tr><td><span class="health-dot health-yellow"></span>Urban Auto Repair</td><td>$41,800</td><td style="color:#eab308;">-12% (3wk)</td><td><span class="card-badge badge-yellow">WATCH</span></td><td style="color:#6366f1; cursor:pointer; font-size:11px;">View Script</td></tr>
-          <tr><td><span class="health-dot health-green"></span>AZ Peptide Labs</td><td>$236,000</td><td style="color:#22c55e;">+8%</td><td><span class="card-badge badge-green">STRONG</span></td><td></td></tr>
-          <tr><td><span class="health-dot health-green"></span>Desert Bloom Med Spa</td><td>$89,400</td><td style="color:#22c55e;">+15%</td><td><span class="card-badge badge-green">STRONG</span></td><td></td></tr>
-          <tr><td><span class="health-dot health-green"></span>Scottsdale Chiro</td><td>$54,200</td><td style="color:#22c55e;">+3%</td><td><span class="card-badge badge-green">HEALTHY</span></td><td></td></tr>
+          <tr><td><span class="health-dot health-red"></span>Peak Fitness Studio</td><td>$34,200</td><td style="color:var(--red); font-weight:600;">-42% (6wk)</td><td><span class="card-badge badge-red">CRITICAL</span></td><td style="color:var(--primary); cursor:pointer; font-size:12px; font-weight:600;">View Script</td></tr>
+          <tr><td><span class="health-dot health-red"></span>Coastal Wellness</td><td>$18,700</td><td style="color:var(--red); font-weight:600;">-31% (4wk)</td><td><span class="card-badge badge-red">AT RISK</span></td><td style="color:var(--primary); cursor:pointer; font-size:12px; font-weight:600;">View Script</td></tr>
+          <tr><td><span class="health-dot health-red"></span>Metro Dental Group</td><td>$67,400</td><td style="color:var(--red); font-weight:600;">-28% (3wk)</td><td><span class="card-badge badge-red">AT RISK</span></td><td style="color:var(--primary); cursor:pointer; font-size:12px; font-weight:600;">View Script</td></tr>
+          <tr><td><span class="health-dot health-yellow"></span>Sunny Side Cafe</td><td>$22,100</td><td style="color:var(--yellow); font-weight:600;">-15% (2wk)</td><td><span class="card-badge badge-yellow">WATCH</span></td><td style="color:var(--primary); cursor:pointer; font-size:12px; font-weight:600;">View Script</td></tr>
+          <tr><td><span class="health-dot health-yellow"></span>Urban Auto Repair</td><td>$41,800</td><td style="color:var(--yellow); font-weight:600;">-12% (3wk)</td><td><span class="card-badge badge-yellow">WATCH</span></td><td style="color:var(--primary); cursor:pointer; font-size:12px; font-weight:600;">View Script</td></tr>
+          <tr><td><span class="health-dot health-green"></span>AZ Peptide Labs</td><td>$236,000</td><td style="color:var(--primary); font-weight:600;">+8%</td><td><span class="card-badge badge-green">STRONG</span></td><td></td></tr>
+          <tr><td><span class="health-dot health-green"></span>Desert Bloom Med Spa</td><td>$89,400</td><td style="color:var(--primary); font-weight:600;">+15%</td><td><span class="card-badge badge-green">STRONG</span></td><td></td></tr>
+          <tr><td><span class="health-dot health-green"></span>Scottsdale Chiro</td><td>$54,200</td><td style="color:var(--primary); font-weight:600;">+3%</td><td><span class="card-badge badge-green">HEALTHY</span></td><td></td></tr>
         </tbody>
       </table>
     </div>
@@ -479,15 +481,14 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
           <div class="alert-time">Recommended: Check-in call, offer C2C bridge</div>
         </div>
       </div>
-      <div style="margin-top:16px; padding-top:12px; border-top:1px solid #1e293b;">
-        <div style="font-size:11px; color:#64748b;">At-risk monthly residual exposure</div>
-        <div style="font-size:24px; font-weight:700; color:#ef4444; margin-top:4px;">$1,840/mo</div>
-        <div style="font-size:11px; color:#64748b; margin-top:4px;">21.8% of total portfolio residuals</div>
+      <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--border);">
+        <div style="font-size:12px; color:var(--text-light); font-weight:500;">At-risk monthly residual exposure</div>
+        <div style="font-size:26px; font-weight:800; color:var(--red); margin-top:4px;">$1,840/mo</div>
+        <div style="font-size:12px; color:var(--text-light); margin-top:4px;">21.8% of total portfolio residuals</div>
       </div>
     </div>
   </div>
 
-  <!-- RESIDUAL FORECAST + VERTICAL PERFORMANCE -->
   <div class="grid-2">
     <div class="card">
       <div class="card-header">
@@ -509,7 +510,6 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
     </div>
   </div>
 
-  <!-- LEAD SCORING + PORTFOLIO VALUE -->
   <div class="grid-2">
     <div class="card">
       <div class="card-header">
@@ -518,11 +518,11 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
       <table class="data-table">
         <thead><tr><th>Lead</th><th>Vertical</th><th>Est. Volume</th><th>Close Prob</th><th>Priority</th></tr></thead>
         <tbody>
-          <tr><td>Phoenix Med Group</td><td>Medical</td><td>$340K/mo</td><td style="color:#22c55e; font-weight:600;">89%</td><td><span class="card-badge badge-green">HIGH</span></td></tr>
-          <tr><td>Tempe CrossFit</td><td>Fitness</td><td>$95K/mo</td><td style="color:#22c55e; font-weight:600;">74%</td><td><span class="card-badge badge-green">HIGH</span></td></tr>
-          <tr><td>Mesa Auto Body</td><td>Automotive</td><td>$128K/mo</td><td style="color:#eab308; font-weight:600;">52%</td><td><span class="card-badge badge-yellow">MEDIUM</span></td></tr>
-          <tr><td>Chandler Dental</td><td>Medical</td><td>$210K/mo</td><td style="color:#eab308; font-weight:600;">41%</td><td><span class="card-badge badge-yellow">MEDIUM</span></td></tr>
-          <tr><td>Gilbert Pet Care</td><td>Veterinary</td><td>$67K/mo</td><td style="color:#64748b; font-weight:600;">28%</td><td><span class="card-badge badge-red">LOW</span></td></tr>
+          <tr><td>Phoenix Med Group</td><td>Medical</td><td>$340K/mo</td><td style="color:var(--primary); font-weight:700;">89%</td><td><span class="card-badge badge-green">HIGH</span></td></tr>
+          <tr><td>Tempe CrossFit</td><td>Fitness</td><td>$95K/mo</td><td style="color:var(--primary); font-weight:700;">74%</td><td><span class="card-badge badge-green">HIGH</span></td></tr>
+          <tr><td>Mesa Auto Body</td><td>Automotive</td><td>$128K/mo</td><td style="color:var(--yellow); font-weight:700;">52%</td><td><span class="card-badge badge-yellow">MEDIUM</span></td></tr>
+          <tr><td>Chandler Dental</td><td>Medical</td><td>$210K/mo</td><td style="color:var(--yellow); font-weight:700;">41%</td><td><span class="card-badge badge-yellow">MEDIUM</span></td></tr>
+          <tr><td>Gilbert Pet Care</td><td>Veterinary</td><td>$67K/mo</td><td style="color:var(--text-light); font-weight:700;">28%</td><td><span class="card-badge badge-red">LOW</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -537,7 +537,6 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
     </div>
   </div>
 
-  <!-- DOWNLINE PERFORMANCE -->
   <div class="full-width">
     <div class="card">
       <div class="card-header">
@@ -549,8 +548,8 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
         <tbody>
           <tr><td>Sarah Chen</td><td><span class="card-badge badge-green">Producing</span></td><td>12</td><td>$840K/mo</td><td>$312/mo</td><td>3 days ago</td><td></td></tr>
           <tr><td>Marcus Rivera</td><td><span class="card-badge badge-green">Producing</span></td><td>8</td><td>$520K/mo</td><td>$198/mo</td><td>1 week ago</td><td></td></tr>
-          <tr><td>Jake Thompson</td><td><span class="card-badge badge-yellow">Slowing</span></td><td>4</td><td>$180K/mo</td><td>$67/mo</td><td>28 days ago</td><td style="color:#6366f1; cursor:pointer; font-size:11px;">Send Reactivation</td></tr>
-          <tr><td>Amy Nguyen</td><td><span class="card-badge badge-red">Dormant</span></td><td>2</td><td>$45K/mo</td><td>$18/mo</td><td>64 days ago</td><td style="color:#6366f1; cursor:pointer; font-size:11px;">Send Reactivation</td></tr>
+          <tr><td>Jake Thompson</td><td><span class="card-badge badge-yellow">Slowing</span></td><td>4</td><td>$180K/mo</td><td>$67/mo</td><td>28 days ago</td><td style="color:var(--primary); cursor:pointer; font-size:12px; font-weight:600;">Send Reactivation</td></tr>
+          <tr><td>Amy Nguyen</td><td><span class="card-badge badge-red">Dormant</span></td><td>2</td><td>$45K/mo</td><td>$18/mo</td><td>64 days ago</td><td style="color:var(--primary); cursor:pointer; font-size:12px; font-weight:600;">Send Reactivation</td></tr>
         </tbody>
       </table>
     </div>
@@ -560,7 +559,6 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
 <!-- ==================== LAYER 3: KASHU OPERATIONS ==================== -->
 <div class="layer-content" id="layer-ops">
 
-  <!-- OPS KPIs -->
   <div class="grid-4">
     <div class="card metric">
       <div class="card-title">Total Active Merchants</div>
@@ -584,7 +582,6 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
     </div>
   </div>
 
-  <!-- TARGET TRACKER + PIPELINE -->
   <div class="grid-2">
     <div class="card">
       <div class="card-header">
@@ -592,35 +589,35 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
         <div class="card-badge badge-blue">62.4% Complete</div>
       </div>
       <div style="margin:16px 0;">
-        <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px;">
-          <span style="color:#94a3b8;">1,247 Active</span>
-          <span style="color:#64748b;">2,000 Target</span>
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:8px;">
+          <span style="color:var(--text-mid); font-weight:500;">1,247 Active</span>
+          <span style="color:var(--text-light);">2,000 Target</span>
         </div>
-        <div style="height:20px; background:#1e293b; border-radius:10px; overflow:hidden;">
-          <div style="height:100%; width:62.4%; background:linear-gradient(90deg,#6366f1,#a855f7); border-radius:10px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:10px; font-weight:700; color:#fff;">62.4%</div>
+        <div style="height:24px; background:var(--pale-light); border-radius:12px; overflow:hidden;">
+          <div style="height:100%; width:62.4%; background:linear-gradient(90deg,var(--primary),var(--primary-light)); border-radius:12px; display:flex; align-items:center; justify-content:flex-end; padding-right:10px; font-size:11px; font-weight:700; color:var(--white);">62.4%</div>
         </div>
       </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:16px;">
-        <div style="text-align:center; padding:12px; background:rgba(99,102,241,.06); border-radius:8px;">
-          <div style="font-size:10px; color:#64748b; text-transform:uppercase;">Need</div>
-          <div style="font-size:20px; font-weight:700; color:#6366f1; margin-top:4px;">753</div>
-          <div style="font-size:10px; color:#64748b;">more merchants</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:18px;">
+        <div style="text-align:center; padding:14px; background:var(--pale-light); border-radius:10px;">
+          <div style="font-size:10px; color:var(--text-light); text-transform:uppercase; font-weight:700; letter-spacing:.5px;">Need</div>
+          <div style="font-size:22px; font-weight:800; color:var(--primary); margin-top:6px;">753</div>
+          <div style="font-size:11px; color:var(--text-light);">more merchants</div>
         </div>
-        <div style="text-align:center; padding:12px; background:rgba(34,197,94,.06); border-radius:8px;">
-          <div style="font-size:10px; color:#64748b; text-transform:uppercase;">Pace</div>
-          <div style="font-size:20px; font-weight:700; color:#22c55e; margin-top:4px;">89/mo</div>
-          <div style="font-size:10px; color:#64748b;">current rate</div>
+        <div style="text-align:center; padding:14px; background:var(--pale-light); border-radius:10px;">
+          <div style="font-size:10px; color:var(--text-light); text-transform:uppercase; font-weight:700; letter-spacing:.5px;">Pace</div>
+          <div style="font-size:22px; font-weight:800; color:var(--primary); margin-top:6px;">89/mo</div>
+          <div style="font-size:11px; color:var(--text-light);">current rate</div>
         </div>
-        <div style="text-align:center; padding:12px; background:rgba(234,179,8,.06); border-radius:8px;">
-          <div style="font-size:10px; color:#64748b; text-transform:uppercase;">ETA</div>
-          <div style="font-size:20px; font-weight:700; color:#eab308; margin-top:4px;">8.5 mo</div>
-          <div style="font-size:10px; color:#64748b;">at current pace</div>
+        <div style="text-align:center; padding:14px; background:var(--yellow-bg); border-radius:10px;">
+          <div style="font-size:10px; color:var(--text-light); text-transform:uppercase; font-weight:700; letter-spacing:.5px;">ETA</div>
+          <div style="font-size:22px; font-weight:800; color:var(--yellow); margin-top:6px;">8.5 mo</div>
+          <div style="font-size:11px; color:var(--text-light);">at current pace</div>
         </div>
       </div>
       <div class="alert-item warning" style="margin-top:16px;">
         <div class="alert-icon">!</div>
         <div>
-          <div class="alert-text"><strong>Pace alert.</strong> Current activation rate of 89/month needs to increase to 125/month to hit 2,000 by September. Gap: 36 additional activations per month. Recommended: increase MRP recruiting by 40% or add 2nd direct closer.</div>
+          <div class="alert-text"><strong>Pace alert.</strong> Current activation rate of 89/month needs to increase to 125/month to hit 2,000 by September. Gap: 36 additional activations per month.</div>
         </div>
       </div>
     </div>
@@ -632,48 +629,47 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
       <div style="margin-top:8px;">
         <div class="pipeline-stage">
           <div class="pipeline-label">New Lead</div>
-          <div class="pipeline-bar-wrap"><div class="pipeline-bar" style="width:100%; background:linear-gradient(90deg,#475569,#64748b);">312</div></div>
+          <div class="pipeline-bar-wrap"><div class="pipeline-bar" style="width:100%; background:var(--tertiary);">312</div></div>
           <div class="pipeline-count">$2.1M</div>
         </div>
         <div class="pipeline-stage">
           <div class="pipeline-label">Contacted</div>
-          <div class="pipeline-bar-wrap"><div class="pipeline-bar" style="width:62%; background:linear-gradient(90deg,#6366f1,#818cf8);">194</div></div>
+          <div class="pipeline-bar-wrap"><div class="pipeline-bar" style="width:62%; background:var(--primary-light);">194</div></div>
           <div class="pipeline-count">$1.4M</div>
         </div>
         <div class="pipeline-stage">
           <div class="pipeline-label">Proposal</div>
-          <div class="pipeline-bar-wrap"><div class="pipeline-bar" style="width:35%; background:linear-gradient(90deg,#a855f7,#c084fc);">108</div></div>
+          <div class="pipeline-bar-wrap"><div class="pipeline-bar" style="width:35%; background:var(--primary);">108</div></div>
           <div class="pipeline-count">$1.2M</div>
         </div>
         <div class="pipeline-stage">
           <div class="pipeline-label">Application</div>
-          <div class="pipeline-bar-wrap"><div class="pipeline-bar" style="width:22%; background:linear-gradient(90deg,#f59e0b,#fbbf24);">67</div></div>
+          <div class="pipeline-bar-wrap"><div class="pipeline-bar" style="width:22%; background:var(--yellow);">67</div></div>
           <div class="pipeline-count">$740K</div>
         </div>
         <div class="pipeline-stage">
           <div class="pipeline-label">In Underwriting</div>
-          <div class="pipeline-bar-wrap"><div class="pipeline-bar" style="width:10%; background:linear-gradient(90deg,#22c55e,#4ade80);">31</div></div>
+          <div class="pipeline-bar-wrap"><div class="pipeline-bar" style="width:10%; background:var(--accent);">31</div></div>
           <div class="pipeline-count">$380K</div>
         </div>
       </div>
-      <div style="margin-top:16px; padding-top:12px; border-top:1px solid #1e293b;">
-        <div style="display:flex; justify-content:space-between; font-size:12px;">
-          <span style="color:#64748b;">Avg Days to Close</span>
-          <span style="color:#e2e8f0; font-weight:600;">14.2 days</span>
+      <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--border);">
+        <div style="display:flex; justify-content:space-between; font-size:13px;">
+          <span style="color:var(--text-light);">Avg Days to Close</span>
+          <span style="color:var(--text-dark); font-weight:700;">14.2 days</span>
         </div>
-        <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:4px;">
-          <span style="color:#64748b;">Close Rate</span>
-          <span style="color:#22c55e; font-weight:600;">68.4%</span>
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-top:4px;">
+          <span style="color:var(--text-light);">Close Rate</span>
+          <span style="color:var(--primary); font-weight:700;">68.4%</span>
         </div>
-        <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:4px;">
-          <span style="color:#64748b;">Projected Activations (30d)</span>
-          <span style="color:#6366f1; font-weight:600;">67 merchants</span>
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-top:4px;">
+          <span style="color:var(--text-light);">Projected Activations (30d)</span>
+          <span style="color:var(--primary); font-weight:700;">67 merchants</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- AI UNDERWRITING + MRP COHORTS -->
   <div class="grid-2">
     <div class="card">
       <div class="card-header">
@@ -683,11 +679,11 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
       <table class="data-table">
         <thead><tr><th>Applicant</th><th>Vertical</th><th>Est. Volume</th><th>AI Score</th><th>Recommendation</th></tr></thead>
         <tbody>
-          <tr><td>Vitality Supplements</td><td>Health</td><td>$180K/mo</td><td style="color:#22c55e; font-weight:700;">94</td><td><span class="card-badge badge-green">AUTO-APPROVE</span></td></tr>
-          <tr><td>Desert Rose Salon</td><td>Beauty</td><td>$42K/mo</td><td style="color:#22c55e; font-weight:700;">91</td><td><span class="card-badge badge-green">AUTO-APPROVE</span></td></tr>
-          <tr><td>Southwest Peptides</td><td>Health</td><td>$310K/mo</td><td style="color:#22c55e; font-weight:700;">87</td><td><span class="card-badge badge-green">FAST-TRACK</span></td></tr>
-          <tr><td>Phoenix Vape Co</td><td>Tobacco</td><td>$89K/mo</td><td style="color:#eab308; font-weight:700;">54</td><td><span class="card-badge badge-yellow">MANUAL REVIEW</span></td></tr>
-          <tr><td>Lucky Dragon Gaming</td><td>Gaming</td><td>$220K/mo</td><td style="color:#ef4444; font-weight:700;">12</td><td><span class="card-badge badge-red">DECLINE -- PROHIBITED</span></td></tr>
+          <tr><td>Vitality Supplements</td><td>Health</td><td>$180K/mo</td><td style="color:var(--primary); font-weight:700;">94</td><td><span class="card-badge badge-green">AUTO-APPROVE</span></td></tr>
+          <tr><td>Desert Rose Salon</td><td>Beauty</td><td>$42K/mo</td><td style="color:var(--primary); font-weight:700;">91</td><td><span class="card-badge badge-green">AUTO-APPROVE</span></td></tr>
+          <tr><td>Southwest Peptides</td><td>Health</td><td>$310K/mo</td><td style="color:var(--primary); font-weight:700;">87</td><td><span class="card-badge badge-green">FAST-TRACK</span></td></tr>
+          <tr><td>Phoenix Vape Co</td><td>Tobacco</td><td>$89K/mo</td><td style="color:var(--yellow); font-weight:700;">54</td><td><span class="card-badge badge-yellow">MANUAL REVIEW</span></td></tr>
+          <tr><td>Lucky Dragon Gaming</td><td>Gaming</td><td>$220K/mo</td><td style="color:var(--red); font-weight:700;">12</td><td><span class="card-badge badge-red">DECLINE</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -699,23 +695,22 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
       <table class="data-table">
         <thead><tr><th>MRP Type</th><th>Count</th><th>Avg Merchants</th><th>Retention</th><th>Avg LTV</th></tr></thead>
         <tbody>
-          <tr><td>CPAs / Accountants</td><td>28</td><td>6.2</td><td style="color:#22c55e; font-weight:600;">94%</td><td style="font-weight:600;">$14,200</td></tr>
-          <tr><td>Business Brokers</td><td>42</td><td>4.8</td><td style="color:#22c55e; font-weight:600;">87%</td><td style="font-weight:600;">$11,400</td></tr>
-          <tr><td>Payment Veterans</td><td>31</td><td>8.1</td><td style="color:#eab308; font-weight:600;">78%</td><td style="font-weight:600;">$9,800</td></tr>
-          <tr><td>Real Estate Agents</td><td>19</td><td>3.4</td><td style="color:#eab308; font-weight:600;">72%</td><td style="font-weight:600;">$7,200</td></tr>
-          <tr><td>General Referrers</td><td>66</td><td>1.9</td><td style="color:#ef4444; font-weight:600;">61%</td><td style="font-weight:600;">$4,100</td></tr>
+          <tr><td>CPAs / Accountants</td><td>28</td><td>6.2</td><td style="color:var(--primary); font-weight:700;">94%</td><td style="font-weight:700;">$14,200</td></tr>
+          <tr><td>Business Brokers</td><td>42</td><td>4.8</td><td style="color:var(--primary); font-weight:700;">87%</td><td style="font-weight:700;">$11,400</td></tr>
+          <tr><td>Payment Veterans</td><td>31</td><td>8.1</td><td style="color:var(--yellow); font-weight:700;">78%</td><td style="font-weight:700;">$9,800</td></tr>
+          <tr><td>Real Estate Agents</td><td>19</td><td>3.4</td><td style="color:var(--yellow); font-weight:700;">72%</td><td style="font-weight:700;">$7,200</td></tr>
+          <tr><td>General Referrers</td><td>66</td><td>1.9</td><td style="color:var(--red); font-weight:700;">61%</td><td style="font-weight:700;">$4,100</td></tr>
         </tbody>
       </table>
       <div class="alert-item info" style="margin-top:12px;">
         <div class="alert-icon">i</div>
         <div>
-          <div class="alert-text"><strong>Insight:</strong> CPA-sourced MRPs deliver 3.5x the merchant LTV of general referrers with 94% retention. Recommend increasing CPA recruiting spend by 50% and reducing general referrer acquisition.</div>
+          <div class="alert-text"><strong>Insight:</strong> CPA-sourced MRPs deliver 3.5x the merchant LTV of general referrers with 94% retention. Recommend increasing CPA recruiting spend by 50%.</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- REVENUE FORECAST -->
   <div class="full-width">
     <div class="card">
       <div class="card-header">
@@ -728,7 +723,6 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
     </div>
   </div>
 
-  <!-- MERCHANT LTV + ATTRITION -->
   <div class="grid-2">
     <div class="card">
       <div class="card-header">
@@ -742,26 +736,26 @@ body { font-family:'Inter',sans-serif; background:#0a0e17; color:#e2e8f0; min-he
       <div class="card-header">
         <div class="card-title">Portfolio Risk Monitor</div>
       </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:8px;">
-        <div style="text-align:center; padding:16px; background:rgba(34,197,94,.06); border-radius:8px;">
-          <div style="font-size:10px; color:#64748b; text-transform:uppercase;">Retention Rate</div>
-          <div style="font-size:28px; font-weight:800; color:#22c55e; margin-top:8px;">91.2%</div>
-          <div style="font-size:10px; color:#64748b; margin-top:4px;">Industry avg: 85%</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:8px;">
+        <div style="text-align:center; padding:18px; background:var(--pale-light); border-radius:10px;">
+          <div style="font-size:10px; color:var(--text-light); text-transform:uppercase; font-weight:700;">Retention Rate</div>
+          <div style="font-size:30px; font-weight:800; color:var(--primary); margin-top:8px;">91.2%</div>
+          <div style="font-size:11px; color:var(--text-light); margin-top:4px;">Industry avg: 85%</div>
         </div>
-        <div style="text-align:center; padding:16px; background:rgba(234,179,8,.06); border-radius:8px;">
-          <div style="font-size:10px; color:#64748b; text-transform:uppercase;">Chargeback Exposure</div>
-          <div style="font-size:28px; font-weight:800; color:#eab308; margin-top:8px;">0.42%</div>
-          <div style="font-size:10px; color:#64748b; margin-top:4px;">Threshold: 1.0%</div>
+        <div style="text-align:center; padding:18px; background:var(--yellow-bg); border-radius:10px;">
+          <div style="font-size:10px; color:var(--text-light); text-transform:uppercase; font-weight:700;">Chargeback Exposure</div>
+          <div style="font-size:30px; font-weight:800; color:var(--yellow); margin-top:8px;">0.42%</div>
+          <div style="font-size:11px; color:var(--text-light); margin-top:4px;">Threshold: 1.0%</div>
         </div>
-        <div style="text-align:center; padding:16px; background:rgba(99,102,241,.06); border-radius:8px;">
-          <div style="font-size:10px; color:#64748b; text-transform:uppercase;">Top Vertical Conc.</div>
-          <div style="font-size:28px; font-weight:800; color:#6366f1; margin-top:8px;">34%</div>
-          <div style="font-size:10px; color:#64748b; margin-top:4px;">Health & Wellness</div>
+        <div style="text-align:center; padding:18px; background:var(--pale-light); border-radius:10px;">
+          <div style="font-size:10px; color:var(--text-light); text-transform:uppercase; font-weight:700;">Top Vertical Conc.</div>
+          <div style="font-size:30px; font-weight:800; color:var(--primary); margin-top:8px;">34%</div>
+          <div style="font-size:11px; color:var(--text-light); margin-top:4px;">Health & Wellness</div>
         </div>
-        <div style="text-align:center; padding:16px; background:rgba(168,85,247,.06); border-radius:8px;">
-          <div style="font-size:10px; color:#64748b; text-transform:uppercase;">C2C Cross-Sell</div>
-          <div style="font-size:28px; font-weight:800; color:#a855f7; margin-top:8px;">18%</div>
-          <div style="font-size:10px; color:#64748b; margin-top:4px;">of merchants eligible</div>
+        <div style="text-align:center; padding:18px; background:var(--pale-light); border-radius:10px;">
+          <div style="font-size:10px; color:var(--text-light); text-transform:uppercase; font-weight:700;">C2C Cross-Sell</div>
+          <div style="font-size:30px; font-weight:800; color:var(--primary); margin-top:8px;">18%</div>
+          <div style="font-size:11px; color:var(--text-light); margin-top:4px;">of merchants eligible</div>
         </div>
       </div>
     </div>
@@ -784,11 +778,11 @@ function switchLayer(layer) {
   event.target.classList.add('active');
 }
 
-// CHART DEFAULTS
-Chart.defaults.color = '#64748b';
-Chart.defaults.borderColor = 'rgba(30,41,59,.5)';
-Chart.defaults.font.family = 'Inter';
-Chart.defaults.font.size = 11;
+// CHART DEFAULTS -- Kashu brand
+Chart.defaults.color = '#397168';
+Chart.defaults.borderColor = '#e0ebe7';
+Chart.defaults.font.family = 'DM Sans';
+Chart.defaults.font.size = 12;
 
 // 1. CASH FLOW CHART
 new Chart(document.getElementById('cashFlowChart'), {
@@ -798,39 +792,32 @@ new Chart(document.getElementById('cashFlowChart'), {
     datasets: [{
       label: 'Actual',
       data: [312000,298000,341000,387000,421000,458000,487230,null,null,null,null,null],
-      borderColor: '#6366f1',
-      backgroundColor: 'rgba(99,102,241,.1)',
+      borderColor: '#0b5147',
+      backgroundColor: 'rgba(11,81,71,.08)',
       fill: true,
       tension: .4,
-      pointRadius: 3,
-      borderWidth: 2
+      pointRadius: 4,
+      pointBackgroundColor: '#0b5147',
+      borderWidth: 2.5
     },{
       label: 'AI Forecast',
       data: [null,null,null,null,null,null,487230,502000,478000,531000,567000,612000],
-      borderColor: '#a855f7',
-      borderDash: [5,5],
-      backgroundColor: 'rgba(168,85,247,.05)',
+      borderColor: '#01de8f',
+      borderDash: [6,4],
+      backgroundColor: 'rgba(1,222,143,.06)',
       fill: true,
       tension: .4,
-      pointRadius: 3,
-      borderWidth: 2
-    },{
-      label: 'Cash Gap Zone',
-      data: [null,null,null,null,null,null,null,null,null,null,null,null],
-      borderColor: 'transparent',
-      backgroundColor: 'rgba(239,68,68,.1)',
-      fill: true,
+      pointRadius: 4,
+      pointBackgroundColor: '#01de8f',
+      borderWidth: 2.5
     }]
   },
   options: {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: {
-      legend: { display: true, position: 'top', labels: { boxWidth: 12, padding: 16, font: { size: 10 } } },
-      annotation: {}
-    },
+    plugins: { legend: { position: 'top', labels: { boxWidth: 14, padding: 20, font: { size: 11, weight: 600 } } } },
     scales: {
-      y: { ticks: { callback: v => '$' + (v/1000) + 'K' }, grid: { color: 'rgba(30,41,59,.3)' } },
+      y: { ticks: { callback: v => '$' + (v/1000) + 'K' }, grid: { color: '#e0ebe7' } },
       x: { grid: { display: false } }
     }
   }
@@ -843,17 +830,16 @@ new Chart(document.getElementById('paymentMixChart'), {
     labels: ['In-Person Chip (2.2%)','In-Person Swipe (2.2%)','Keyed-In (2.5%)','Online (2.5%)','ACH (0.5%)'],
     datasets: [{
       data: [42, 19, 19, 15, 5],
-      backgroundColor: ['#22c55e','#4ade80','#eab308','#6366f1','#64748b'],
-      borderWidth: 0
+      backgroundColor: ['#0b5147','#397168','#d69e2e','#01de8f','#93adaa'],
+      borderWidth: 2,
+      borderColor: '#ffffff'
     }]
   },
   options: {
     responsive: true,
     maintainAspectRatio: false,
-    cutout: '65%',
-    plugins: {
-      legend: { position: 'right', labels: { boxWidth: 10, padding: 10, font: { size: 10 } } }
-    }
+    cutout: '62%',
+    plugins: { legend: { position: 'right', labels: { boxWidth: 12, padding: 12, font: { size: 11 } } } }
   }
 });
 
@@ -865,25 +851,25 @@ new Chart(document.getElementById('residualChart'), {
     datasets: [{
       label: 'Conservative',
       data: [8420, 9800, 12400, 15200, 18600],
-      backgroundColor: 'rgba(99,102,241,.3)',
-      borderColor: '#6366f1',
-      borderWidth: 1,
-      borderRadius: 4
+      backgroundColor: 'rgba(11,81,71,.2)',
+      borderColor: '#0b5147',
+      borderWidth: 1.5,
+      borderRadius: 6
     },{
       label: 'Optimistic',
       data: [8420, 11200, 16800, 23400, 31200],
-      backgroundColor: 'rgba(34,197,94,.3)',
-      borderColor: '#22c55e',
-      borderWidth: 1,
-      borderRadius: 4
+      backgroundColor: 'rgba(1,222,143,.25)',
+      borderColor: '#01de8f',
+      borderWidth: 1.5,
+      borderRadius: 6
     }]
   },
   options: {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 16, font: { size: 10 } } } },
+    plugins: { legend: { position: 'top', labels: { boxWidth: 14, padding: 20, font: { size: 11, weight: 600 } } } },
     scales: {
-      y: { ticks: { callback: v => '$' + v.toLocaleString() }, grid: { color: 'rgba(30,41,59,.3)' } },
+      y: { ticks: { callback: v => '$' + v.toLocaleString() }, grid: { color: '#e0ebe7' } },
       x: { grid: { display: false } }
     }
   }
@@ -897,35 +883,35 @@ new Chart(document.getElementById('verticalChart'), {
     datasets: [{
       label: 'Health & Wellness',
       data: [92, 88, 75, 85, 90],
-      backgroundColor: 'rgba(99,102,241,.15)',
-      borderColor: '#6366f1',
+      backgroundColor: 'rgba(11,81,71,.12)',
+      borderColor: '#0b5147',
       borderWidth: 2,
-      pointBackgroundColor: '#6366f1'
+      pointBackgroundColor: '#0b5147'
     },{
       label: 'Restaurants',
       data: [70, 72, 60, 65, 68],
-      backgroundColor: 'rgba(34,197,94,.15)',
-      borderColor: '#22c55e',
+      backgroundColor: 'rgba(1,222,143,.12)',
+      borderColor: '#01de8f',
       borderWidth: 2,
-      pointBackgroundColor: '#22c55e'
+      pointBackgroundColor: '#01de8f'
     },{
       label: 'Automotive',
       data: [55, 80, 85, 45, 75],
-      backgroundColor: 'rgba(234,179,8,.15)',
-      borderColor: '#eab308',
+      backgroundColor: 'rgba(214,158,46,.12)',
+      borderColor: '#d69e2e',
       borderWidth: 2,
-      pointBackgroundColor: '#eab308'
+      pointBackgroundColor: '#d69e2e'
     }]
   },
   options: {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { position: 'top', labels: { boxWidth: 10, padding: 12, font: { size: 10 } } } },
+    plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 14, font: { size: 11, weight: 600 } } } },
     scales: {
       r: {
-        angleLines: { color: 'rgba(30,41,59,.4)' },
-        grid: { color: 'rgba(30,41,59,.4)' },
-        pointLabels: { font: { size: 10 } },
+        angleLines: { color: '#d5eae3' },
+        grid: { color: '#d5eae3' },
+        pointLabels: { font: { size: 11, weight: 600 }, color: '#0b5147' },
         ticks: { display: false },
         min: 0, max: 100
       }
@@ -941,13 +927,15 @@ new Chart(document.getElementById('valuationChart'), {
     datasets: [{
       label: 'Portfolio Value',
       data: [142000, 158000, 174000, 198000, 221000, 238000, 252000],
-      borderColor: '#a855f7',
-      backgroundColor: 'rgba(168,85,247,.1)',
+      borderColor: '#0b5147',
+      backgroundColor: 'rgba(11,81,71,.06)',
       fill: true,
       tension: .4,
-      borderWidth: 2,
-      pointRadius: 4,
-      pointBackgroundColor: '#a855f7'
+      borderWidth: 2.5,
+      pointRadius: 5,
+      pointBackgroundColor: '#0b5147',
+      pointBorderColor: '#ffffff',
+      pointBorderWidth: 2
     }]
   },
   options: {
@@ -955,7 +943,7 @@ new Chart(document.getElementById('valuationChart'), {
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
     scales: {
-      y: { ticks: { callback: v => '$' + (v/1000) + 'K' }, grid: { color: 'rgba(30,41,59,.3)' } },
+      y: { ticks: { callback: v => '$' + (v/1000) + 'K' }, grid: { color: '#e0ebe7' } },
       x: { grid: { display: false } }
     }
   }
@@ -969,25 +957,25 @@ new Chart(document.getElementById('revenueChart'), {
     datasets: [{
       label: 'Processing Revenue',
       data: [820000,890000,980000,1120000,1240000,1340000,1420000,1580000,1720000,1890000,2100000,2340000],
-      borderColor: '#6366f1',
-      backgroundColor: 'rgba(99,102,241,.08)',
+      borderColor: '#0b5147',
+      backgroundColor: 'rgba(11,81,71,.06)',
       fill: true,
       tension: .4,
-      borderWidth: 2
+      borderWidth: 2.5
     },{
       label: 'C2C Revenue',
       data: [0,0,0,0,0,120000,180000,280000,380000,520000,680000,840000],
-      borderColor: '#a855f7',
-      backgroundColor: 'rgba(168,85,247,.08)',
+      borderColor: '#01de8f',
+      backgroundColor: 'rgba(1,222,143,.06)',
       fill: true,
       tension: .4,
-      borderWidth: 2
+      borderWidth: 2.5
     },{
       label: 'Combined',
       data: [820000,890000,980000,1120000,1240000,1460000,1600000,1860000,2100000,2410000,2780000,3180000],
-      borderColor: '#22c55e',
+      borderColor: '#397168',
       backgroundColor: 'transparent',
-      borderDash: [5,5],
+      borderDash: [6,4],
       tension: .4,
       borderWidth: 2,
       pointRadius: 0
@@ -996,9 +984,9 @@ new Chart(document.getElementById('revenueChart'), {
   options: {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 16, font: { size: 10 } } } },
+    plugins: { legend: { position: 'top', labels: { boxWidth: 14, padding: 20, font: { size: 11, weight: 600 } } } },
     scales: {
-      y: { ticks: { callback: v => '$' + (v/1000000).toFixed(1) + 'M' }, grid: { color: 'rgba(30,41,59,.3)' } },
+      y: { ticks: { callback: v => '$' + (v/1000000).toFixed(1) + 'M' }, grid: { color: '#e0ebe7' } },
       x: { grid: { display: false } }
     }
   }
@@ -1012,9 +1000,9 @@ new Chart(document.getElementById('ltvChart'), {
     datasets: [{
       label: 'Merchants',
       data: [89, 312, 421, 287, 98, 40],
-      backgroundColor: ['#ef4444','#eab308','#22c55e','#6366f1','#a855f7','#ec4899'],
+      backgroundColor: ['#e53e3e','#d69e2e','#01de8f','#0b5147','#397168','#93adaa'],
       borderWidth: 0,
-      borderRadius: 4
+      borderRadius: 6
     }]
   },
   options: {
@@ -1022,7 +1010,7 @@ new Chart(document.getElementById('ltvChart'), {
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
     scales: {
-      y: { ticks: { stepSize: 100 }, grid: { color: 'rgba(30,41,59,.3)' } },
+      y: { ticks: { stepSize: 100 }, grid: { color: '#e0ebe7' } },
       x: { grid: { display: false } }
     }
   }
