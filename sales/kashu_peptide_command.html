@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashu | Peptide Vertical Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --dark: #0b1a17;
+    --dark-teal: #0b5147;
+    --mid-teal: #397168;
+    --muted: #7a9994;
+    --green: #01de8f;
+    --green-glow: rgba(1,222,143,0.15);
+    --light-bg: #f4f9f8;
+    --white: #ffffff;
+    --text: #1a2e2b;
+    --border: #d0deda;
+    --card-bg: rgba(255,255,255,0.95);
+    --shadow: 0 2px 20px rgba(11,81,71,0.08);
+    --shadow-hover: 0 8px 32px rgba(11,81,71,0.14);
+    --red: #e74c3c;
+    --yellow: #f39c12;
+    --blue: #3498db;
+  }
+
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--light-bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(165deg, #061210 0%, #0b5147 40%, #0e6b5e 70%, #0b5147 100%);
+    padding: 40px 48px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -150px; right: -80px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(1,222,143,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .logo { font-size: 28px; font-weight: 800; color: var(--white); letter-spacing: -0.5px; }
+  .logo span { color: var(--green); }
+  .badge { background: var(--green); color: var(--dark-teal); font-size: 11px; font-weight: 700; padding: 6px 16px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; }
+  .header h1 { font-size: 26px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .header .subtitle { font-size: 15px; color: #8de6c6; font-weight: 500; }
+
+  /* TABS */
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    background: var(--dark-teal);
+    border-bottom: 2px solid rgba(1,222,143,0.2);
+    padding: 0 48px;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #8de6c6;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .tab:hover { color: var(--white); background: rgba(1,222,143,0.05); }
+  .tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    padding: 24px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .stat-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+  .stat-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .stat-value { font-size: 28px; font-weight: 800; color: var(--dark-teal); }
+  .stat-sub { font-size: 12px; color: var(--mid-teal); margin-top: 2px; }
+
+  /* CONTENT */
+  .content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 48px 48px;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* SECTION */
+  .section { margin-bottom: 32px; }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .section-title { font-size: 18px; font-weight: 700; color: var(--dark-teal); }
+
+  /* BUTTONS */
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--green); color: var(--dark-teal); }
+  .btn-primary:hover { background: #00c47e; box-shadow: 0 4px 16px rgba(1,222,143,0.3); }
+  .btn-secondary { background: var(--dark-teal); color: var(--white); }
+  .btn-secondary:hover { background: #0a4a40; }
+  .btn-sm { padding: 6px 14px; font-size: 12px; }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-danger:hover { background: #c0392b; }
+  .btn-group { display: flex; gap: 8px; }
+
+  /* TABLE */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+  .data-table thead th {
+    background: var(--dark-teal);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 14px 16px;
+    text-align: left;
+  }
+  .data-table tbody td {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .data-table tbody tr:hover { background: #edf5f3; }
+  .data-table tbody tr:last-child td { border-bottom: none; }
+
+  /* STATUS BADGES */
+  .status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .status-prospect { background: #e8f4fd; color: #2980b9; }
+  .status-contacted { background: #fef3e2; color: #e67e22; }
+  .status-engaged { background: #fdf2f8; color: #9b59b6; }
+  .status-live { background: #e8faf0; color: #27ae60; }
+  .status-stalled { background: #fde8e8; color: #e74c3c; }
+  .status-intel { background: #f0e8fa; color: #8e44ad; }
+  .status-pitching { background: #fef3e2; color: #e67e22; }
+  .status-onboarding { background: #e8f8f5; color: #1abc9c; }
+
+  /* FORMS */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 32px;
+    width: 560px;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.2);
+  }
+  .modal h2 { font-size: 20px; font-weight: 700; color: var(--dark-teal); margin-bottom: 20px; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--mid-teal); margin-bottom: 4px; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: var(--green);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+  /* SUPPLY CHAIN MAP */
+  .chain-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .chain-card h3 { font-size: 16px; font-weight: 700; color: var(--dark-teal); margin-bottom: 8px; }
+  .chain-card .chain-stats { display: flex; gap: 24px; margin-bottom: 12px; }
+  .chain-card .chain-stat { font-size: 13px; color: var(--mid-teal); }
+  .chain-card .chain-stat strong { color: var(--dark-teal); }
+  .chain-merchants { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chain-merchant-tag {
+    background: #e8faf0;
+    color: #27ae60;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .chain-merchant-tag.prospect { background: #e8f4fd; color: #2980b9; }
+
+  /* COPY SECTION */
+  .copy-block {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .copy-block h3 { font-size: 15px; font-weight: 700; color: var(--dark-teal); margin-bottom: 4px; }
+  .copy-block .copy-context { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .copy-block .copy-text {
+    background: #f8fbfa;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: var(--dark-teal);
+    color: var(--white);
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { background: var(--green); color: var(--dark-teal); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state h3 { font-size: 18px; font-weight: 600; color: var(--mid-teal); margin-bottom: 8px; }
+  .empty-state p { font-size: 14px; max-width: 400px; margin: 0 auto; }
+
+  /* SEARCH */
+  .search-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .search-bar input {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+  }
+  .search-bar input:focus { outline: none; border-color: var(--green); }
+
+  /* EXPORT */
+  .export-bar {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 900px) {
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .header, .tab-bar, .content { padding-left: 20px; padding-right: 20px; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="logo">Kashu<span>.</span></div>
+      <div class="badge">Peptide Vertical</div>
+    </div>
+    <h1>Peptide Command Center</h1>
+    <div class="subtitle">Own the supply chain. Own the vertical.</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <div class="tab active" data-tab="dashboard" onclick="switchTab('dashboard')">Dashboard</div>
+  <div class="tab" data-tab="merchants" onclick="switchTab('merchants')">Merchants</div>
+  <div class="tab" data-tab="wholesalers" onclick="switchTab('wholesalers')">Wholesalers / Vendors</div>
+  <div class="tab" data-tab="supply-chain" onclick="switchTab('supply-chain')">Supply Chain Map</div>
+  <div class="tab" data-tab="outreach" onclick="switchTab('outreach')">Outreach Copy</div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-card">
+    <div class="stat-label">Merchants</div>
+    <div class="stat-value" id="stat-merchants">0</div>
+    <div class="stat-sub" id="stat-merchants-live">0 live</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Wholesalers</div>
+    <div class="stat-value" id="stat-wholesalers">0</div>
+    <div class="stat-sub" id="stat-wholesalers-engaged">0 engaged</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Est. Monthly Volume</div>
+    <div class="stat-value" id="stat-volume">$0</div>
+    <div class="stat-sub">across all merchants</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Referral Chains</div>
+    <div class="stat-value" id="stat-chains">0</div>
+    <div class="stat-sub">wholesaler > merchant links</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Pipeline Value</div>
+    <div class="stat-value" id="stat-pipeline">$0</div>
+    <div class="stat-sub">est. annual revenue</div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- DASHBOARD TAB -->
+  <div class="tab-panel active" id="panel-dashboard">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Peptide Supply Chain Overview</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="chain-card">
+          <h3>Top Wholesalers by Merchant Count</h3>
+          <div id="dash-top-wholesalers"><p style="color:var(--muted);font-size:14px;padding:20px 0;">Add wholesalers and link merchants to see rankings.</p></div>
+        </div>
+        <div class="chain-card">
+          <h3>Recent Activity</h3>
+          <div id="dash-activity"><p style="color:var(--muted);font-size:14px;padding:20px 0;">Activity will appear as you add and update records.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Merchants Missing Supplier Intel</div>
+      </div>
+      <div id="dash-missing-intel"><p style="color:var(--muted);font-size:14px;">All merchants have supplier info, or no merchants added yet.</p></div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Stalled Deals (7+ Days No Update)</div>
+      </div>
+      <div id="dash-stalled"><p style="color:var(--muted);font-size:14px;">No stalled deals.</p></div>
+    </div>
+  </div>
+
+  <!-- MERCHANTS TAB -->
+  <div class="tab-panel" id="panel-merchants">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Peptide Merchants</div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="openModal('merchant')">+ Add Merchant</button>
+          <button class="btn btn-secondary" onclick="exportCSV('merchants')">Export CSV</button>
+        </div>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="merchant-search" placeholder="Search merchants..." oninput="renderMerchants()">
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Merchant</th>
+            <th>Business Type</th>
+            <th>Est. Volume</th>
+            <th>Supplier(s)</th>
+            <th>Status</th>
+            <th>Referred By</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="merchant-body"></tbody>
+      </table>
+      <div id="merchant-empty" class="empty-state" style="display:none;">
+        <div class="empty-icon">&#x1F9EA;</div>
+        <h3>No merchants yet</h3>
+        <p>Add your first peptide merchant to start building the supply chain map.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHOLESALERS TAB -->
+  <div class="tab-panel" id="panel-wholesalers">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Wholesalers &amp; Vendors</div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="openModal('wholesaler')">+ Add Wholesaler</button>
+          <button class="btn btn-secondary" onclick="exportCSV('wholesalers')">Export CSV</button>
+        </div>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="wholesaler-search" placeholder="Search wholesalers..." oninput="renderWholesalers()">
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Wholesaler / Vendor</th>
+            <th>Type</th>
+            <th>Est. Merchant Clients</th>
+            <th>Known Merchants</th>
+            <th>Status</th>
+            <th>Contact</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="wholesaler-body"></tbody>
+      </table>
+      <div id="wholesaler-empty" class="empty-state" style="display:none;">
+        <div class="empty-icon">&#x1F3ED;</div>
+        <h3>No wholesalers yet</h3>
+        <p>Add wholesalers as you discover them from merchant conversations.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUPPLY CHAIN MAP TAB -->
+  <div class="tab-panel" id="panel-supply-chain">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Supply Chain Map</div>
+      </div>
+      <p style="font-size:14px;color:var(--mid-teal);margin-bottom:20px;">Each card is a wholesaler node showing all linked merchants. This is how you see the full picture and find the gaps.</p>
+      <div id="chain-map"></div>
+      <div id="chain-empty" class="empty-state" style="display:none;">
+        <div class="empty-icon">&#x1F5FA;</div>
+        <h3>No supply chain links yet</h3>
+        <p>Link merchants to wholesalers to build the map.</p>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Unlinked Merchants</div>
+      </div>
+      <p style="font-size:14px;color:var(--mid-teal);margin-bottom:12px;">These merchants have no known supplier yet. Priority: ask who they buy from.</p>
+      <div id="unlinked-merchants"></div>
+    </div>
+  </div>
+
+  <!-- OUTREACH COPY TAB -->
+  <div class="tab-panel" id="panel-outreach">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Peptide Vertical Outreach Scripts</div>
+      </div>
+
+      <div class="copy-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        <h3>The Supplier Question (Onboarding / Call)</h3>
+        <div class="copy-context">Ask every peptide merchant this during or after close. Extracts the supplier intel you need.</div>
+        <div class="copy-text">Hey quick question while we're getting you set up. Who do you source your peptides from? I ask because we work with a bunch of companies in this space and I like to know who the good vendors are. Sometimes I can even make intros that help both sides.</div>
+      </div>
+
+      <div class="copy-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        <h3>Merchant Referral Ask (Post-Onboarding)</h3>
+        <div class="copy-context">Once the merchant is live and processing, hit them with this to get the supplier intro.</div>
+        <div class="copy-text">Hey [NAME], quick one for you. You mentioned you source from [SUPPLIER]. I'm working with a few other companies in the peptide space and I'd love an intro if you're open to it. Here's the thing -- for every business you connect me with that ends up processing with us, you earn residuals on their volume. Not a one-time thing. Monthly. So if your supplier has other clients in the space and they intro me, you make money every month on those accounts. Want me to send you the details?</div>
+      </div>
+
+      <div class="copy-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        <h3>Cold Outreach to Wholesaler (Email)</h3>
+        <div class="copy-context">Going direct to a peptide wholesaler/vendor you've identified. Lead with value, not the ask.</div>
+        <div class="copy-text">Hey [NAME],
+
+I work with a bunch of peptide companies on their payment processing and I keep hearing your name come up as one of the go-to suppliers in the space.
+
+Wanted to reach out for two reasons. First, if you're processing card payments on your end, I can almost certainly save you money or add a revenue line through surcharging. I'll put it in writing before you switch anything.
+
+Second, I have a referral program that might interest you. For every business you connect me with that processes through us, you earn monthly residuals on their volume. Your clients are already my target market. You wouldn't have to sell anything. Just make an intro.
+
+Worth a quick call this week?</div>
+      </div>
+
+      <div class="copy-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        <h3>Wholesaler Commission Pitch (Call / Meeting)</h3>
+        <div class="copy-context">The full pitch when you're on a call with the wholesaler. Close them on opening their client list.</div>
+        <div class="copy-text">Here's what I'm proposing. You have relationships with dozens, maybe hundreds of peptide companies. Every single one of them processes payments. Most of them are overpaying or using a generic processor that doesn't understand their business.
+
+I handle payment processing specifically for companies in this space. I guarantee better rates in writing. The switch takes a day. They don't miss a single transaction.
+
+What I'm offering you is simple. For every client of yours that you intro me to and they end up processing with us, you earn a percentage of the net revenue on their account. Every month. For as long as they process. You don't sell anything. You don't explain anything. You just say "hey talk to John at Kashu, he handles payments for a bunch of companies like yours."
+
+At your scale, if even 20 of your clients come on, you're looking at a few thousand a month in passive income. And that number grows as they grow.
+
+All I need is a list and a warm intro. I handle everything else.</div>
+      </div>
+
+      <div class="copy-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        <h3>Cold Outreach to Peptide Merchant (Email)</h3>
+        <div class="copy-context">Direct cold outreach to peptide merchants. Pattern interrupt opener.</div>
+        <div class="copy-text">Hey [NAME],
+
+Most processors treat peptide companies like a risk category. I treat you like a revenue opportunity.
+
+I work exclusively with businesses in this space. I know the volume patterns, the chargeback profile, the compliance headaches. And I guarantee better pricing in writing before you switch anything.
+
+Quick example -- I just moved a company doing about $80K/month and saved them $1,400/month by adding a surcharge program. They didn't lose a single customer. They added a revenue line.
+
+Worth 10 minutes to see what the numbers look like for you?</div>
+      </div>
+
+      <div class="copy-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        <h3>Cold Outreach to Peptide Merchant (Text/DM)</h3>
+        <div class="copy-context">Short version for text or LinkedIn DM.</div>
+        <div class="copy-text">Hey [NAME], I handle payment processing for a bunch of peptide companies. I can guarantee better rates in writing and most of my clients add a revenue line through surcharging. Worth a quick look?</div>
+      </div>
+
+      <div class="copy-block">
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+        <h3>Follow-Up After No Response (Wholesaler)</h3>
+        <div class="copy-context">Bump email for wholesalers who didn't reply.</div>
+        <div class="copy-text">Hey [NAME], circling back on this. I just onboarded another peptide company this week and your name came up again as their supplier.
+
+The referral program is still open. Monthly residuals on any client you intro that ends up processing with us. Zero effort on your end.
+
+Happy to walk you through the numbers if you have 5 minutes this week.</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- MERCHANT MODAL -->
+<div class="modal-overlay" id="modal-merchant">
+  <div class="modal">
+    <h2 id="merchant-modal-title">Add Peptide Merchant</h2>
+    <input type="hidden" id="merchant-edit-id">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Business Name *</label>
+        <input type="text" id="m-name" placeholder="e.g. Iron Peptides">
+      </div>
+      <div class="form-group">
+        <label>Contact Name</label>
+        <input type="text" id="m-contact" placeholder="e.g. Mike Johnson">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Business Type</label>
+        <select id="m-type">
+          <option value="Research Peptides">Research Peptides</option>
+          <option value="Cosmetic Peptides">Cosmetic Peptides</option>
+          <option value="Supplement Peptides">Supplement Peptides</option>
+          <option value="Custom Synthesis">Custom Synthesis</option>
+          <option value="Raw Materials">Raw Materials</option>
+          <option value="Wholesale/Distribution">Wholesale/Distribution</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Est. Monthly Volume ($)</label>
+        <input type="number" id="m-volume" placeholder="e.g. 80000">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Status</label>
+        <select id="m-status">
+          <option value="Prospect">Prospect</option>
+          <option value="Contacted">Contacted</option>
+          <option value="Engaged">Engaged</option>
+          <option value="Onboarding">Onboarding</option>
+          <option value="Live">Live</option>
+          <option value="Stalled">Stalled</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Referred By</label>
+        <input type="text" id="m-referred" placeholder="Wholesaler, MRP, or direct">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Known Supplier(s)</label>
+      <input type="text" id="m-suppliers" placeholder="Comma-separated supplier names">
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="m-notes" rows="3" placeholder="Anything useful..."></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="closeModal('merchant')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveMerchant()">Save Merchant</button>
+    </div>
+  </div>
+</div>
+
+<!-- WHOLESALER MODAL -->
+<div class="modal-overlay" id="modal-wholesaler">
+  <div class="modal">
+    <h2 id="wholesaler-modal-title">Add Wholesaler / Vendor</h2>
+    <input type="hidden" id="wholesaler-edit-id">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Company Name *</label>
+        <input type="text" id="w-name" placeholder="e.g. PeptideSynth Labs">
+      </div>
+      <div class="form-group">
+        <label>Contact Name</label>
+        <input type="text" id="w-contact" placeholder="e.g. Sarah Chen">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Type</label>
+        <select id="w-type">
+          <option value="Raw Material Supplier">Raw Material Supplier</option>
+          <option value="Custom Synthesis">Custom Synthesis</option>
+          <option value="Wholesale Distributor">Wholesale Distributor</option>
+          <option value="API Manufacturer">API Manufacturer</option>
+          <option value="Packaging/Fulfillment">Packaging/Fulfillment</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Est. # of Merchant Clients</label>
+        <input type="number" id="w-clients" placeholder="e.g. 50">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Status</label>
+        <select id="w-status">
+          <option value="Identified">Identified</option>
+          <option value="Contacted">Contacted</option>
+          <option value="Engaged">Engaged</option>
+          <option value="Pitching">Pitching</option>
+          <option value="Live">Live</option>
+          <option value="Stalled">Stalled</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Contact Info</label>
+        <input type="text" id="w-contactinfo" placeholder="Email or phone">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Known Merchant Clients</label>
+      <input type="text" id="w-merchants" placeholder="Comma-separated merchant names">
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="w-notes" rows="3" placeholder="Size, reputation, how you found them..."></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="closeModal('wholesaler')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveWholesaler()">Save Wholesaler</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// DATA STORE
+const STORAGE_KEY = 'kashu_peptide_command';
+
+function loadData() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) return JSON.parse(raw);
+  return { merchants: [], wholesalers: [], activity: [] };
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function formatMoney(n) {
+  if (!n || isNaN(n)) return '$0';
+  if (n >= 1000000) return '$' + (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return '$' + (n / 1000).toFixed(0) + 'K';
+  return '$' + n;
+}
+
+function addActivity(data, text) {
+  data.activity.unshift({ text, date: new Date().toISOString() });
+  if (data.activity.length > 50) data.activity = data.activity.slice(0, 50);
+}
+
+// TABS
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+  document.getElementById(`panel-${tab}`).classList.add('active');
+}
+
+// MODALS
+function openModal(type) {
+  document.getElementById(`modal-${type}`).classList.add('show');
+  if (type === 'merchant') {
+    document.getElementById('merchant-modal-title').textContent = 'Add Peptide Merchant';
+    document.getElementById('merchant-edit-id').value = '';
+    clearMerchantForm();
+  } else {
+    document.getElementById('wholesaler-modal-title').textContent = 'Add Wholesaler / Vendor';
+    document.getElementById('wholesaler-edit-id').value = '';
+    clearWholesalerForm();
+  }
+}
+
+function closeModal(type) {
+  document.getElementById(`modal-${type}`).classList.remove('show');
+}
+
+function clearMerchantForm() {
+  ['m-name','m-contact','m-volume','m-referred','m-suppliers','m-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('m-type').selectedIndex = 0;
+  document.getElementById('m-status').selectedIndex = 0;
+}
+
+function clearWholesalerForm() {
+  ['w-name','w-contact','w-clients','w-contactinfo','w-merchants','w-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('w-type').selectedIndex = 0;
+  document.getElementById('w-status').selectedIndex = 0;
+}
+
+// SAVE MERCHANT
+function saveMerchant() {
+  const name = document.getElementById('m-name').value.trim();
+  if (!name) return alert('Business name is required.');
+  const data = loadData();
+  const editId = document.getElementById('merchant-edit-id').value;
+  const merchant = {
+    id: editId || genId(),
+    name,
+    contact: document.getElementById('m-contact').value.trim(),
+    type: document.getElementById('m-type').value,
+    volume: parseInt(document.getElementById('m-volume').value) || 0,
+    status: document.getElementById('m-status').value,
+    referred: document.getElementById('m-referred').value.trim(),
+    suppliers: document.getElementById('m-suppliers').value.split(',').map(s => s.trim()).filter(Boolean),
+    notes: document.getElementById('m-notes').value.trim(),
+    updated: new Date().toISOString(),
+    created: null
+  };
+  if (editId) {
+    const idx = data.merchants.findIndex(m => m.id === editId);
+    if (idx >= 0) { merchant.created = data.merchants[idx].created; data.merchants[idx] = merchant; }
+    addActivity(data, `Updated merchant: ${name}`);
+  } else {
+    merchant.created = merchant.updated;
+    data.merchants.push(merchant);
+    addActivity(data, `Added merchant: ${name}`);
+  }
+  saveData(data);
+  closeModal('merchant');
+  renderAll();
+}
+
+// SAVE WHOLESALER
+function saveWholesaler() {
+  const name = document.getElementById('w-name').value.trim();
+  if (!name) return alert('Company name is required.');
+  const data = loadData();
+  const editId = document.getElementById('wholesaler-edit-id').value;
+  const wholesaler = {
+    id: editId || genId(),
+    name,
+    contact: document.getElementById('w-contact').value.trim(),
+    type: document.getElementById('w-type').value,
+    clients: parseInt(document.getElementById('w-clients').value) || 0,
+    status: document.getElementById('w-status').value,
+    contactInfo: document.getElementById('w-contactinfo').value.trim(),
+    merchants: document.getElementById('w-merchants').value.split(',').map(s => s.trim()).filter(Boolean),
+    notes: document.getElementById('w-notes').value.trim(),
+    updated: new Date().toISOString(),
+    created: null
+  };
+  if (editId) {
+    const idx = data.wholesalers.findIndex(w => w.id === editId);
+    if (idx >= 0) { wholesaler.created = data.wholesalers[idx].created; data.wholesalers[idx] = wholesaler; }
+    addActivity(data, `Updated wholesaler: ${name}`);
+  } else {
+    wholesaler.created = wholesaler.updated;
+    data.wholesalers.push(wholesaler);
+    addActivity(data, `Added wholesaler: ${name}`);
+  }
+  saveData(data);
+  closeModal('wholesaler');
+  renderAll();
+}
+
+// EDIT
+function editMerchant(id) {
+  const data = loadData();
+  const m = data.merchants.find(x => x.id === id);
+  if (!m) return;
+  document.getElementById('merchant-modal-title').textContent = 'Edit Merchant';
+  document.getElementById('merchant-edit-id').value = id;
+  document.getElementById('m-name').value = m.name;
+  document.getElementById('m-contact').value = m.contact || '';
+  document.getElementById('m-type').value = m.type || 'Research Peptides';
+  document.getElementById('m-volume').value = m.volume || '';
+  document.getElementById('m-status').value = m.status || 'Prospect';
+  document.getElementById('m-referred').value = m.referred || '';
+  document.getElementById('m-suppliers').value = (m.suppliers || []).join(', ');
+  document.getElementById('m-notes').value = m.notes || '';
+  document.getElementById('modal-merchant').classList.add('show');
+}
+
+function editWholesaler(id) {
+  const data = loadData();
+  const w = data.wholesalers.find(x => x.id === id);
+  if (!w) return;
+  document.getElementById('wholesaler-modal-title').textContent = 'Edit Wholesaler';
+  document.getElementById('wholesaler-edit-id').value = id;
+  document.getElementById('w-name').value = w.name;
+  document.getElementById('w-contact').value = w.contact || '';
+  document.getElementById('w-type').value = w.type || 'Raw Material Supplier';
+  document.getElementById('w-clients').value = w.clients || '';
+  document.getElementById('w-status').value = w.status || 'Identified';
+  document.getElementById('w-contactinfo').value = w.contactInfo || '';
+  document.getElementById('w-merchants').value = (w.merchants || []).join(', ');
+  document.getElementById('w-notes').value = w.notes || '';
+  document.getElementById('modal-wholesaler').classList.add('show');
+}
+
+// DELETE
+function deleteMerchant(id) {
+  if (!confirm('Delete this merchant?')) return;
+  const data = loadData();
+  const m = data.merchants.find(x => x.id === id);
+  data.merchants = data.merchants.filter(x => x.id !== id);
+  if (m) addActivity(data, `Removed merchant: ${m.name}`);
+  saveData(data);
+  renderAll();
+}
+
+function deleteWholesaler(id) {
+  if (!confirm('Delete this wholesaler?')) return;
+  const data = loadData();
+  const w = data.wholesalers.find(x => x.id === id);
+  data.wholesalers = data.wholesalers.filter(x => x.id !== id);
+  if (w) addActivity(data, `Removed wholesaler: ${w.name}`);
+  saveData(data);
+  renderAll();
+}
+
+// RENDER MERCHANTS
+function renderMerchants() {
+  const data = loadData();
+  const search = (document.getElementById('merchant-search').value || '').toLowerCase();
+  let merchants = data.merchants;
+  if (search) merchants = merchants.filter(m => m.name.toLowerCase().includes(search) || (m.type||'').toLowerCase().includes(search) || (m.suppliers||[]).join(' ').toLowerCase().includes(search));
+
+  const tbody = document.getElementById('merchant-body');
+  const empty = document.getElementById('merchant-empty');
+
+  if (merchants.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = merchants.map(m => `
+    <tr>
+      <td><strong>${m.name}</strong>${m.contact ? '<br><span style="font-size:12px;color:var(--muted)">'+m.contact+'</span>' : ''}</td>
+      <td>${m.type || ''}</td>
+      <td>${m.volume ? formatMoney(m.volume)+'/mo' : '--'}</td>
+      <td>${(m.suppliers||[]).length ? m.suppliers.map(s => '<span style="background:#f0e8fa;color:#8e44ad;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;margin-right:4px;display:inline-block;margin-bottom:2px;">'+s+'</span>').join('') : '<span style="color:var(--red);font-size:12px;font-weight:600;">NEED INTEL</span>'}</td>
+      <td><span class="status status-${(m.status||'prospect').toLowerCase()}">${m.status||'Prospect'}</span></td>
+      <td style="font-size:13px;">${m.referred || '--'}</td>
+      <td style="font-size:13px;">${formatDate(m.updated)}</td>
+      <td>
+        <div class="btn-group">
+          <button class="btn btn-sm btn-secondary" onclick="editMerchant('${m.id}')">Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteMerchant('${m.id}')">X</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// RENDER WHOLESALERS
+function renderWholesalers() {
+  const data = loadData();
+  const search = (document.getElementById('wholesaler-search').value || '').toLowerCase();
+  let wholesalers = data.wholesalers;
+  if (search) wholesalers = wholesalers.filter(w => w.name.toLowerCase().includes(search) || (w.type||'').toLowerCase().includes(search));
+
+  const tbody = document.getElementById('wholesaler-body');
+  const empty = document.getElementById('wholesaler-empty');
+
+  if (wholesalers.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = wholesalers.map(w => `
+    <tr>
+      <td><strong>${w.name}</strong>${w.contact ? '<br><span style="font-size:12px;color:var(--muted)">'+w.contact+'</span>' : ''}</td>
+      <td>${w.type || ''}</td>
+      <td>${w.clients || '--'}</td>
+      <td>${(w.merchants||[]).length ? w.merchants.map(m => '<span style="background:#e8faf0;color:#27ae60;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;margin-right:4px;display:inline-block;margin-bottom:2px;">'+m+'</span>').join('') : '--'}</td>
+      <td><span class="status status-${(w.status||'identified').toLowerCase().replace(' ','-')}">${w.status||'Identified'}</span></td>
+      <td style="font-size:13px;">${w.contactInfo || '--'}</td>
+      <td style="font-size:13px;">${formatDate(w.updated)}</td>
+      <td>
+        <div class="btn-group">
+          <button class="btn btn-sm btn-secondary" onclick="editWholesaler('${w.id}')">Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteWholesaler('${w.id}')">X</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// RENDER SUPPLY CHAIN MAP
+function renderChainMap() {
+  const data = loadData();
+  const mapEl = document.getElementById('chain-map');
+  const emptyEl = document.getElementById('chain-empty');
+  const unlinkedEl = document.getElementById('unlinked-merchants');
+
+  // Build wholesaler -> merchant links
+  const chains = {};
+
+  // From wholesaler's known merchants
+  data.wholesalers.forEach(w => {
+    if (!chains[w.name]) chains[w.name] = { wholesaler: w, merchants: new Set() };
+    (w.merchants || []).forEach(m => chains[w.name].merchants.add(m));
+  });
+
+  // From merchant's known suppliers
+  data.merchants.forEach(m => {
+    (m.suppliers || []).forEach(s => {
+      if (!chains[s]) chains[s] = { wholesaler: data.wholesalers.find(w => w.name.toLowerCase() === s.toLowerCase()) || null, merchants: new Set() };
+      chains[s].merchants.add(m.name);
+    });
+  });
+
+  const chainKeys = Object.keys(chains).sort((a,b) => chains[b].merchants.size - chains[a].merchants.size);
+
+  if (chainKeys.length === 0) {
+    mapEl.innerHTML = '';
+    emptyEl.style.display = 'block';
+  } else {
+    emptyEl.style.display = 'none';
+    mapEl.innerHTML = chainKeys.map(key => {
+      const c = chains[key];
+      const ws = c.wholesaler;
+      const merchantArr = Array.from(c.merchants);
+      const liveMerchants = merchantArr.filter(mn => {
+        const found = data.merchants.find(m => m.name.toLowerCase() === mn.toLowerCase());
+        return found && found.status === 'Live';
+      });
+      return `
+        <div class="chain-card">
+          <h3>${key} ${ws ? '<span class="status status-'+(ws.status||'identified').toLowerCase().replace(' ','-')+'" style="margin-left:8px;">'+(ws.status||'Identified')+'</span>' : '<span class="status status-intel">From Merchant Intel</span>'}</h3>
+          <div class="chain-stats">
+            <div class="chain-stat">Linked Merchants: <strong>${merchantArr.length}</strong></div>
+            <div class="chain-stat">Live: <strong>${liveMerchants.length}</strong></div>
+            ${ws && ws.clients ? '<div class="chain-stat">Est. Total Clients: <strong>'+ws.clients+'</strong></div>' : ''}
+          </div>
+          <div class="chain-merchants">
+            ${merchantArr.map(mn => {
+              const found = data.merchants.find(m => m.name.toLowerCase() === mn.toLowerCase());
+              const isLive = found && found.status === 'Live';
+              return '<span class="chain-merchant-tag '+(isLive ? '' : 'prospect')+'">'+mn+'</span>';
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Unlinked merchants
+  const linkedNames = new Set();
+  Object.values(chains).forEach(c => c.merchants.forEach(m => linkedNames.add(m.toLowerCase())));
+  const unlinked = data.merchants.filter(m => !linkedNames.has(m.name.toLowerCase()) && (!m.suppliers || m.suppliers.length === 0));
+
+  if (unlinked.length === 0) {
+    unlinkedEl.innerHTML = '<p style="color:var(--muted);font-size:14px;">All merchants are linked to at least one supplier.</p>';
+  } else {
+    unlinkedEl.innerHTML = unlinked.map(m => `
+      <div style="display:inline-flex;align-items:center;gap:8px;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:8px 16px;margin:0 8px 8px 0;">
+        <strong style="font-size:14px;">${m.name}</strong>
+        <span class="status status-${(m.status||'prospect').toLowerCase()}">${m.status||'Prospect'}</span>
+        <button class="btn btn-sm btn-primary" onclick="editMerchant('${m.id}')">Add Supplier</button>
+      </div>
+    `).join('');
+  }
+}
+
+// RENDER DASHBOARD
+function renderDashboard() {
+  const data = loadData();
+
+  // Stats
+  document.getElementById('stat-merchants').textContent = data.merchants.length;
+  document.getElementById('stat-merchants-live').textContent = data.merchants.filter(m => m.status === 'Live').length + ' live';
+  document.getElementById('stat-wholesalers').textContent = data.wholesalers.length;
+  document.getElementById('stat-wholesalers-engaged').textContent = data.wholesalers.filter(w => ['Engaged','Pitching','Live'].includes(w.status)).length + ' engaged';
+
+  const totalVolume = data.merchants.reduce((sum, m) => sum + (m.volume || 0), 0);
+  document.getElementById('stat-volume').textContent = formatMoney(totalVolume);
+
+  // Count chains
+  const supplierSet = new Set();
+  data.merchants.forEach(m => (m.suppliers||[]).forEach(s => supplierSet.add(s.toLowerCase())));
+  data.wholesalers.forEach(w => (w.merchants||[]).forEach(m => supplierSet.add(w.name.toLowerCase())));
+  document.getElementById('stat-chains').textContent = supplierSet.size;
+
+  // Pipeline = annual rev estimate (volume * 0.022 * 12 for interchange approximation)
+  const annualRev = totalVolume * 0.022 * 12;
+  document.getElementById('stat-pipeline').textContent = formatMoney(annualRev);
+
+  // Top wholesalers
+  const wCounts = {};
+  data.wholesalers.forEach(w => { wCounts[w.name] = (w.merchants||[]).length; });
+  data.merchants.forEach(m => (m.suppliers||[]).forEach(s => { wCounts[s] = (wCounts[s]||0) + 1; }));
+  const sorted = Object.entries(wCounts).sort((a,b) => b[1]-a[1]).slice(0,5);
+  const topEl = document.getElementById('dash-top-wholesalers');
+  if (sorted.length > 0 && sorted[0][1] > 0) {
+    topEl.innerHTML = sorted.map(([name, count], i) => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;${i < sorted.length-1 ? 'border-bottom:1px solid var(--border);':''}">
+        <span style="font-weight:600;">${name}</span>
+        <span style="background:var(--green-glow);color:var(--dark-teal);padding:4px 12px;border-radius:6px;font-size:13px;font-weight:700;">${count} merchants</span>
+      </div>
+    `).join('');
+  } else {
+    topEl.innerHTML = '<p style="color:var(--muted);font-size:14px;padding:20px 0;">Add wholesalers and link merchants to see rankings.</p>';
+  }
+
+  // Activity
+  const actEl = document.getElementById('dash-activity');
+  if (data.activity && data.activity.length > 0) {
+    actEl.innerHTML = data.activity.slice(0,8).map(a => `
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;">
+        <span>${a.text}</span>
+        <span style="color:var(--muted);white-space:nowrap;margin-left:12px;">${formatDate(a.date)}</span>
+      </div>
+    `).join('');
+  }
+
+  // Missing intel
+  const missingIntel = data.merchants.filter(m => !m.suppliers || m.suppliers.length === 0);
+  const miEl = document.getElementById('dash-missing-intel');
+  if (missingIntel.length > 0) {
+    miEl.innerHTML = `<table class="data-table"><thead><tr><th>Merchant</th><th>Status</th><th>Volume</th><th>Action</th></tr></thead><tbody>${missingIntel.map(m => `
+      <tr>
+        <td><strong>${m.name}</strong></td>
+        <td><span class="status status-${(m.status||'prospect').toLowerCase()}">${m.status}</span></td>
+        <td>${m.volume ? formatMoney(m.volume)+'/mo' : '--'}</td>
+        <td><button class="btn btn-sm btn-primary" onclick="editMerchant('${m.id}')">Add Supplier</button></td>
+      </tr>
+    `).join('')}</tbody></table>`;
+  } else if (data.merchants.length === 0) {
+    miEl.innerHTML = '<p style="color:var(--muted);font-size:14px;">No merchants added yet.</p>';
+  } else {
+    miEl.innerHTML = '<p style="color:var(--muted);font-size:14px;">All merchants have supplier info.</p>';
+  }
+
+  // Stalled
+  const now = Date.now();
+  const stalled = data.merchants.filter(m => {
+    if (m.status === 'Live') return false;
+    const diff = now - new Date(m.updated).getTime();
+    return diff > 7 * 24 * 60 * 60 * 1000;
+  });
+  const sEl = document.getElementById('dash-stalled');
+  if (stalled.length > 0) {
+    sEl.innerHTML = `<table class="data-table"><thead><tr><th>Merchant</th><th>Status</th><th>Days Since Update</th><th>Action</th></tr></thead><tbody>${stalled.map(m => {
+      const days = Math.floor((now - new Date(m.updated).getTime()) / (24*60*60*1000));
+      return `<tr>
+        <td><strong>${m.name}</strong></td>
+        <td><span class="status status-${(m.status||'prospect').toLowerCase()}">${m.status}</span></td>
+        <td style="color:${days > 14 ? 'var(--red)' : 'var(--yellow)'};font-weight:700;">${days} days</td>
+        <td><button class="btn btn-sm btn-secondary" onclick="editMerchant('${m.id}')">Update</button></td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+  }
+}
+
+// COPY
+function copyText(btn) {
+  const text = btn.parentElement.querySelector('.copy-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+// EXPORT CSV
+function exportCSV(type) {
+  const data = loadData();
+  let csv, filename;
+  if (type === 'merchants') {
+    csv = 'Name,Contact,Type,Volume,Status,Referred By,Suppliers,Notes,Updated\n';
+    csv += data.merchants.map(m =>
+      `"${m.name}","${m.contact||''}","${m.type||''}",${m.volume||0},"${m.status||''}","${m.referred||''}","${(m.suppliers||[]).join('; ')}","${(m.notes||'').replace(/"/g,'""')}","${m.updated||''}"`
+    ).join('\n');
+    filename = 'kashu_peptide_merchants.csv';
+  } else {
+    csv = 'Name,Contact,Type,Est Clients,Status,Contact Info,Known Merchants,Notes,Updated\n';
+    csv += data.wholesalers.map(w =>
+      `"${w.name}","${w.contact||''}","${w.type||''}",${w.clients||0},"${w.status||''}","${w.contactInfo||''}","${(w.merchants||[]).join('; ')}","${(w.notes||'').replace(/"/g,'""')}","${w.updated||''}"`
+    ).join('\n');
+    filename = 'kashu_peptide_wholesalers.csv';
+  }
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+}
+
+// RENDER ALL
+function renderAll() {
+  renderMerchants();
+  renderWholesalers();
+  renderChainMap();
+  renderDashboard();
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => {
+    if (e.target === el) el.classList.remove('show');
+  });
+});
+
+// INIT
+renderAll();
+</script>
+</body>
+</html>
